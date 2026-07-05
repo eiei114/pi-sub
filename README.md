@@ -5,6 +5,18 @@
 
 Monorepo for the `sub-*` extension ecosystem: a shared usage core (`sub-core`), UI clients (like `sub-bar`), and headless consumers that subscribe to usage updates.
 
+## About this fork
+
+This fork exists because the upstream repo has been quiet while a few maintenance issues and PRs were waiting. The goal is to keep `pi-sub` usable for current Pi users, not to present this fork as the upstream project.
+
+Initial changes in this fork:
+
+- Package scope changed from `@marckrenn/*` to `@eiei114/*` for npm publishing.
+- Install docs updated for the `@eiei114` packages.
+- Cache writes are more robust on Windows by retrying transient rename failures and cleaning up temp files.
+- Cache lock ownership is safer so one process does not release another process's lock.
+- `turn_end` and `tool_result` refreshes now respect the cache TTL instead of forcing network requests every turn.
+
 ## Overview
 
 - **sub-core**: fetches usage + status, manages cache/locks, owns provider selection, and emits updates via `pi.events`.
@@ -203,4 +215,3 @@ npm run test -w @eiei114/pi-sub-core
 npm run test -w @eiei114/pi-sub-bar
 npm run test -w @eiei114/pi-sub-status
 ```
-
