@@ -1,5 +1,5 @@
 {
-  "name": "@marckrenn/pi-sub-status",
+  "name": "@eiei114/pi-sub-status",
   "version": "1.5.0",
   "description": "Compact status-line client for pi subscription usage",
   "keywords": [
@@ -14,7 +14,7 @@
   "pi": {
     "extensions": [
       "./index.ts",
-      "node_modules/@marckrenn/pi-sub-core/index.ts",
+      "node_modules/@eiei114/pi-sub-core/index.ts",
       "../pi-sub-core/index.ts"
     ]
   },
@@ -30,8 +30,8 @@
     "typescript": "^5.8.0"
   },
   "dependencies": {
-    "@marckrenn/pi-sub-core": "^1.5.0",
-    "@marckrenn/pi-sub-shared": "^1.5.0"
+    "@eiei114/pi-sub-core": "^1.5.0",
+    "@eiei114/pi-sub-shared": "^1.5.0"
   },
   "peerDependencies": {
     "@mariozechner/pi-coding-agent": "*"

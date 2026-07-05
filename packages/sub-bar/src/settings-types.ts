@@ -2,8 +2,8 @@
  * Settings types and defaults for sub-bar
  */
 
-import type { CoreSettings, ProviderName } from "@marckrenn/pi-sub-shared";
-import { PROVIDERS } from "@marckrenn/pi-sub-shared";
+import type { CoreSettings, ProviderName } from "@eiei114/pi-sub-shared";
+import { PROVIDERS } from "@eiei114/pi-sub-shared";
 import type { ThemeColor } from "@mariozechner/pi-coding-agent";
 
 /**
@@ -284,7 +284,7 @@ export interface ProviderSettingsMap {
 	zai: ZaiProviderSettings;
 }
 
-export type { BehaviorSettings, CoreSettings } from "@marckrenn/pi-sub-shared";
+export type { BehaviorSettings, CoreSettings } from "@eiei114/pi-sub-shared";
 
 /**
  * Keybinding settings.

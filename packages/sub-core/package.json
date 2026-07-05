@@ -1,5 +1,5 @@
 {
-  "name": "@marckrenn/pi-sub-core",
+  "name": "@eiei114/pi-sub-core",
   "version": "1.5.0",
   "description": "Shared usage data core for pi extensions",
   "keywords": [
@@ -27,7 +27,7 @@
     "typescript": "^5.8.0"
   },
   "dependencies": {
-    "@marckrenn/pi-sub-shared": "^1.5.0"
+    "@eiei114/pi-sub-shared": "^1.5.0"
   },
   "peerDependencies": {
     "@mariozechner/pi-coding-agent": "*"
