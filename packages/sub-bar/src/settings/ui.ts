@@ -8,7 +8,7 @@ import { Container, Input, SelectList, Spacer, Text } from "@mariozechner/pi-tui
 import { SettingsList, type SettingItem, CUSTOM_OPTION } from "../ui/settings-list.js";
 import type { ProviderName } from "../types.js";
 import type { Settings } from "../settings-types.js";
-import type { CoreSettings } from "@marckrenn/pi-sub-shared";
+import type { CoreSettings } from "@eiei114/pi-sub-shared";
 import { getFallbackCoreSettings } from "../core-settings.js";
 import { getDefaultSettings } from "../settings-types.js";
 import { getSettings, saveSettings } from "../settings.js";

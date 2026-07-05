@@ -23,7 +23,7 @@ From your release branch (or feature branch if not bundling):
 npm run changeset
 ```
 
-- Choose **patch** for `@marckrenn/pi-sub-bar` / `@marckrenn/pi-sub-core` / `@marckrenn/pi-sub-shared`.
+- Choose **patch** for `@eiei114/pi-sub-bar` / `@eiei114/pi-sub-core` / `@eiei114/pi-sub-shared`.
 - These packages are a **fixed group**, so one changeset bumps all three together.
 
 Commit and push the changeset.

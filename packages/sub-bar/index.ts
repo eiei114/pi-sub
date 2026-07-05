@@ -13,7 +13,7 @@ import type { ProviderName, ProviderUsageEntry, SubCoreAllState, SubCoreState, U
 import { type Settings, type BaseTextColor, type WidgetBackgroundColor } from "./src/settings-types.js";
 import { isBackgroundColor, resolveBackgroundColor, resolveBaseTextColor, resolveDividerColor } from "./src/settings-types.js";
 import { buildDividerLine } from "./src/dividers.js";
-import type { CoreSettings } from "@marckrenn/pi-sub-shared";
+import type { CoreSettings } from "@eiei114/pi-sub-shared";
 import type { KeyId } from "@mariozechner/pi-tui";
 import { formatUsageStatus, formatUsageStatusWithWidth } from "./src/formatting.js";
 import type { ContextInfo } from "./src/formatting.js";
@@ -172,7 +172,7 @@ export default function createExtension(pi: ExtensionAPI) {
 		const hasCore = await probeSubCore();
 		if (hasCore) return;
 		try {
-			const bundledUrl = new URL("./node_modules/@marckrenn/pi-sub-core/index.ts", import.meta.url);
+			const bundledUrl = new URL("./node_modules/@eiei114/pi-sub-core/index.ts", import.meta.url);
 			const module = await import(bundledUrl.toString());
 			const createCore = module.default as undefined | ((api: ExtensionAPI) => void | Promise<void>);
 			if (typeof createCore === "function") {
@@ -183,7 +183,7 @@ export default function createExtension(pi: ExtensionAPI) {
 			// Fall back to package resolution
 		}
 		try {
-			const module = await import("@marckrenn/pi-sub-core");
+			const module = await import("@eiei114/pi-sub-core");
 			const createCore = module.default as undefined | ((api: ExtensionAPI) => void | Promise<void>);
 			if (typeof createCore === "function") {
 				void createCore(pi);
@@ -739,7 +739,7 @@ export default function createExtension(pi: ExtensionAPI) {
 
 	function renderCurrent(ctx: ExtensionContext): void {
 		if (!coreAvailable) {
-			renderUsageWidget(ctx, undefined, "pi-sub-core required. install with: pi install npm:@marckrenn/pi-sub-core");
+			renderUsageWidget(ctx, undefined, "pi-sub-core required. install with: pi install npm:@eiei114/pi-sub-core");
 			return;
 		}
 		const usage = resolveDisplayedUsage();

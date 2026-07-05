@@ -16,7 +16,7 @@ export const GEMINI_PRODUCT_ID = "npdyhgECDJ6tB66MxXyo";
  * Model multipliers for Copilot request counting
  * Maps model display names to their request multiplier
  */
-export { MODEL_MULTIPLIERS } from "@marckrenn/pi-sub-shared";
+export { MODEL_MULTIPLIERS } from "@eiei114/pi-sub-shared";
 
 /**
  * Timeout for API requests in milliseconds

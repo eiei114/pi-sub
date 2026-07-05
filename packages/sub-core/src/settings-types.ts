@@ -9,8 +9,8 @@ import type {
 	BehaviorSettings,
 	ProviderName,
 	ProviderEnabledSetting,
-} from "@marckrenn/pi-sub-shared";
-import { PROVIDERS, getDefaultCoreSettings } from "@marckrenn/pi-sub-shared";
+} from "@eiei114/pi-sub-shared";
+import { PROVIDERS, getDefaultCoreSettings } from "@eiei114/pi-sub-shared";
 
 export type {
 	CoreProviderSettings,
@@ -18,7 +18,7 @@ export type {
 	BehaviorSettings,
 	CoreSettings,
 	ProviderEnabledSetting,
-} from "@marckrenn/pi-sub-shared";
+} from "@eiei114/pi-sub-shared";
 
 /**
  * Tool registration settings

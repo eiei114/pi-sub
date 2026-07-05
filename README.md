@@ -1,5 +1,8 @@
 # pi-sub
 
+> Unofficial continuation of [`marckrenn/pi-sub`](https://github.com/marckrenn/pi-sub).
+> This fork keeps the upstream MIT license and attribution, but publishes packages under the `@eiei114` npm scope.
+
 Monorepo for the `sub-*` extension ecosystem: a shared usage core (`sub-core`), UI clients (like `sub-bar`), and headless consumers that subscribe to usage updates.
 
 ## Overview
@@ -7,7 +10,7 @@ Monorepo for the `sub-*` extension ecosystem: a shared usage core (`sub-core`), 
 - **sub-core**: fetches usage + status, manages cache/locks, owns provider selection, and emits updates via `pi.events`.
 - **sub-bar**: UI widget that renders the current usage state above the editor.
 - **sub-status**: compact status-line client that renders the current usage state via `ctx.ui.setStatus(...)`.
-- **sub-shared**: shared types + event contract (published to npm as `@marckrenn/pi-sub-shared`).
+- **sub-shared**: shared types + event contract (published to npm as `@eiei114/pi-sub-shared`).
 
 `sub-core` can power multiple `sub-*` extensions at once, including rich UI clients like `sub-bar` and compact/headless-friendly clients like `sub-status`.
 
@@ -15,10 +18,10 @@ Monorepo for the `sub-*` extension ecosystem: a shared usage core (`sub-core`), 
 
 | Package | Description |
 | --- | --- |
-| [`@marckrenn/pi-sub-core`](./packages/sub-core) | Shared fetch/cache core (pi extension). |
-| [`@marckrenn/pi-sub-bar`](./packages/sub-bar) | Rich widget display client (pi extension). |
-| [`@marckrenn/pi-sub-status`](./packages/sub-status) | Compact status-line display client (pi extension). |
-| [`@marckrenn/pi-sub-shared`](./packages/sub-shared) | Shared types + event contract (npm package). |
+| [`@eiei114/pi-sub-core`](./packages/sub-core) | Shared fetch/cache core (pi extension). |
+| [`@eiei114/pi-sub-bar`](./packages/sub-bar) | Rich widget display client (pi extension). |
+| [`@eiei114/pi-sub-status`](./packages/sub-status) | Compact status-line display client (pi extension). |
+| [`@eiei114/pi-sub-shared`](./packages/sub-shared) | Shared types + event contract (npm package). |
 
 ## Ideas / planned sub-* extensions
 
@@ -40,9 +43,9 @@ If you’d like to work on these, PRs or standalone packages are welcome.
 You can install the packages via `pi install`:
 
 ```bash
-pi install npm:@marckrenn/pi-sub-core
-pi install npm:@marckrenn/pi-sub-bar
-pi install npm:@marckrenn/pi-sub-status
+pi install npm:@eiei114/pi-sub-core
+pi install npm:@eiei114/pi-sub-bar
+pi install npm:@eiei114/pi-sub-status
 ```
 
 `sub-bar` remains the default rich UI path. `sub-status` is an explicit opt-in compact client and can be installed alongside `sub-bar` when you want both the widget and a status-line summary.
@@ -50,7 +53,7 @@ pi install npm:@marckrenn/pi-sub-status
 ## Quick Start (manual install)
 
 ```bash
-git clone https://github.com/marckrenn/pi-sub.git
+git clone https://github.com/eiei114/pi-sub.git
 
 # Enable the shared core plus one or both display clients
 ln -s /path/to/pi-sub/packages/sub-core   ~/.pi/agent/extensions/sub-core
@@ -181,24 +184,23 @@ Common commands:
 Watch mode:
 
 ```bash
-npm run check:watch -w @marckrenn/pi-sub-core
-npm run check:watch -w @marckrenn/pi-sub-bar
-npm run check:watch -w @marckrenn/pi-sub-status
-npm run check:watch -w @marckrenn/pi-sub-shared
-npm run test:watch -w @marckrenn/pi-sub-bar
-npm run test:watch -w @marckrenn/pi-sub-status
+npm run check:watch -w @eiei114/pi-sub-core
+npm run check:watch -w @eiei114/pi-sub-bar
+npm run check:watch -w @eiei114/pi-sub-status
+npm run check:watch -w @eiei114/pi-sub-shared
+npm run test:watch -w @eiei114/pi-sub-bar
+npm run test:watch -w @eiei114/pi-sub-status
 ```
 
 Workspace-specific commands:
 
 ```bash
-npm run check -w @marckrenn/pi-sub-core
-npm run check -w @marckrenn/pi-sub-bar
-npm run check -w @marckrenn/pi-sub-status
-npm run check -w @marckrenn/pi-sub-shared
-npm run test -w @marckrenn/pi-sub-core
-npm run test -w @marckrenn/pi-sub-bar
-npm run test -w @marckrenn/pi-sub-status
+npm run check -w @eiei114/pi-sub-core
+npm run check -w @eiei114/pi-sub-bar
+npm run check -w @eiei114/pi-sub-status
+npm run check -w @eiei114/pi-sub-shared
+npm run test -w @eiei114/pi-sub-core
+npm run test -w @eiei114/pi-sub-bar
+npm run test -w @eiei114/pi-sub-status
 ```
-
 

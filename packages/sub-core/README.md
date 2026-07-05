@@ -14,13 +14,13 @@ Shared usage data core for pi extensions. Sub-core owns fetching, caching, provi
 Install via the pi package manager (recommended):
 
 ```bash
-pi install npm:@marckrenn/pi-sub-core
+pi install npm:@eiei114/pi-sub-core
 ```
 
 Use `-l` to install into project settings instead of global:
 
 ```bash
-pi install -l npm:@marckrenn/pi-sub-core
+pi install -l npm:@eiei114/pi-sub-core
 ```
 
 For a UI, also install a display extension like `sub-bar` from the same repo (see the root README for the full setup).
@@ -28,7 +28,7 @@ For a UI, also install a display extension like `sub-bar` from the same repo (se
 Manual install (local development):
 
 ```bash
-git clone https://github.com/marckrenn/pi-sub.git
+git clone https://github.com/eiei114/pi-sub.git
 ln -s /path/to/pi-sub/packages/sub-core ~/.pi/agent/extensions/sub-core
 ```
 
@@ -108,7 +108,7 @@ Legacy cache files next to the extension entry or in the agent root are migrated
 Pi packages use a `pi` field in `package.json` plus the `pi-package` keyword for discoverability. This repo already declares `pi.extensions`, so you can install via:
 
 ```bash
-pi install npm:@marckrenn/pi-sub-core
+pi install npm:@eiei114/pi-sub-core
 ```
 
 Manual paths/symlinks still work for local development as documented above.
