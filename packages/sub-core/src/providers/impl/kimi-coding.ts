@@ -61,8 +61,16 @@ function parseDetailToWindow(label: string, detail: KimiLimitDetail | undefined)
 	if (!detail) return undefined;
 	const limit = parseFloat(detail.limit ?? "0");
 	const used = parseFloat(detail.used ?? "0");
-	if (limit <= 0) return undefined;
-	const resetAt = detail.resetTime ? new Date(detail.resetTime) : undefined;
+	if (!Number.isFinite(limit) || !Number.isFinite(used) || limit <= 0) return undefined;
+
+	let resetAt: Date | undefined;
+	if (detail.resetTime) {
+		const parsed = new Date(detail.resetTime);
+		if (!Number.isNaN(parsed.getTime())) {
+			resetAt = parsed;
+		}
+	}
+
 	return {
 		label,
 		usedPercent: (used / limit) * 100,

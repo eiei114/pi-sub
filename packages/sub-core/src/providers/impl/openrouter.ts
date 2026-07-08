@@ -83,7 +83,13 @@ export class OpenRouterProvider extends BaseProvider {
 				return this.emptySnapshot(httpError(res.status));
 			}
 
-			const data = (await res.json()) as OpenRouterCreditsResponse;
+			let data: OpenRouterCreditsResponse;
+			try {
+				data = (await res.json()) as OpenRouterCreditsResponse;
+			} catch {
+				return this.emptySnapshot(apiError("Invalid OpenRouter credits response"));
+			}
+
 			const totalCredits = toFiniteNumber(data.data?.total_credits);
 			const totalUsage = toFiniteNumber(data.data?.total_usage);
 
@@ -105,7 +111,7 @@ export class OpenRouterProvider extends BaseProvider {
 				windows,
 				creditTotal: totalCredits,
 				creditUsage: totalUsage,
-				creditRemaining: totalCredits - totalUsage,
+				creditRemaining: Math.max(0, totalCredits - totalUsage),
 			});
 		} catch {
 			clear();

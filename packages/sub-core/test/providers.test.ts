@@ -236,6 +236,35 @@ test("openrouter reports invalid API responses", async () => {
 	assert.equal(usage.error?.code, "API_ERROR");
 });
 
+test("openrouter clamps creditRemaining when usage exceeds credits", async () => {
+	const provider = new OpenRouterProvider();
+	const { deps, files } = createDeps({
+		fetch: async () => createJsonResponse({ data: { total_credits: 10, total_usage: 15 } }),
+	});
+	withAuth(files, { openrouter: { access: "token" } }, deps.homedir());
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(usage.creditRemaining, 0);
+	assert.equal(usage.windows[0]?.usedPercent, 100);
+});
+
+test("openrouter reports malformed JSON as API error", async () => {
+	const provider = new OpenRouterProvider();
+	const { deps, files } = createDeps({
+		fetch: async () => ({
+			ok: true,
+			status: 200,
+			json: async () => {
+				throw new SyntaxError("Unexpected token");
+			},
+		}),
+	});
+	withAuth(files, { openrouter: { access: "token" } }, deps.homedir());
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(usage.error?.code, "API_ERROR");
+});
+
 test("openrouter reports missing credentials", async () => {
 	const provider = new OpenRouterProvider();
 	const { deps } = createDeps();
@@ -566,6 +595,39 @@ test("kimi-coding handles missing 5h limit gracefully", async () => {
 	const usage = await provider.fetchUsage(deps);
 	assertWindow(usage, "Week");
 	assert.equal(usage.windows.length, 1);
+});
+
+test("kimi-coding skips windows with invalid numeric values", async () => {
+	const provider = new KimiCodingProvider();
+	const { deps, files } = createDeps({
+		fetch: async () => createJsonResponse({
+			usage: { limit: "not-a-number", used: "100" },
+			limits: [{
+				window: { duration: 300, timeUnit: "TIME_UNIT_MINUTE" },
+				detail: { limit: "200", used: "invalid", remaining: "61" },
+			}],
+		}),
+	});
+	withAuth(files, { "kimi-coding": { access: "token" } }, deps.homedir());
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(usage.windows.length, 0);
+});
+
+test("kimi-coding ignores invalid resetTime but keeps valid window", async () => {
+	const provider = new KimiCodingProvider();
+	const { deps, files } = createDeps({
+		fetch: async () => createJsonResponse({
+			usage: { limit: "1024", used: "100", remaining: "924", resetTime: "not-a-date" },
+			limits: [],
+		}),
+	});
+	withAuth(files, { "kimi-coding": { access: "token" } }, deps.homedir());
+
+	const usage = await provider.fetchUsage(deps);
+	assertWindow(usage, "Week");
+	assert.equal(usage.windows[0]?.resetAt, undefined);
+	assert.equal(usage.windows[0]?.resetDescription, undefined);
 });
 
 test("kimi-coding reports http errors", async () => {
