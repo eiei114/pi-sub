@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import path from "node:path";
 import { AnthropicProvider } from "../src/providers/impl/anthropic.js";
 import { CopilotProvider } from "../src/providers/impl/copilot.js";
 import { GeminiProvider } from "../src/providers/impl/gemini.js";
@@ -74,6 +75,44 @@ test("anthropic parses windows and extra usage", async () => {
 	const extra = usage.windows.find((window) => window.label.startsWith("Extra"));
 	assert.ok(extra?.label.includes("Extra [active]"));
 	assert.equal(usage.extraUsageEnabled, true);
+});
+
+test("anthropic falls back to seven_day_sonnet when seven_day is missing", async () => {
+	const provider = new AnthropicProvider();
+	const { deps, files } = createDeps({
+		fetch: async () => createJsonResponse({
+			five_hour: { utilization: 10, resets_at: new Date(Date.now() + 3600_000).toISOString() },
+			seven_day_sonnet: { utilization: 42, resets_at: new Date(Date.now() + 86400_000).toISOString() },
+		}),
+		execFileSync: () => "",
+	});
+	withAuth(files, { anthropic: { access: "token" } }, deps.homedir());
+
+	const usage = await provider.fetchUsage(deps);
+	assertWindow(usage, "5h");
+	assertWindow(usage, "Week");
+	assert.equal(usage.windows.find((window) => window.label === "Week")?.usedPercent, 42);
+});
+
+test("anthropic reads token from Claude credentials file", async () => {
+	const provider = new AnthropicProvider();
+	const home = "/home/test";
+	let authorization: string | undefined;
+
+	const { deps, files } = createDeps({
+		homedir: home,
+		fetch: async (_url, init) => {
+			authorization = (init as { headers?: { Authorization?: string } })?.headers?.Authorization;
+			return createJsonResponse({});
+		},
+		execFileSync: () => "",
+	});
+	files.set(path.join(home, ".claude", ".credentials.json"), JSON.stringify({
+		claudeAiOauth: { accessToken: "claude-token" },
+	}));
+
+	await provider.fetchUsage(deps);
+	assert.equal(authorization, "Bearer claude-token");
 });
 
 test("copilot reads token from GITHUB_TOKEN env var", async () => {
@@ -305,6 +344,29 @@ test("copilot parses quotas and requests", async () => {
 	assert.equal(usage.windows[0]?.usedPercent, 30);
 	assert.equal(usage.requestsRemaining, 10);
 	assert.equal(usage.requestsEntitlement, 50);
+});
+
+test("copilot parses chat quota when premium interactions are missing", async () => {
+	const provider = new CopilotProvider();
+	const { deps, files } = createDeps({
+		fetch: async () => createJsonResponse({
+			quota_reset_date: "2026-02-01T00:00:00Z",
+			quota_snapshots: {
+				chat: {
+					percent_remaining: 80,
+					remaining: 40,
+					entitlement: 200,
+				},
+			},
+		}),
+	});
+	withAuth(files, { "github-copilot": { refresh: "token" } }, deps.homedir());
+
+	const usage = await provider.fetchUsage(deps);
+	assertWindow(usage, "Chat");
+	assert.equal(usage.windows[0]?.usedPercent, 20);
+	assert.equal(usage.requestsRemaining, 40);
+	assert.equal(usage.requestsEntitlement, 200);
 });
 
 test("copilot reports http errors", async () => {
