@@ -1,5 +1,15 @@
 # @marckrenn/pi-sub-bar
 
+## 1.5.2
+
+### Patch Changes
+
+- [#3](https://github.com/eiei114/pi-sub/pull/3) [`7507aa1`](https://github.com/eiei114/pi-sub/commit/7507aa12207cb4b545e30e32c9f09a998cd20f16) Thanks [@eiei114](https://github.com/eiei114)! - Add project status badges to the root README (npm version, license, Node.js, release workflow, PRs welcome).
+
+- Updated dependencies [[`7507aa1`](https://github.com/eiei114/pi-sub/commit/7507aa12207cb4b545e30e32c9f09a998cd20f16)]:
+  - @eiei114/pi-sub-core@1.5.2
+  - @eiei114/pi-sub-shared@1.5.2
+
 ## 1.5.1
 
 ### Patch Changes
