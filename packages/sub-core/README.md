@@ -98,8 +98,10 @@ Legacy cache files next to the extension entry or in the agent root are migrated
 | Google Gemini | Pro/Flash quotas | ✅ | Aggregated by model family |
 | Antigravity | Model quotas | ✅ | Sandbox Cloud Code Assist quotas (tested) |
 | OpenAI Codex | Primary/secondary windows | ✅ | Credits not yet supported (PRs welcome!) |
-| AWS Kiro | Credits | - | Credits not yet supported (PRs welcome!) |
+| AWS Kiro | Credits | - | `kiro-cli /usage` (stdout+stderr); tested on Windows |
 | z.ai | Tokens/monthly limits | - | API quota limits |
+| Kimi for Coding | Week + 5h rolling windows | - | OAuth; tested with `pi-provider-kimi-code` |
+| OpenRouter | Credits | - | API credits endpoint |
 
 ## Development
 
@@ -115,7 +117,7 @@ Manual paths/symlinks still work for local development as documented above.
 
 ### Tested providers
 
-Tested so far: Anthropic (Claude), OpenAI Codex, GitHub Copilot. Other providers are implemented but not yet verified in production.
+Tested so far: Anthropic (Claude), OpenAI Codex, GitHub Copilot, Kimi for Coding, OpenRouter. Other providers are implemented but not yet verified in production.
 
 ### Adding a Provider
 
