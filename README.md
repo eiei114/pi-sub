@@ -1,9 +1,12 @@
 # pi-sub
 
-[![npm version](https://img.shields.io/npm/v/@eiei114/pi-sub-core.svg)](https://www.npmjs.com/package/@eiei114/pi-sub-core)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org/)
 [![Release](https://github.com/eiei114/pi-sub/actions/workflows/release.yml/badge.svg)](https://github.com/eiei114/pi-sub/actions/workflows/release.yml)
+[![npm version](https://img.shields.io/npm/v/@eiei114/pi-sub-core.svg)](https://www.npmjs.com/package/@eiei114/pi-sub-core)
+[![npm downloads](https://img.shields.io/npm/dm/@eiei114/pi-sub-core.svg)](https://www.npmjs.com/package/@eiei114/pi-sub-core)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Pi package](https://img.shields.io/badge/pi-package-purple.svg)](https://pi.dev/packages)
+[![Trusted Publishing](https://img.shields.io/badge/npm-Trusted%20Publishing-blue.svg)](RELEASE_PROCESS.md)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 > Unofficial continuation of [`marckrenn/pi-sub`](https://github.com/marckrenn/pi-sub).
