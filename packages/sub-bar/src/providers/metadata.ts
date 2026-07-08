@@ -31,7 +31,9 @@ const anthropicWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, win
 const copilotWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, window, settings, _model) => {
 	if (!settings) return true;
 	const ps = settings.providers.copilot;
-	if (window.label === "Month") return ps.windows.showMonth;
+	if (window.label === "Month" || window.label === "Chat" || window.label === "Completions") {
+		return ps.windows.showMonth;
+	}
 	return true;
 };
 

@@ -11,9 +11,10 @@ import {
 	updateCacheStatus,
 	watchCacheUpdates,
 } from "../src/cache.js";
-import { getCacheLockPath } from "../src/paths.js";
+import { getCacheLockPath, getLegacyAgentCachePath } from "../src/paths.js";
 
 const LOCK_PATH = getCacheLockPath();
+const LEGACY_AGENT_CACHE_PATH = getLegacyAgentCachePath();
 
 function wait(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -45,6 +46,32 @@ async function withCacheFiles(fn: () => Promise<void> | void): Promise<void> {
 		}
 	}
 }
+
+test("readCache migrates legacy agent cache file", async () => {
+	await withCacheFiles(() => {
+		const legacyValue = {
+			anthropic: {
+				fetchedAt: 456,
+				usage: {
+					provider: "anthropic",
+					displayName: "Claude Plan",
+					windows: [],
+				},
+			},
+		};
+
+		if (fs.existsSync(CACHE_PATH)) {
+			fs.unlinkSync(CACHE_PATH);
+		}
+		fs.mkdirSync(path.dirname(LEGACY_AGENT_CACHE_PATH), { recursive: true });
+		fs.writeFileSync(LEGACY_AGENT_CACHE_PATH, JSON.stringify(legacyValue), "utf-8");
+
+		const cache = readCache();
+		assert.equal(cache.anthropic?.fetchedAt, 456);
+		assert.ok(fs.existsSync(CACHE_PATH));
+		assert.equal(fs.existsSync(LEGACY_AGENT_CACHE_PATH), false);
+	});
+});
 
 test("readCache recovers from truncated JSON", async () => {
 	await withCacheFiles(() => {
