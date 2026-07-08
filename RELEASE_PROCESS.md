@@ -9,7 +9,7 @@ This repo uses Changesets + GitHub Actions to ship npm releases automatically af
    - This workflow already requests `id-token: write`, so no `NPM_TOKEN` secret is required when Trusted Publishing is configured.
 2. **Enable GitHub auto-merge**
    - Repo Settings → Pull Requests → enable **Allow auto-merge**.
-   - `.github/workflows/release-pr-automerge.yml` turns on auto-merge for the bot-created `Version Packages` PR.
+   - The release workflow turns on auto-merge for the bot-created `Version Packages` PR after Changesets opens it.
 
 ## Normal release flow
 
@@ -32,7 +32,7 @@ Commit the generated `.changeset/*.md` file in the same PR.
 On every push to `main`, `.github/workflows/release.yml` runs automatically.
 
 - If unreleased changesets exist, Changesets creates or updates a **Version Packages** PR.
-- `.github/workflows/release-pr-automerge.yml` enables auto-merge for that PR.
+- The same workflow immediately enables auto-merge for that PR with `gh pr merge --auto --squash`.
 
 ### 3) Let the Version Packages PR merge itself
 
@@ -58,4 +58,5 @@ npm run verify
 
 - Publish scope is package-aware: only packages affected by the merged changesets are released.
 - Internal dependency bumps are handled by Changesets.
-- If the repo auto-merge setting is off, the `Version Packages` PR will still be created, but someone must merge it manually.
+- If the repo auto-merge setting is off, the workflow cannot arm auto-merge and someone must merge the `Version Packages` PR manually.
+- A separate `pull_request_target` workflow is not used because PRs created with `GITHUB_TOKEN` do not reliably trigger follow-up automation.
