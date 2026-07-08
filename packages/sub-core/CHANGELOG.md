@@ -1,5 +1,30 @@
 # @marckrenn/pi-sub-core
 
+## 1.6.0
+
+### Minor Changes
+
+- [#2](https://github.com/eiei114/pi-sub/pull/2) [`93242b9`](https://github.com/eiei114/pi-sub/commit/93242b9f021e211796f48f4643fdecbe983f217d) Thanks [@eiei114](https://github.com/eiei114)! - Add OpenRouter and Kimi for Coding usage providers.
+
+  Ports upstream PRs marckrenn/pi-sub#66 (OpenRouter credits) and #63 (Kimi for Coding week/5h windows) into the @eiei114 fork. PR #67 (Kiro stderr + ISO reset date) was already landed separately.
+  - **OpenRouter**: credits endpoint, env/auth token resolution, sub-bar credit extras and toggles.
+  - **Kimi for Coding**: `api.kimi.com/coding/v1/usages`, pi-mono `KIMI_API_KEY` / auth.json support, sub-bar week/5h window toggles.
+
+### Patch Changes
+
+- [#1](https://github.com/eiei114/pi-sub/pull/1) [`c43a83c`](https://github.com/eiei114/pi-sub/commit/c43a83c322d50b96df27d8f178e4bfff1fa64035) Thanks [@eiei114](https://github.com/eiei114)! - Kiro provider: capture stderr from `kiro-cli /usage` and parse `YYYY-MM-DD` reset dates.
+
+  Ports the Kiro parts of upstream PR marckrenn/pi-sub#67 while keeping Windows working:
+  - Usage retrieval now reads both stdout and stderr (kiro-cli writes some usage
+    data to stderr) via a new shell-free, cross-platform dependency hook
+    (`execFileSyncWithStderr`, backed by `spawnSync`). No `/bin/sh` or `cmd.exe`
+    is spawned, so Windows cache/TTL behavior is unaffected.
+  - The reset-date parser now accepts `resets on 2026-06-01` (`YYYY-MM-DD`) in
+    addition to the existing `resets on 01/01` (`MM/DD`) format.
+
+- Updated dependencies []:
+  - @eiei114/pi-sub-shared@1.6.0
+
 ## 1.5.2
 
 ### Patch Changes

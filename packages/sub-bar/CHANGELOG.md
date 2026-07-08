@@ -1,5 +1,13 @@
 # @marckrenn/pi-sub-bar
 
+## 1.6.0
+
+### Patch Changes
+
+- Updated dependencies [[`c43a83c`](https://github.com/eiei114/pi-sub/commit/c43a83c322d50b96df27d8f178e4bfff1fa64035), [`93242b9`](https://github.com/eiei114/pi-sub/commit/93242b9f021e211796f48f4643fdecbe983f217d)]:
+  - @eiei114/pi-sub-core@1.6.0
+  - @eiei114/pi-sub-shared@1.6.0
+
 ## 1.5.2
 
 ### Patch Changes
