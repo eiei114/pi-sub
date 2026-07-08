@@ -1,5 +1,15 @@
 # @marckrenn/pi-sub-bar
 
+## 1.6.1
+
+### Patch Changes
+
+- [#6](https://github.com/eiei114/pi-sub/pull/6) [`3d7604e`](https://github.com/eiei114/pi-sub/commit/3d7604ef7f092f0e5b24d172f59155dfd836671d) Thanks [@eiei114](https://github.com/eiei114)! - Fix Anthropic and Copilot usage providers for upstream API changes (marckrenn/pi-sub#61, #65). Anthropic now reads Claude Code credentials and model-specific weekly quota windows. Copilot now parses chat/completions quota snapshots in addition to premium interactions. Add regression test for legacy cache migration (marckrenn/pi-sub#45).
+
+- Updated dependencies [[`3d7604e`](https://github.com/eiei114/pi-sub/commit/3d7604ef7f092f0e5b24d172f59155dfd836671d)]:
+  - @eiei114/pi-sub-core@1.6.1
+  - @eiei114/pi-sub-shared@1.6.1
+
 ## 1.6.0
 
 ### Patch Changes
