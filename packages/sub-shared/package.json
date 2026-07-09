@@ -23,6 +23,6 @@
     "check:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "typescript": "^5.8.0"
+    "typescript": "^5.9.3"
   }
 }
