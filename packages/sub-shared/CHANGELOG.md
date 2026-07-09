@@ -1,5 +1,7 @@
 # @marckrenn/pi-sub-shared
 
+## 2.0.0
+
 ## 1.6.1
 
 ### Patch Changes
