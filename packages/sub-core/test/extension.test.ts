@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import type { ExtensionAPI, ExtensionContext } from '@mariozechner/pi-coding-agent';
+import type { ExtensionAPI, ExtensionContext } from '@earendil-works/pi-coding-agent';
 import createExtension from '../index.js';
 import { CACHE_PATH, clearCache } from '../src/cache.js';
 import { SETTINGS_PATH } from '../src/settings.js';
