@@ -486,18 +486,19 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 		await refresh(ctx);
 	});
 
-	pi.on("session_before_switch", async (_event, ctx) => {
+	const resetUsageCache = async (ctx: ExtensionContext): Promise<void> => {
 		controllerState.currentProvider = undefined;
 		controllerState.cachedUsage = undefined;
 		await refresh(ctx);
 		await refreshStatus(ctx);
+	};
+
+	pi.on("session_before_switch", async (_event, ctx) => {
+		await resetUsageCache(ctx);
 	});
 
 	pi.on("session_before_fork", async (_event, ctx) => {
-		controllerState.currentProvider = undefined;
-		controllerState.cachedUsage = undefined;
-		await refresh(ctx);
-		await refreshStatus(ctx);
+		await resetUsageCache(ctx);
 	});
 
 	pi.on("model_select" as unknown as "session_start", async (_event: unknown, ctx: ExtensionContext) => {
