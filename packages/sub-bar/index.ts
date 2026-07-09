@@ -4,8 +4,8 @@
  * Only shows stats for the currently selected provider.
  */
 
-import type { ExtensionAPI, ExtensionContext, Theme, ThemeColor } from "@mariozechner/pi-coding-agent";
-import { Container, Input, SelectList, Spacer, Text, truncateToWidth, wrapTextWithAnsi, visibleWidth } from "@mariozechner/pi-tui";
+import type { ExtensionAPI, ExtensionContext, Theme, ThemeColor } from "@earendil-works/pi-coding-agent";
+import { Container, Input, SelectList, Spacer, Text, truncateToWidth, wrapTextWithAnsi, visibleWidth } from "@earendil-works/pi-tui";
 import * as fs from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
@@ -14,7 +14,7 @@ import { type Settings, type BaseTextColor, type WidgetBackgroundColor } from ".
 import { isBackgroundColor, resolveBackgroundColor, resolveBaseTextColor, resolveDividerColor } from "./src/settings-types.js";
 import { buildDividerLine } from "./src/dividers.js";
 import type { CoreSettings } from "@eiei114/pi-sub-shared";
-import type { KeyId } from "@mariozechner/pi-tui";
+import type { KeyId } from "@earendil-works/pi-tui";
 import { formatUsageStatus, formatUsageStatusWithWidth } from "./src/formatting.js";
 import type { ContextInfo } from "./src/formatting.js";
 import { clearSettingsCache, loadSettings, saveSettings, SETTINGS_PATH } from "./src/settings.js";
@@ -496,7 +496,7 @@ export default function createExtension(pi: ExtensionAPI) {
 		// Get context usage info from pi framework
 		const ctxUsage = ctx.getContextUsage?.();
 		const contextInfo: ContextInfo | undefined = ctxUsage && ctxUsage.contextWindow > 0
-			? { tokens: ctxUsage.tokens, contextWindow: ctxUsage.contextWindow, percent: ctxUsage.percent }
+			? { tokens: ctxUsage.tokens ?? 0, contextWindow: ctxUsage.contextWindow, percent: ctxUsage.percent ?? 0 }
 			: undefined;
 
 		const formatted = message

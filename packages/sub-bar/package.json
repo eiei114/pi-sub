@@ -39,6 +39,7 @@
     "@eiei114/pi-sub-shared": "^1.6.1"
   },
   "peerDependencies": {
-    "@mariozechner/pi-coding-agent": "*"
+    "@earendil-works/pi-coding-agent": "^0.80.0",
+    "@earendil-works/pi-tui": "^0.80.0"
   }
 }

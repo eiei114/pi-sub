@@ -4,7 +4,7 @@
 
 import type { CoreSettings, ProviderName } from "@eiei114/pi-sub-shared";
 import { PROVIDERS } from "@eiei114/pi-sub-shared";
-import type { ThemeColor } from "@mariozechner/pi-coding-agent";
+import type { ThemeColor } from "@earendil-works/pi-coding-agent";
 
 /**
  * Bar display style
