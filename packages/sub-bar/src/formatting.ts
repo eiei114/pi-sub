@@ -10,9 +10,7 @@ import type {
 	BarStyle,
 	BarType,
 	BarCharacter,
-	BarWidth,
 	ColorScheme,
-	DividerBlanks,
 	ResetTimerContainment,
 	Settings,
 } from "./settings-types.js";
@@ -450,7 +448,6 @@ export function formatUsageWindowParts(
 ): UsageWindowParts {
 	const barStyle: BarStyle = settings?.display.barStyle ?? "both";
 	const barWidthSetting = settings?.display.barWidth;
-	const containBar = settings?.display.containBar ?? false;
 	const barWidth = options?.barWidthOverride ?? (typeof barWidthSetting === "number" ? barWidthSetting : 6);
 	const barType: BarType = settings?.display.barType ?? "horizontal-bar";
 	const brailleFillEmpty = settings?.display.brailleFillEmpty ?? false;
@@ -474,7 +471,7 @@ export function formatUsageWindowParts(
 
 	const barPercent = clampPercent(displayPct);
 	const filled = Math.round((barPercent / 100) * barWidth);
-	const empty = Math.max(0, barWidth - filled);
+	const _empty = Math.max(0, barWidth - filled);
 
 	const baseColor = getUsageColor(displayPct, isRemaining, colorScheme, errorThreshold, warningThreshold, successThreshold);
 	const usageTargets = resolveUsageColorTargets(settings);
@@ -820,7 +817,7 @@ export function formatUsageStatusWithWidth(
 
 	const useBars = barFill && barEligibleCount > 0;
 	const labelGapUnits = labelGapEnabled ? (providerDividerActive ? 2 : 1) : 0;
-	const dividerSlots = dividerCount + (labelGapEnabled ? 1 : 0);
+	const _dividerSlots = dividerCount + (labelGapEnabled ? 1 : 0);
 	const dividerUnits = dividerCount * 2 + labelGapUnits;
 	const useDividers = dividerFill && dividerUnits > 0;
 

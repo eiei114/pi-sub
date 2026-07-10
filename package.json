@@ -14,7 +14,7 @@
     "check:watch": "npm run check:watch --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --write .",
     "verify": "npm run check && npm run test && npm run lint",
@@ -23,18 +23,18 @@
     "release": "changeset publish"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.5.2",
+    "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
     "@earendil-works/pi-coding-agent": "^0.80.5",
     "@earendil-works/pi-tui": "^0.80.5",
-    "@types/node": "^22.20.1",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^9.1.2",
+    "@types/node": "^26.1.0",
+    "typescript": "^6.0.3",
+    "eslint": "^9.24.0",
+    "@eslint/js": "^9.24.0",
+    "typescript-eslint": "^8.30.0",
+    "eslint-config-prettier": "^10.1.0",
     "prettier": "^3.9.5",
-    "typebox": "^1.1.38",
-    "typescript": "^5.9.3"
+    "typebox": "^1.3.6"
   },
   "engines": {
     "node": ">=20.0.0"

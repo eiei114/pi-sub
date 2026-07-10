@@ -8,7 +8,6 @@ import { Container, Input, SelectList, Spacer, Text } from "@earendil-works/pi-t
 import { SettingsList, type SettingItem, CUSTOM_OPTION } from "../ui/settings-list.js";
 import type { ProviderName } from "../types.js";
 import type { Settings } from "../settings-types.js";
-import { getDefaultSettings } from "../settings-types.js";
 import { getSettings, saveSettings, resetSettings } from "../settings.js";
 import { PROVIDER_DISPLAY_NAMES } from "../providers/metadata.js";
 import { buildProviderSettingsItems, applyProviderSettingsChange } from "../providers/settings.js";

@@ -352,6 +352,7 @@ export function watchCacheUpdates(options?: CacheWatchOptions): () => void {
 		watcher = undefined;
 	}
 
+	// eslint-disable-next-line prefer-const
 	pollTimer = setInterval(() => emitFromCache(), pollIntervalMs);
 	pollTimer.unref?.();
 
