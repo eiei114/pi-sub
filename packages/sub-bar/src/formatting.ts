@@ -470,8 +470,6 @@ export function formatUsageWindowParts(
 	const isRemaining = isCodex;
 
 	const barPercent = clampPercent(displayPct);
-	const filled = Math.round((barPercent / 100) * barWidth);
-	const _empty = Math.max(0, barWidth - filled);
 
 	const baseColor = getUsageColor(displayPct, isRemaining, colorScheme, errorThreshold, warningThreshold, successThreshold);
 	const usageTargets = resolveUsageColorTargets(settings);
@@ -817,7 +815,6 @@ export function formatUsageStatusWithWidth(
 
 	const useBars = barFill && barEligibleCount > 0;
 	const labelGapUnits = labelGapEnabled ? (providerDividerActive ? 2 : 1) : 0;
-	const _dividerSlots = dividerCount + (labelGapEnabled ? 1 : 0);
 	const dividerUnits = dividerCount * 2 + labelGapUnits;
 	const useDividers = dividerFill && dividerUnits > 0;
 

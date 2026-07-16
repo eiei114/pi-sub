@@ -1188,7 +1188,6 @@ export async function showSettingsUI(
 				} else {
 					// Settings list for category
 					let items: SettingItem[];
-					let handleChange: (id: string, value: string) => void;
 					const backCategory: SettingsCategory = "display";
 
 					switch (currentCategory) {
@@ -1265,8 +1264,7 @@ export async function showSettingsUI(
 					}
 					attachCustomInputs(items, customHandlers);
 
-					// eslint-disable-next-line prefer-const
-					handleChange = (id, value) => {
+					const handleChange = (id: string, value: string) => {
 						settings = applyDisplayChange(settings, id, value);
 						saveSettings(settings);
 						if (onSettingsChange) void onSettingsChange(settings);
