@@ -1,5 +1,21 @@
 # @marckrenn/pi-sub-shared
 
+## 2.0.0
+
+## 1.6.1
+
+### Patch Changes
+
+- [#6](https://github.com/eiei114/pi-sub/pull/6) [`3d7604e`](https://github.com/eiei114/pi-sub/commit/3d7604ef7f092f0e5b24d172f59155dfd836671d) Thanks [@eiei114](https://github.com/eiei114)! - Fix Anthropic and Copilot usage providers for upstream API changes (marckrenn/pi-sub#61, #65). Anthropic now reads Claude Code credentials and model-specific weekly quota windows. Copilot now parses chat/completions quota snapshots in addition to premium interactions. Add regression test for legacy cache migration (marckrenn/pi-sub#45).
+
+## 1.6.0
+
+## 1.5.2
+
+### Patch Changes
+
+- [#3](https://github.com/eiei114/pi-sub/pull/3) [`7507aa1`](https://github.com/eiei114/pi-sub/commit/7507aa12207cb4b545e30e32c9f09a998cd20f16) Thanks [@eiei114](https://github.com/eiei114)! - Add project status badges to the root README (npm version, license, Node.js, release workflow, PRs welcome).
+
 ## 1.5.1
 
 ## 1.5.0

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createEventBus, type ExtensionAPI, type ExtensionContext } from "@mariozechner/pi-coding-agent";
+import { createEventBus, type ExtensionAPI, type ExtensionContext } from "@earendil-works/pi-coding-agent";
 import type { SubCoreState, UsageSnapshot } from "@eiei114/pi-sub-shared";
 import { createStatusRuntime } from "../src/runtime.js";
 

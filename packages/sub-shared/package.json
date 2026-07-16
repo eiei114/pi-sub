@@ -1,6 +1,6 @@
 {
   "name": "@eiei114/pi-sub-shared",
-  "version": "1.5.1",
+  "version": "2.0.0",
   "description": "Shared types and event contract for the sub-* ecosystem",
   "type": "module",
   "repository": {
@@ -23,6 +23,6 @@
     "check:watch": "tsc --noEmit --watch"
   },
   "devDependencies": {
-    "typescript": "^5.8.0"
+    "typescript": "^6.0.3"
   }
 }

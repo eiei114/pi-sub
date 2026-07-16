@@ -351,7 +351,7 @@ export function watchCacheUpdates(options?: CacheWatchOptions): () => void {
 		watcher = undefined;
 	}
 
-	const pollTimer = setInterval(() => emitFromCache(), pollIntervalMs);
+const pollTimer = setInterval(() => emitFromCache(), pollIntervalMs);
 	pollTimer.unref?.();
 
 	return () => {

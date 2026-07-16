@@ -1,5 +1,11 @@
 # pi-sub
 
+[![Release](https://github.com/eiei114/pi-sub/actions/workflows/release.yml/badge.svg?branch=main&event=push)](https://github.com/eiei114/pi-sub/actions/workflows/release.yml)
+[![npm version](https://img.shields.io/npm/v/%40eiei114%2Fpi-sub-core.svg)](https://www.npmjs.com/package/@eiei114/pi-sub-core)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Pi package](https://img.shields.io/badge/pi-package-purple.svg)](https://pi.dev/packages)
+[![Trusted Publishing](https://img.shields.io/badge/npm-Trusted%20Publishing-blue.svg)](RELEASE_PROCESS.md)
+
 > Unofficial continuation of [`marckrenn/pi-sub`](https://github.com/marckrenn/pi-sub).
 > This fork keeps the upstream MIT license and attribution, but publishes packages under the `@eiei114` npm scope.
 
@@ -28,12 +34,12 @@ Initial changes in this fork:
 
 ## Packages
 
-| Package | Description |
-| --- | --- |
-| [`@eiei114/pi-sub-core`](./packages/sub-core) | Shared fetch/cache core (pi extension). |
-| [`@eiei114/pi-sub-bar`](./packages/sub-bar) | Rich widget display client (pi extension). |
-| [`@eiei114/pi-sub-status`](./packages/sub-status) | Compact status-line display client (pi extension). |
-| [`@eiei114/pi-sub-shared`](./packages/sub-shared) | Shared types + event contract (npm package). |
+| Package | Version | Downloads | Description |
+| --- | --- | --- | --- |
+| [`@eiei114/pi-sub-core`](https://www.npmjs.com/package/@eiei114/pi-sub-core) | ![npm version](https://img.shields.io/npm/v/%40eiei114%2Fpi-sub-core.svg) | ![npm downloads](https://img.shields.io/npm/dm/%40eiei114%2Fpi-sub-core.svg) | Shared fetch/cache core (pi extension). |
+| [`@eiei114/pi-sub-bar`](https://www.npmjs.com/package/@eiei114/pi-sub-bar) | ![npm version](https://img.shields.io/npm/v/%40eiei114%2Fpi-sub-bar.svg) | ![npm downloads](https://img.shields.io/npm/dm/%40eiei114%2Fpi-sub-bar.svg) | Rich widget display client (pi extension). |
+| [`@eiei114/pi-sub-status`](https://www.npmjs.com/package/@eiei114/pi-sub-status) | ![npm version](https://img.shields.io/npm/v/%40eiei114%2Fpi-sub-status.svg) | ![npm downloads](https://img.shields.io/npm/dm/%40eiei114%2Fpi-sub-status.svg) | Compact status-line display client (pi extension). |
+| [`@eiei114/pi-sub-shared`](https://www.npmjs.com/package/@eiei114/pi-sub-shared) | ![npm version](https://img.shields.io/npm/v/%40eiei114%2Fpi-sub-shared.svg) | ![npm downloads](https://img.shields.io/npm/dm/%40eiei114%2Fpi-sub-shared.svg) | Shared types + event contract (npm package). |
 
 ## Ideas / planned sub-* extensions
 

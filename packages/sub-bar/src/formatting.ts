@@ -2,8 +2,8 @@
  * UI formatting utilities for the sub-bar extension
  */
 
-import type { Theme } from "@mariozechner/pi-coding-agent";
-import { truncateToWidth, visibleWidth } from "@mariozechner/pi-tui";
+import type { Theme } from "@earendil-works/pi-coding-agent";
+import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import type { RateWindow, UsageSnapshot, ProviderStatus, ModelInfo } from "./types.js";
 import type {
 	BaseTextColor,
