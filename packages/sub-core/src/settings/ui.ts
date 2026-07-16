@@ -4,11 +4,10 @@
 
 import type { ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { DynamicBorder, getSettingsListTheme } from "@mariozechner/pi-coding-agent";
-import { Container, Input, type SelectItem, SelectList, Spacer, Text } from "@mariozechner/pi-tui";
+import { Container, Input, SelectList, Spacer, Text } from "@mariozechner/pi-tui";
 import { SettingsList, type SettingItem, CUSTOM_OPTION } from "../ui/settings-list.js";
 import type { ProviderName } from "../types.js";
 import type { Settings } from "../settings-types.js";
-import { getDefaultSettings } from "../settings-types.js";
 import { getSettings, saveSettings, resetSettings } from "../settings.js";
 import { PROVIDER_DISPLAY_NAMES } from "../providers/metadata.js";
 import { buildProviderSettingsItems, applyProviderSettingsChange } from "../providers/settings.js";

@@ -99,7 +99,7 @@ export async function showSettingsUI(
 	const onCoreSettingsChange = options?.onCoreSettingsChange;
 	const onOpenCoreSettings = options?.onOpenCoreSettings;
 	let settings = getSettings();
-	let coreSettings = options?.coreSettings ?? getFallbackCoreSettings(settings);
+	const coreSettings = options?.coreSettings ?? getFallbackCoreSettings(settings);
 	const onDisplayThemeApplied = options?.onDisplayThemeApplied;
 	const onDisplayThemeShared = options?.onDisplayThemeShared;
 	let currentCategory: SettingsCategory = "main";
@@ -1188,8 +1188,7 @@ export async function showSettingsUI(
 				} else {
 					// Settings list for category
 					let items: SettingItem[];
-					let handleChange: (id: string, value: string) => void;
-					let backCategory: SettingsCategory = "display";
+					const backCategory: SettingsCategory = "display";
 
 					switch (currentCategory) {
 						case "display-layout":
@@ -1265,7 +1264,7 @@ export async function showSettingsUI(
 					}
 					attachCustomInputs(items, customHandlers);
 
-					handleChange = (id, value) => {
+					const handleChange = (id: string, value: string) => {
 						settings = applyDisplayChange(settings, id, value);
 						saveSettings(settings);
 						if (onSettingsChange) void onSettingsChange(settings);

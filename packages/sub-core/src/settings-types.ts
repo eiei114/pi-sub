@@ -2,15 +2,8 @@
  * Settings types and defaults for sub-core
  */
 
-import type {
-	CoreSettings,
-	CoreProviderSettingsMap,
-	CoreProviderSettings,
-	BehaviorSettings,
-	ProviderName,
-	ProviderEnabledSetting,
-} from "@eiei114/pi-sub-shared";
-import { PROVIDERS, getDefaultCoreSettings } from "@eiei114/pi-sub-shared";
+import type { CoreSettings } from "@eiei114/pi-sub-shared";
+import { getDefaultCoreSettings } from "@eiei114/pi-sub-shared";
 
 export type {
 	CoreProviderSettings,

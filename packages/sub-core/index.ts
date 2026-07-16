@@ -14,7 +14,6 @@ import { fetchUsageEntries, getCachedUsageEntries } from "./src/usage/fetch.js";
 import { onCacheSnapshot, onCacheUpdate, watchCacheUpdates, type Cache } from "./src/cache.js";
 import { isExpectedMissingData } from "./src/errors.js";
 import { prioritizeWindowsForModel } from "./src/utils.js";
-import { getStorage } from "./src/storage.js";
 import { clearSettingsCache, loadSettings, saveSettings, SETTINGS_PATH } from "./src/settings.js";
 import { showSettingsUI } from "./src/settings-ui.js";
 

@@ -297,7 +297,6 @@ export function watchCacheUpdates(options?: CacheWatchOptions): () => void {
 	const pollIntervalMs = options?.pollIntervalMs ?? 5000;
 	const lockRetryMs = options?.lockRetryMs ?? 1000;
 	let debounceTimer: NodeJS.Timeout | undefined;
-	let pollTimer: NodeJS.Timeout | undefined;
 	let lockRetryPending = false;
 	let lastSnapshot = "";
 	let lastMtimeMs = 0;
@@ -352,7 +351,7 @@ export function watchCacheUpdates(options?: CacheWatchOptions): () => void {
 		watcher = undefined;
 	}
 
-	pollTimer = setInterval(() => emitFromCache(), pollIntervalMs);
+	const pollTimer = setInterval(() => emitFromCache(), pollIntervalMs);
 	pollTimer.unref?.();
 
 	return () => {
