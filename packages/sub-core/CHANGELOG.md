@@ -1,4 +1,4 @@
-# @marckrenn/pi-sub-core
+# @eiei114/pi-sub-core
 
 ## 2.0.0
 
