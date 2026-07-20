@@ -1,5 +1,11 @@
 # @marckrenn/pi-sub-shared
 
+## 2.0.1
+
+### Patch Changes
+
+- Publish the missed patch release after reconciling public workspace packages with the managed npm inventory.
+
 ## 2.0.0
 
 ## 1.6.1
