@@ -1,5 +1,15 @@
 # @marckrenn/pi-sub-status
 
+## 2.0.1
+
+### Patch Changes
+
+- Publish the missed patch release after reconciling public workspace packages with the managed npm inventory.
+
+- Updated dependencies []:
+  - @eiei114/pi-sub-core@2.0.1
+  - @eiei114/pi-sub-shared@2.0.1
+
 ## 2.0.0
 
 ### Major Changes
