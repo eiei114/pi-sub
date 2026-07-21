@@ -7,3 +7,4 @@ import "./extension.test.js";
 import "./lock.test.js";
 import "./status.test.js";
 import "./keybindings.test.js";
+import "./changelog-titles.test.js";

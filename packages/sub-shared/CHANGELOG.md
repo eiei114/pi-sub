@@ -1,4 +1,4 @@
-# @marckrenn/pi-sub-shared
+# @eiei114/pi-sub-shared
 
 ## 2.0.1
 

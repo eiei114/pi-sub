@@ -1,4 +1,4 @@
-# @marckrenn/pi-sub-status
+# @eiei114/pi-sub-status
 
 ## 2.0.1
 

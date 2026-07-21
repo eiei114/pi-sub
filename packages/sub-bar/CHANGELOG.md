@@ -1,4 +1,4 @@
-# @marckrenn/pi-sub-bar
+# @eiei114/pi-sub-bar
 
 ## 2.0.1
 
