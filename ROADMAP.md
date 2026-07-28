@@ -119,9 +119,10 @@ guards against future drift.
 - [x] `packages/sub-shared/CHANGELOG.md` H1 reads `# @eiei114/pi-sub-shared`.
 - [x] `packages/sub-status/CHANGELOG.md` H1 reads `# @eiei114/pi-sub-status`.
 - [x] No other lines in the changelogs are changed (history is preserved).
-- [x] `npm run lint` still passes; no changeset added (docs-only).
+- [x] `packages/sub-core/test/changelog-titles.test.ts` regression test passes (H1 titles match each `package.json` `name`).
+- [x] `npm run verify` passes; `npm run lint` still passes; no changeset added (docs-only).
 
-**Verification:** `grep -Rn "^# @marckrenn" packages/` returns nothing.
+**Verification:** `grep -Rn "^# @marckrenn" packages/` returns nothing; `npm run verify` includes the changelog-title regression test.
 
 ---
 
