@@ -66,9 +66,10 @@ boring and defensive — the fork's value is reliability, not features.
    ([PR #17](https://github.com/eiei114/pi-sub/pull/17)), but there is still no
    workflow on `pull_request` and no Windows CI matrix. Adding PR CI is the
    highest-leverage maintenance work available (see seed S-2).
-4. **Documentation accuracy.** CHANGELOG H1 titles and some generated docs still
-   reference the old `@marckrenn/*` scope. Keep docs consistent with the
-   `@eiei114/*` reality so new contributors aren't misled (see seed S-1).
+4. **Documentation accuracy.** CHANGELOG H1 titles now match `@eiei114/*`
+   ([PR #19](https://github.com/eiei114/pi-sub/pull/19), DOT-1243). Some
+   generated docs may still reference the old scope — keep those consistent so
+   new contributors aren't misled.
 5. **Test coverage for shared contracts.** `sub-shared` is published and
    consumed by core and bar but has no tests — a small smoke suite would lock
    in the provider/settings invariants (see seed S-3).
@@ -82,7 +83,6 @@ boring and defensive — the fork's value is reliability, not features.
 
 | Area | Detail | Source |
 | --- | --- | --- |
-| Stale CHANGELOG titles | Every `packages/*/CHANGELOG.md` H1 still reads `# @marckrenn/pi-sub-*` though the packages are `@eiei114/*`. | `packages/*/CHANGELOG.md` |
 | No PR CI / no Windows CI | `release.yml` runs `npm run verify` on `main` only; no workflow runs on `pull_request` and Windows is not a CI target. | `.github/workflows/` |
 | `sub-shared` has no tests | Published to npm and re-exported by core+bar, but `PROVIDERS`, `PROVIDER_METADATA`, `PROVIDER_DISPLAY_NAMES`, `MODEL_MULTIPLIERS`, `getDefaultCoreSettings`, and `getDefaultCoreProviderSettings` have no test coverage. | `packages/sub-shared/` |
 | Thin `CONTRIBUTING.md` | Doesn't explain the `fixed` release group, Trusted Publishing, or the verify-before-merge gate. | `CONTRIBUTING.md` |
@@ -103,25 +103,23 @@ criteria so an agent or contributor can self-verify.
 
 ---
 
-### S-1 — Fix stale CHANGELOG package-name titles
+### S-1 — Fix stale CHANGELOG package-name titles ✅
 
-**Size:** ~30 min · **Type:** docs · **Changeset:** no
+**Size:** ~30 min · **Type:** docs · **Changeset:** no · **Status:** done
+(DOT-1243, [PR #19](https://github.com/eiei114/pi-sub/pull/19))
 
-All four package CHANGELOGs still open with `# @marckrenn/pi-sub-*` as the H1
-title, left over from the `@marckrenn → @eiei114` scope migration. The titles
-should match the published package names.
-
-**Why needed:** stale titles confuse contributors and break automated doc
-linting that keys off package names.
+All four package CHANGELOG H1 titles now read `@eiei114/pi-sub-*`, matching the
+published package names. A regression test in `packages/sub-core/test/changelog-titles.test.ts`
+guards against future drift.
 
 **Acceptance criteria**
 
-- [ ] `packages/sub-core/CHANGELOG.md` H1 reads `# @eiei114/pi-sub-core`.
-- [ ] `packages/sub-bar/CHANGELOG.md` H1 reads `# @eiei114/pi-sub-bar`.
-- [ ] `packages/sub-shared/CHANGELOG.md` H1 reads `# @eiei114/pi-sub-shared`.
-- [ ] `packages/sub-status/CHANGELOG.md` H1 reads `# @eiei114/pi-sub-status`.
-- [ ] No other lines in the changelogs are changed (history is preserved).
-- [ ] `npm run lint` still passes; no changeset added (docs-only).
+- [x] `packages/sub-core/CHANGELOG.md` H1 reads `# @eiei114/pi-sub-core`.
+- [x] `packages/sub-bar/CHANGELOG.md` H1 reads `# @eiei114/pi-sub-bar`.
+- [x] `packages/sub-shared/CHANGELOG.md` H1 reads `# @eiei114/pi-sub-shared`.
+- [x] `packages/sub-status/CHANGELOG.md` H1 reads `# @eiei114/pi-sub-status`.
+- [x] No other lines in the changelogs are changed (history is preserved).
+- [x] `npm run lint` still passes; no changeset added (docs-only).
 
 **Verification:** `grep -Rn "^# @marckrenn" packages/` returns nothing.
 
@@ -281,6 +279,9 @@ seed. Revisit only if a contributor volunteers to own one.
 
 ## 6. Changelog
 
+- **2026-07-28** — Marked seed S-1 done (DOT-1243). CHANGELOG H1 titles were
+  aligned in [PR #19](https://github.com/eiei114/pi-sub/pull/19); this refresh
+  checks off the seed and removes the stale-title technical-debt row.
 - **2026-07-21** — Roadmap refresh (DOT-1013). Bumped release status to `2.0.1`
   (2026-07-20), noted `release.yml` now runs `npm run verify` on `main` (PR #17),
   and reframed S-2 around the remaining PR/Windows CI gap. Seeds S-1 … S-6
