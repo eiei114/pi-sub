@@ -53,7 +53,7 @@ If you’d like to work on these, PRs or standalone packages are welcome.
 
 ## Requirements
 
-- Node.js >= 20 (see `.nvmrc`)
+- Node.js >= 24 (see `.nvmrc`)
 - npm (bundled with Node)
 
 ## Pi package manager

@@ -8,3 +8,4 @@ import "./lock.test.js";
 import "./status.test.js";
 import "./keybindings.test.js";
 import "./changelog-titles.test.js";
+import "./ci-workflow.test.js";
