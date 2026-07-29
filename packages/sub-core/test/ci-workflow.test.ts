@@ -9,6 +9,10 @@ const ciWorkflowPath = path.join(repoRoot, ".github", "workflows", "ci.yml");
 
 test("pull-request CI workflow gates feature branches on verify", () => {
 	const workflow = fs.readFileSync(ciWorkflowPath, "utf8");
+	const nvmrcMajor = Number.parseInt(
+		fs.readFileSync(path.join(repoRoot, ".nvmrc"), "utf8").trim(),
+		10,
+	);
 
 	assert.match(workflow, /pull_request:/);
 	assert.match(workflow, /branches-ignore:\s*\n\s*- main/);
@@ -16,4 +20,5 @@ test("pull-request CI workflow gates feature branches on verify", () => {
 	assert.match(workflow, /windows-latest/);
 	assert.match(workflow, /node-version-file:\s*\.nvmrc/);
 	assert.match(workflow, /npm run verify/);
+	assert.ok(nvmrcMajor >= 24, ".nvmrc must match the Node version required by pi-coding-agent/undici");
 });
