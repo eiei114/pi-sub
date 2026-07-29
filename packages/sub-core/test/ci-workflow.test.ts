@@ -15,7 +15,7 @@ test("pull-request CI workflow gates feature branches on verify", () => {
 	);
 
 	assert.match(workflow, /pull_request:/);
-	assert.match(workflow, /branches-ignore:\s*\n\s*- main/);
+	assert.match(workflow, /push:\s*\n\s+branches-ignore:\s*\n\s+- main/);
 	assert.match(workflow, /ubuntu-latest/);
 	assert.match(workflow, /windows-latest/);
 	assert.match(workflow, /node-version-file:\s*\.nvmrc/);
