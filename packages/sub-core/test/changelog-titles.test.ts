@@ -17,7 +17,7 @@ test("CHANGELOG titles match published package names", () => {
 		}
 
 		const pkgName = JSON.parse(fs.readFileSync(pkgJsonPath, "utf8")).name as string;
-		const firstLine = fs.readFileSync(changelogPath, "utf8").split("\n")[0] ?? "";
+		const firstLine = fs.readFileSync(changelogPath, "utf8").split(/\r?\n/)[0] ?? "";
 
 		assert.equal(firstLine, `# ${pkgName}`);
 		assert.doesNotMatch(firstLine, /@marckrenn/);
