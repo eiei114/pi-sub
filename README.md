@@ -1,5 +1,7 @@
 # pi-sub
 
+[![Join dotfield.xyz on Discord](https://img.shields.io/badge/Join%20dotfield.xyz%20on%20Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/4945dXZVW5)
+
 [![Release](https://github.com/eiei114/pi-sub/actions/workflows/release.yml/badge.svg?branch=main&event=push)](https://github.com/eiei114/pi-sub/actions/workflows/release.yml)
 [![npm version](https://img.shields.io/npm/v/%40eiei114%2Fpi-sub-core.svg)](https://www.npmjs.com/package/@eiei114/pi-sub-core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
