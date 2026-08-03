@@ -11,15 +11,16 @@ const packagesDir = path.join(repoRoot, "packages");
 
 test("ROADMAP does not claim PR CI is missing when ci.yml exists", () => {
 	const roadmap = fs.readFileSync(roadmapPath, "utf8");
-	const ciExists = fs.existsSync(ciWorkflowPath);
+	assert.ok(fs.existsSync(ciWorkflowPath), "ci.yml must exist for completed S-2");
+	const s2Start = roadmap.indexOf("### S-2");
+	assert.notEqual(s2Start, -1, "ROADMAP must contain S-2");
+	const s2End = roadmap.indexOf("\n---", s2Start);
+	const s2 = roadmap.slice(s2Start, s2End === -1 ? roadmap.length : s2End);
 
-	if (!ciExists) {
-		return;
-	}
-
-	assert.doesNotMatch(roadmap, /there is still no workflow on `pull_request`/);
-	assert.doesNotMatch(roadmap, /No PR CI \/ no Windows CI/);
-	assert.match(roadmap, /\.github\/workflows\/ci\.yml/);
+	assert.match(s2, /\*\*Status:\*\* done/);
+	assert.doesNotMatch(s2, /there is still no workflow on `pull_request`/);
+	assert.doesNotMatch(s2, /No PR CI \/ no Windows CI/);
+	assert.match(s2, /\.github\/workflows\/ci\.yml/);
 });
 
 test("ROADMAP release table matches workspace package versions", () => {
@@ -37,12 +38,12 @@ test("ROADMAP release table matches workspace package versions", () => {
 			version: string;
 		};
 
-		const row = lines.find((line) => line.includes(name));
 		const versionCell = "| `" + version + "` |";
+		const row = lines.find((line) => line.startsWith("| [`" + name + "`]"));
 
 		assert.ok(row, "ROADMAP release table should mention " + name);
 		assert.ok(
-			row?.includes(versionCell),
+			row.includes(versionCell),
 			"ROADMAP release table should list " + name + " at " + version,
 		);
 	}
