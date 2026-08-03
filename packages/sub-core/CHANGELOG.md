@@ -1,5 +1,14 @@
 # @eiei114/pi-sub-core
 
+## 2.0.2
+
+### Patch Changes
+
+- [#24](https://github.com/eiei114/pi-sub/pull/24) [`c761eff`](https://github.com/eiei114/pi-sub/commit/c761eff51c4b90636ba974b10b08ea9398bb06bc) Thanks [@eiei114](https://github.com/eiei114)! - Batch patch release to verify Discord release webhook delivery.
+
+- Updated dependencies [[`c761eff`](https://github.com/eiei114/pi-sub/commit/c761eff51c4b90636ba974b10b08ea9398bb06bc)]:
+  - @eiei114/pi-sub-shared@2.0.2
+
 ## 2.0.1
 
 ### Patch Changes
