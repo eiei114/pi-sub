@@ -18,10 +18,10 @@ up, so the planner always has an accurate picture of "what's next".
 
 | Package | Latest | Published | Release group |
 | --- | --- | --- | --- |
-| [`@eiei114/pi-sub-core`](https://www.npmjs.com/package/@eiei114/pi-sub-core) | `2.0.1` | 2026-07-20 | **fixed** |
-| [`@eiei114/pi-sub-bar`](https://www.npmjs.com/package/@eiei114/pi-sub-bar) | `2.0.1` | 2026-07-20 | **fixed** |
-| [`@eiei114/pi-sub-shared`](https://www.npmjs.com/package/@eiei114/pi-sub-shared) | `2.0.1` | 2026-07-20 | **fixed** |
-| [`@eiei114/pi-sub-status`](https://www.npmjs.com/package/@eiei114/pi-sub-status) | `2.0.1` | 2026-07-20 | independent |
+| [`@eiei114/pi-sub-core`](https://www.npmjs.com/package/@eiei114/pi-sub-core) | `2.0.2` | 2026-08-03 | **fixed** |
+| [`@eiei114/pi-sub-bar`](https://www.npmjs.com/package/@eiei114/pi-sub-bar) | `2.0.2` | 2026-08-03 | **fixed** |
+| [`@eiei114/pi-sub-shared`](https://www.npmjs.com/package/@eiei114/pi-sub-shared) | `2.0.2` | 2026-08-03 | **fixed** |
+| [`@eiei114/pi-sub-status`](https://www.npmjs.com/package/@eiei114/pi-sub-status) | `2.0.2` | 2026-08-03 | independent |
 
 - `2.0.0` was a **major** bump ([PR #13](https://github.com/eiei114/pi-sub/pull/13),
   DOT-771): the Pi SDK peer dependency moved from the frozen `@mariozechner/*`
@@ -29,7 +29,10 @@ up, so the planner always has an accurate picture of "what's next".
   change for consumers.
 - `2.0.1` ([PR #18](https://github.com/eiei114/pi-sub/pull/18)) reconciled the
   published npm inventory with the workspace after the `2.0.0` release — no
-  functional source changes, but consumers should pin `2.0.1` or later.
+  functional source changes.
+- `2.0.2` ([PR #25](https://github.com/eiei114/pi-sub/pull/25)) shipped a batch
+  patch release to verify Discord release webhook delivery ([PR #24](https://github.com/eiei114/pi-sub/pull/24)).
+  Consumers should pin `2.0.2` or later.
 - `sub-core`, `sub-bar`, and `sub-shared` form a **fixed release group** (one
   changeset bumps all three together — see `.changeset/config.json`).
   `sub-status` is versioned independently but currently tracks the same number.
@@ -39,12 +42,15 @@ up, so the planner always has an accurate picture of "what's next".
 ### Release pipeline
 
 - Changesets + GitHub Actions, npm **Trusted Publishing** (no `NPM_TOKEN`).
-- `.github/workflows/release.yml` runs on every push to `main`: `npm ci` →
-  `npm run verify` (check + test + lint, since [PR #17](https://github.com/eiei114/pi-sub/pull/17)),
-  then Changesets opens (and auto-merges via squash) a `Version Packages` PR,
-  then publishes on the second run.
-- **Gap:** there is still no workflow on `pull_request`, so feature branches are
-  not gated until they land on `main`.
+- `.github/workflows/release.yml` runs on every push to `main` (and supports
+  `workflow_dispatch` for manual recovery, [PR #26](https://github.com/eiei114/pi-sub/pull/26)):
+  `npm ci` → `npm run verify` (check + test + lint, since
+  [PR #17](https://github.com/eiei114/pi-sub/pull/17)), then Changesets opens
+  (and auto-merges via squash) a `Version Packages` PR, then publishes on the
+  second run.
+- `.github/workflows/ci.yml` gates `pull_request` and non-`main` pushes on
+  `ubuntu-latest` + `windows-latest` via `npm run verify` (since
+  [PR #22](https://github.com/eiei114/pi-sub/pull/22), DOT-1258).
 - Documented in [`RELEASE_PROCESS.md`](./RELEASE_PROCESS.md).
 
 ---
@@ -62,10 +68,10 @@ boring and defensive — the fork's value is reliability, not features.
    TTL-respecting refresh fixes are the fork's headline differentiators. Any
    change touching `packages/sub-core/src/cache.ts`, `storage/lock.ts`, or the
    usage controller must not regress these on Windows.
-3. **Close the PR CI gap.** `release.yml` now runs `npm run verify` on `main`
-   ([PR #17](https://github.com/eiei114/pi-sub/pull/17)), but there is still no
-   workflow on `pull_request` and no Windows CI matrix. Adding PR CI is the
-   highest-leverage maintenance work available (see seed S-2).
+3. **Keep PR CI green.** `.github/workflows/ci.yml` now gates `pull_request` and
+   non-`main` pushes on `ubuntu-latest` + `windows-latest` via `npm run verify`
+   ([PR #22](https://github.com/eiei114/pi-sub/pull/22), DOT-1258). Treat CI
+   failures on feature branches as release blockers — do not merge broken PRs.
 4. **Documentation accuracy.** CHANGELOG H1 titles now match `@eiei114/*`
    ([PR #19](https://github.com/eiei114/pi-sub/pull/19), DOT-1243). Some
    generated docs may still reference the old scope — keep those consistent so
@@ -83,7 +89,6 @@ boring and defensive — the fork's value is reliability, not features.
 
 | Area | Detail | Source |
 | --- | --- | --- |
-| No PR CI / no Windows CI | `release.yml` runs `npm run verify` on `main` only; no workflow runs on `pull_request` and Windows is not a CI target. | `.github/workflows/` |
 | `sub-shared` has no tests | Published to npm and re-exported by core+bar, but `PROVIDERS`, `PROVIDER_METADATA`, `PROVIDER_DISPLAY_NAMES`, `MODEL_MULTIPLIERS`, `getDefaultCoreSettings`, and `getDefaultCoreProviderSettings` have no test coverage. | `packages/sub-shared/` |
 | Thin `CONTRIBUTING.md` | Doesn't explain the `fixed` release group, Trusted Publishing, or the verify-before-merge gate. | `CONTRIBUTING.md` |
 | Aspirational extension list | README "Ideas / planned" lists `pi-sub-compare`, `pi-sub-model-switcher`, `pi-sub-account-switcher` with no tracking or owners. | `README.md` |
@@ -126,28 +131,26 @@ guards against future drift.
 
 ---
 
-### S-2 — Add pull-request CI (with Windows matrix)
+### S-2 — Add pull-request CI (with Windows matrix) ✅
 
-**Size:** ~60 min · **Type:** CI · **Changeset:** no
+**Size:** ~60 min · **Type:** CI · **Changeset:** no · **Status:** done
+(DOT-1258, [PR #22](https://github.com/eiei114/pi-sub/pull/22); trigger-shape
+regression in [PR #23](https://github.com/eiei114/pi-sub/pull/23), DOT-1266)
 
-`release.yml` now runs `npm run verify` on every push to `main` ([PR #17](https://github.com/eiei114/pi-sub/pull/17)),
-but feature branches are not gated until merge. There is also no Windows CI
-matrix even though the fork's headline fixes are Windows-specific. Add a
-dedicated CI workflow that gates PRs early.
-
-**Why needed:** contributors can currently merge lint/type errors that only
-surface after landing on `main`, wasting a release-cycle retry.
+`.github/workflows/ci.yml` now gates `pull_request` and non-`main` pushes on
+`ubuntu-latest` + `windows-latest` via `npm run verify`. `release.yml` still
+runs on `main` to gate publish.
 
 **Acceptance criteria**
 
-- [ ] New `.github/workflows/ci.yml` triggers on `pull_request` and on `push` to
+- [x] New `.github/workflows/ci.yml` triggers on `pull_request` and on `push` to
       non-`main` branches.
-- [ ] It runs on `ubuntu-latest` + `windows-latest`.
-- [ ] Steps: checkout → setup-node (version from `.nvmrc`) → `npm ci` →
+- [x] It runs on `ubuntu-latest` + `windows-latest`.
+- [x] Steps: checkout → setup-node (version from `.nvmrc`) → `npm ci` →
       `npm run verify`.
-- [ ] `release.yml`'s `test` job is left in place (it gates the publish); CI is
+- [x] `release.yml`'s `test` job is left in place (it gates the publish); CI is
       additive, not a replacement.
-- [ ] Workflow passes on a no-op PR before merge.
+- [x] Workflow passes on a no-op PR before merge.
 
 **Verification:** open a PR; both CI matrices go green; deliberately introduce a
 lint error and confirm the job fails.
@@ -280,6 +283,9 @@ seed. Revisit only if a contributor volunteers to own one.
 
 ## 6. Changelog
 
+- **2026-08-03** — Roadmap refresh (DOT-1335). Bumped release status to `2.0.2`
+  (2026-08-03), marked seed S-2 done (DOT-1258 / PR #22), and removed stale
+  claims that PR CI and the Windows matrix were still missing.
 - **2026-07-28** — Marked seed S-1 done (DOT-1243). CHANGELOG H1 titles were
   aligned in [PR #19](https://github.com/eiei114/pi-sub/pull/19); this refresh
   checks off the seed and removes the stale-title technical-debt row.
