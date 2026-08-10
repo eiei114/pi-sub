@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const roadmapPath = path.join(repoRoot, "ROADMAP.md");
 const ciWorkflowPath = path.join(repoRoot, ".github", "workflows", "ci.yml");
+const subSharedTestPath = path.join(repoRoot, "packages", "sub-shared", "test", "all.test.ts");
 const packagesDir = path.join(repoRoot, "packages");
 
 test("ROADMAP does not claim PR CI is missing when ci.yml exists", () => {
@@ -21,6 +22,23 @@ test("ROADMAP does not claim PR CI is missing when ci.yml exists", () => {
 	assert.doesNotMatch(s2, /there is still no workflow on `pull_request`/);
 	assert.doesNotMatch(s2, /No PR CI \/ no Windows CI/);
 	assert.match(s2, /\.github\/workflows\/ci\.yml/);
+});
+
+test("ROADMAP does not claim sub-shared has no tests when the smoke suite exists", () => {
+	const roadmap = fs.readFileSync(roadmapPath, "utf8");
+	assert.ok(
+		fs.existsSync(subSharedTestPath),
+		"sub-shared smoke tests must exist for completed S-3",
+	);
+	const s3Start = roadmap.indexOf("### S-3");
+	assert.notEqual(s3Start, -1, "ROADMAP must contain S-3");
+	const s3End = roadmap.indexOf("\n---", s3Start);
+	const s3 = roadmap.slice(s3Start, s3End === -1 ? roadmap.length : s3End);
+
+	assert.match(s3, /\*\*Status:\*\* done/);
+	assert.doesNotMatch(s3, /has no tests/i);
+	assert.match(s3, /packages\/sub-shared\/test\/all\.test\.ts/);
+	assert.doesNotMatch(roadmap, /`sub-shared` has no tests/i);
 });
 
 test("ROADMAP release table matches workspace package versions", () => {

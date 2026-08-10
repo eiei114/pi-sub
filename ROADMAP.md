@@ -76,9 +76,10 @@ boring and defensive — the fork's value is reliability, not features.
    ([PR #19](https://github.com/eiei114/pi-sub/pull/19), DOT-1243). Some
    generated docs may still reference the old scope — keep those consistent so
    new contributors aren't misled.
-5. **Test coverage for shared contracts.** `sub-shared` is published and
-   consumed by core and bar but has no tests — a small smoke suite would lock
-   in the provider/settings invariants (see seed S-3).
+5. **Test coverage for shared contracts.** `sub-shared` now has a smoke suite
+   in `packages/sub-shared/test/all.test.ts` that locks in provider/settings
+   invariants ([PR #29](https://github.com/eiei114/pi-sub/pull/29), DOT-1434).
+   Keep it updated when shared contracts change.
 6. **Provider parity triage.** Periodically scan upstream `marckrenn/pi-sub`
    for safe, small provider fixes that can be ported without pulling in
    unrelated churn (see seed S-6).
@@ -89,7 +90,6 @@ boring and defensive — the fork's value is reliability, not features.
 
 | Area | Detail | Source |
 | --- | --- | --- |
-| `sub-shared` has no tests | Published to npm and re-exported by core+bar, but `PROVIDERS`, `PROVIDER_METADATA`, `PROVIDER_DISPLAY_NAMES`, `MODEL_MULTIPLIERS`, `getDefaultCoreSettings`, and `getDefaultCoreProviderSettings` have no test coverage. | `packages/sub-shared/` |
 | Thin `CONTRIBUTING.md` | Doesn't explain the `fixed` release group, Trusted Publishing, or the verify-before-merge gate. | `CONTRIBUTING.md` |
 | Aspirational extension list | README "Ideas / planned" lists `pi-sub-compare`, `pi-sub-model-switcher`, `pi-sub-account-switcher` with no tracking or owners. | `README.md` |
 
@@ -157,29 +157,27 @@ lint error and confirm the job fails.
 
 ---
 
-### S-3 — Add tests for `sub-shared`
+### S-3 — Add tests for `sub-shared` ✅
 
-**Size:** ~60 min · **Type:** tests · **Changeset:** no
+**Size:** ~60 min · **Type:** tests · **Changeset:** no · **Status:** done
+(DOT-1434, [PR #29](https://github.com/eiei114/pi-sub/pull/29))
 
-`sub-shared` is published to npm and consumed by core and bar, but has no tests.
-Add a `packages/sub-shared/test/all.test.ts` smoke suite that locks in the
-invariants other packages depend on.
-
-**Why needed:** provider/settings regressions in `sub-shared` silently break both
-`sub-core` and `sub-bar` without any test signal.
+`packages/sub-shared/test/all.test.ts` now smoke-tests provider metadata,
+default settings, and the shared contract that `sub-core` and `sub-bar`
+consume.
 
 **Acceptance criteria**
 
-- [ ] `packages/sub-shared/package.json` gains `"test": "tsx test/all.test.ts"`
+- [x] `packages/sub-shared/package.json` gains `"test": "tsx test/all.test.ts"`
       and `tsx` as a devDependency (matching sub-core/sub-bar).
-- [ ] `npm run test -w @eiei114/pi-sub-shared` passes.
-- [ ] `npm run test` (root) now includes sub-shared results.
-- [ ] Tests assert: every entry in `PROVIDERS` has metadata + a display name;
+- [x] `npm run test -w @eiei114/pi-sub-shared` passes.
+- [x] `npm run test` (root) now includes sub-shared results.
+- [x] Tests assert: every entry in `PROVIDERS` has metadata + a display name;
       `PROVIDER_DISPLAY_NAMES` keys equal `PROVIDERS`;
       `getDefaultCoreProviderSettings()` returns one entry per provider with
       `enabled === "auto"`; `getDefaultCoreSettings()` returns a full
       `providerOrder` matching `PROVIDERS` and a non-null `behavior`.
-- [ ] No production source changes; no changeset (test-only).
+- [x] No production source changes; no changeset (test-only).
 
 **Verification:** `npm run test -w @eiei114/pi-sub-shared` exits 0; root
 `npm run test` shows the new workspace.
@@ -283,6 +281,9 @@ seed. Revisit only if a contributor volunteers to own one.
 
 ## 6. Changelog
 
+- **2026-08-10** — Roadmap refresh (DOT-1444). Marked seed S-3 done
+  (DOT-1434 / PR #29) and removed stale claims that `sub-shared` still has no
+  tests.
 - **2026-08-03** — Roadmap refresh (DOT-1335). Bumped release status to `2.0.2`
   (2026-08-03), marked seed S-2 done (DOT-1258 / PR #22), and removed stale
   claims that PR CI and the Windows matrix were still missing.
