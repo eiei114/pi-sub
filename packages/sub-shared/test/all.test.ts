@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+	DEFAULT_BEHAVIOR_SETTINGS,
 	getDefaultCoreProviderSettings,
 	getDefaultCoreSettings,
 	PROVIDER_DISPLAY_NAMES,
@@ -28,6 +29,7 @@ test("default provider settings include every provider as auto", () => {
 	assert.deepEqual(Object.keys(settings).sort(), [...PROVIDERS].sort());
 	for (const provider of PROVIDERS) {
 		assert.equal(settings[provider].enabled, "auto");
+		assert.equal(settings[provider].fetchStatus, Boolean(PROVIDER_METADATA[provider]?.status));
 	}
 });
 
@@ -35,5 +37,8 @@ test("default core settings include provider order and behavior", () => {
 	const settings = getDefaultCoreSettings();
 
 	assert.deepEqual(settings.providerOrder, [...PROVIDERS]);
-	assert.ok(settings.behavior);
+	assert.deepEqual(settings.providers, getDefaultCoreProviderSettings());
+	assert.deepEqual(settings.behavior, DEFAULT_BEHAVIOR_SETTINGS);
+	assert.deepEqual(settings.statusRefresh, DEFAULT_BEHAVIOR_SETTINGS);
+	assert.equal(settings.defaultProvider, null);
 });
