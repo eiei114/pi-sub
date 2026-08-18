@@ -1,6 +1,6 @@
 {
   "name": "@eiei114/pi-sub-shared",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "description": "Shared types and event contract for the sub-* ecosystem",
   "type": "module",
   "repository": {

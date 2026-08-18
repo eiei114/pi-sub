@@ -1,5 +1,17 @@
 # @eiei114/pi-sub-bar
 
+## 2.1.0
+
+### Minor Changes
+
+- [#35](https://github.com/eiei114/pi-sub/pull/35) [`aa520f6`](https://github.com/eiei114/pi-sub/commit/aa520f6b7c791a216c2d7f16eb740330b9e6ef7a) Thanks [@eiei114](https://github.com/eiei114)! - Add Cursor, OpenCode, and Command Code usage providers (unofficial APIs) with soft-fail errors and bar settings.
+
+### Patch Changes
+
+- Updated dependencies [[`aa520f6`](https://github.com/eiei114/pi-sub/commit/aa520f6b7c791a216c2d7f16eb740330b9e6ef7a)]:
+  - @eiei114/pi-sub-shared@2.1.0
+  - @eiei114/pi-sub-core@2.1.0
+
 ## 2.0.3
 
 ### Patch Changes
