@@ -1,5 +1,14 @@
 # @eiei114/pi-sub-core
 
+## 2.0.3
+
+### Patch Changes
+
+- [#32](https://github.com/eiei114/pi-sub/pull/32) [`c774677`](https://github.com/eiei114/pi-sub/commit/c7746771e5ba70bd59bb54698a9e69a68b4917de) Thanks [@eiei114](https://github.com/eiei114)! - Fix Adv. Display settings crash on narrow terminals by truncating settings hint/help lines to the viewport width.
+
+- Updated dependencies [[`c774677`](https://github.com/eiei114/pi-sub/commit/c7746771e5ba70bd59bb54698a9e69a68b4917de)]:
+  - @eiei114/pi-sub-shared@2.0.3
+
 ## 2.0.2
 
 ### Patch Changes
