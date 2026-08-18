@@ -29,6 +29,23 @@ export const API_TIMEOUT_MS = 5000;
 export const OPENROUTER_CREDITS_URL = "https://openrouter.ai/api/v1/credits";
 
 /**
+ * Cursor usage endpoints (unofficial)
+ */
+export const CURSOR_AUTH_USAGE_URL = "https://api2.cursor.sh/auth/usage";
+export const CURSOR_USAGE_SUMMARY_URL = "https://cursor.com/api/usage-summary";
+
+/**
+ * OpenCode Go usage endpoint (unofficial)
+ */
+export const OPENCODE_USAGE_URL = "https://opencode.ai/zen/go/v1/usage";
+
+/**
+ * Command Code billing endpoints (unofficial)
+ */
+export const COMMAND_CODE_WHOAMI_URL = "https://api.commandcode.ai/alpha/whoami";
+export const COMMAND_CODE_CREDITS_URL = "https://api.commandcode.ai/alpha/billing/credits";
+
+/**
  * Timeout for CLI commands in milliseconds
  */
 export const CLI_TIMEOUT_MS = 10000;

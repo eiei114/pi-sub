@@ -2,7 +2,20 @@
  * Shared types and metadata for sub-* extensions.
  */
 
-export const PROVIDERS = ["anthropic", "copilot", "gemini", "antigravity", "codex", "kiro", "zai", "kimi-coding", "openrouter"] as const;
+export const PROVIDERS = [
+	"anthropic",
+	"copilot",
+	"gemini",
+	"antigravity",
+	"codex",
+	"kiro",
+	"zai",
+	"kimi-coding",
+	"openrouter",
+	"cursor",
+	"opencode",
+	"command-code",
+] as const;
 
 export type ProviderName = (typeof PROVIDERS)[number];
 
@@ -68,17 +81,7 @@ export interface CoreProviderSettings {
 	extraUsageDecimalSeparator?: "." | ",";
 }
 
-export interface CoreProviderSettingsMap {
-	anthropic: CoreProviderSettings;
-	copilot: CoreProviderSettings;
-	gemini: CoreProviderSettings;
-	antigravity: CoreProviderSettings;
-	codex: CoreProviderSettings;
-	kiro: CoreProviderSettings;
-	zai: CoreProviderSettings;
-	"kimi-coding": CoreProviderSettings;
-	openrouter: CoreProviderSettings;
-}
+export type CoreProviderSettingsMap = Record<ProviderName, CoreProviderSettings>;
 
 export interface BehaviorSettings {
 	refreshInterval: number;
@@ -206,6 +209,18 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 	openrouter: {
 		displayName: "OpenRouter",
 		detection: { providerTokens: ["openrouter"], modelTokens: [] },
+	},
+	cursor: {
+		displayName: "Cursor",
+		detection: { providerTokens: ["cursor"], modelTokens: [] },
+	},
+	opencode: {
+		displayName: "OpenCode",
+		detection: { providerTokens: ["opencode"], modelTokens: [] },
+	},
+	"command-code": {
+		displayName: "Command Code",
+		detection: { providerTokens: ["command-code", "commandcode"], modelTokens: [] },
 	},
 };
 

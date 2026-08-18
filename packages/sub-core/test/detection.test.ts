@@ -32,3 +32,18 @@ test("detectProviderFromModel detects openrouter case-insensitively", () => {
 	const provider = detectProviderFromModel({ provider: "OpenRouter", id: "meta-llama" });
 	assert.equal(provider, "openrouter");
 });
+
+test("detectProviderFromModel detects cursor by provider", () => {
+	const provider = detectProviderFromModel({ provider: "cursor", id: "composer" });
+	assert.equal(provider, "cursor");
+});
+
+test("detectProviderFromModel detects opencode by provider", () => {
+	const provider = detectProviderFromModel({ provider: "opencode", id: "opencode/auto" });
+	assert.equal(provider, "opencode");
+});
+
+test("detectProviderFromModel detects command-code by provider", () => {
+	const provider = detectProviderFromModel({ provider: "command-code", id: "auto" });
+	assert.equal(provider, "command-code");
+});

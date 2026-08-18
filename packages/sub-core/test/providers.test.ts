@@ -10,8 +10,17 @@ import { KiroProvider } from "../src/providers/impl/kiro.js";
 import { ZaiProvider } from "../src/providers/impl/zai.js";
 import { KimiCodingProvider } from "../src/providers/impl/kimi-coding.js";
 import { OpenRouterProvider } from "../src/providers/impl/openrouter.js";
+import { CursorProvider } from "../src/providers/impl/cursor.js";
+import { OpenCodeProvider } from "../src/providers/impl/opencode.js";
+import { CommandCodeProvider } from "../src/providers/impl/command-code.js";
 import { createDeps, createJsonResponse, getAuthPath } from "./helpers.js";
 import type { UsageSnapshot } from "../src/types.js";
+import {
+	CURSOR_AUTH_USAGE_URL,
+	CURSOR_USAGE_SUMMARY_URL,
+	COMMAND_CODE_WHOAMI_URL,
+	COMMAND_CODE_CREDITS_URL,
+} from "../src/config.js";
 
 function withAuth(files: Map<string, string>, payload: Record<string, unknown>, home: string): void {
 	files.set(getAuthPath(home), JSON.stringify(payload));
@@ -756,6 +765,217 @@ test("kimi-coding reports no credentials", async () => {
 	const provider = new KimiCodingProvider();
 	const { deps } = createDeps({
 		fetch: async () => createJsonResponse({ usage: {} }),
+	});
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(usage.error?.code, "NO_CREDENTIALS");
+});
+
+function encodeJwt(payload: Record<string, unknown>): string {
+	const header = Buffer.from(JSON.stringify({ alg: "none", typ: "JWT" })).toString("base64url");
+	const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
+	return `${header}.${body}.sig`;
+}
+
+test("cursor reads token from CURSOR_API_KEY env var", async () => {
+	const provider = new CursorProvider();
+	let authorization: string | undefined;
+
+	const { deps } = createDeps({
+		env: { CURSOR_API_KEY: "env-token" },
+		fetch: async (_url, init) => {
+			authorization = (init as { headers?: { Authorization?: string } })?.headers?.Authorization;
+			return createJsonResponse({});
+		},
+	});
+
+	await provider.fetchUsage(deps);
+	assert.equal(authorization, "Bearer env-token");
+});
+
+test("cursor parses Models/Other/On-Demand from usage-summary", async () => {
+	const provider = new CursorProvider();
+	const token = encodeJwt({ sub: "auth0|user-123" });
+	const { deps, files } = createDeps({
+		fetch: async (url) => {
+			const href = String(url);
+			if (href === CURSOR_USAGE_SUMMARY_URL) {
+				return createJsonResponse({
+					billingCycleEnd: "2099-01-01T00:00:00.000Z",
+					individualUsage: {
+						plan: {
+							autoPercentUsed: 12,
+							apiPercentUsed: 34,
+							limit: 10000,
+						},
+						onDemand: {
+							enabled: true,
+							used: 250,
+							limit: 1000,
+							remaining: 750,
+						},
+					},
+				});
+			}
+			if (href === CURSOR_AUTH_USAGE_URL) {
+				return createJsonResponse({});
+			}
+			throw new Error(`unexpected url ${href}`);
+		},
+	});
+	withAuth(files, { cursor: { type: "api_key", key: token } }, deps.homedir());
+
+	const usage = await provider.fetchUsage(deps);
+	assertWindow(usage, "Models");
+	assertWindow(usage, "Other");
+	assertWindow(usage, "On-Demand");
+	assert.equal(usage.windows.find((w) => w.label === "Models")?.usedPercent, 12);
+	assert.equal(usage.windows.find((w) => w.label === "Other")?.usedPercent, 34);
+	assert.equal(usage.windows.find((w) => w.label === "On-Demand")?.usedPercent, 25);
+});
+
+test("cursor reports http errors", async () => {
+	const provider = new CursorProvider();
+	const { deps, files } = createDeps({
+		fetch: async () => createJsonResponse({}, { ok: false, status: 401 }),
+	});
+	withAuth(files, { cursor: { access: "token" } }, deps.homedir());
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(usage.error?.code, "HTTP_ERROR");
+	assert.equal(usage.error?.httpStatus, 401);
+});
+
+test("cursor reports missing credentials", async () => {
+	const provider = new CursorProvider();
+	const { deps } = createDeps({
+		fetch: async () => createJsonResponse({}),
+	});
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(usage.error?.code, "NO_CREDENTIALS");
+});
+
+test("opencode reads key from local auth.json", async () => {
+	const provider = new OpenCodeProvider();
+	let authorization: string | undefined;
+	const home = "/home/test";
+	const { deps, files } = createDeps({
+		homedir: home,
+		fetch: async (_url, init) => {
+			authorization = (init as { headers?: { Authorization?: string } })?.headers?.Authorization;
+			return createJsonResponse({
+				usage: {
+					rolling: { percent: 10, status: "ok", resetsAt: "2099-01-01T00:00:00.000Z" },
+					weekly: { percent: 20, status: "ok", resetsAt: "2099-01-08T00:00:00.000Z" },
+				},
+			});
+		},
+	});
+	files.set(
+		path.join(home, ".local", "share", "opencode", "auth.json"),
+		JSON.stringify({ "opencode-go": { type: "api", key: "oc-key" } })
+	);
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(authorization, "Bearer oc-key");
+	assertWindow(usage, "5h");
+	assertWindow(usage, "Week");
+	assert.equal(usage.windows.find((w) => w.label === "5h")?.usedPercent, 10);
+});
+
+test("opencode reports http errors", async () => {
+	const provider = new OpenCodeProvider();
+	const home = "/home/test";
+	const { deps, files } = createDeps({
+		homedir: home,
+		fetch: async () => createJsonResponse({}, { ok: false, status: 403 }),
+	});
+	files.set(
+		path.join(home, ".local", "share", "opencode", "auth.json"),
+		JSON.stringify({ "opencode-go": { type: "api", key: "oc-key" } })
+	);
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(usage.error?.code, "HTTP_ERROR");
+	assert.equal(usage.error?.httpStatus, 403);
+});
+
+test("opencode reports missing credentials", async () => {
+	const provider = new OpenCodeProvider();
+	const { deps } = createDeps({
+		fetch: async () => createJsonResponse({ usage: {} }),
+	});
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(usage.error?.code, "NO_CREDENTIALS");
+});
+
+test("opencode reports invalid responses", async () => {
+	const provider = new OpenCodeProvider();
+	const { deps } = createDeps({
+		env: { OPENCODE_API_KEY: "oc-key" },
+		fetch: async () => createJsonResponse({ usage: {} }),
+	});
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(usage.error?.code, "API_ERROR");
+});
+
+test("command-code parses 5h/week windows and credit extras", async () => {
+	const provider = new CommandCodeProvider();
+	const home = "/home/test";
+	const { deps, files } = createDeps({
+		homedir: home,
+		fetch: async (url) => {
+			const href = String(url);
+			if (href === COMMAND_CODE_WHOAMI_URL) {
+				return createJsonResponse({ org: { id: "org-1" } });
+			}
+			if (href.startsWith(COMMAND_CODE_CREDITS_URL)) {
+				return createJsonResponse({
+					credits: {
+						monthlyCredits: 42,
+						purchasedCredits: 10,
+						freeCredits: 2,
+					},
+					windowLimits: {
+						fiveHour: { used: 25, cap: 100, resetAt: 4_102_444_800 },
+						weekly: { used: 50, cap: 200, resetAt: 4_102_444_800 },
+					},
+				});
+			}
+			throw new Error(`unexpected url ${href}`);
+		},
+	});
+	files.set(path.join(home, ".commandcode", "auth.json"), JSON.stringify({ apiKey: "cc-key" }));
+
+	const usage = await provider.fetchUsage(deps);
+	assertWindow(usage, "5h");
+	assertWindow(usage, "Week");
+	assert.equal(usage.windows.find((w) => w.label === "5h")?.usedPercent, 25);
+	assert.equal(usage.windows.find((w) => w.label === "Week")?.usedPercent, 25);
+	assert.equal(usage.creditRemaining, 42);
+	assert.ok(usage.requestsSummary?.includes("purchased 10"));
+	assert.ok(usage.requestsSummary?.includes("free 2"));
+});
+
+test("command-code reports http errors from whoami", async () => {
+	const provider = new CommandCodeProvider();
+	const { deps } = createDeps({
+		env: { COMMAND_CODE_API_KEY: "cc-key" },
+		fetch: async () => createJsonResponse({}, { ok: false, status: 401 }),
+	});
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(usage.error?.code, "HTTP_ERROR");
+	assert.equal(usage.error?.httpStatus, 401);
+});
+
+test("command-code reports missing credentials", async () => {
+	const provider = new CommandCodeProvider();
+	const { deps } = createDeps({
+		fetch: async () => createJsonResponse({}),
 	});
 
 	const usage = await provider.fetchUsage(deps);

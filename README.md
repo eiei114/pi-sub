@@ -136,21 +136,21 @@ Settings live in the agent directory to survive updates (legacy extension `setti
 
 ## Adding a Provider (summary)
 
-You must update **both** sub-core (fetch layer) and sub-bar (display/UI).
+You must update **sub-shared** (provider id + metadata), **sub-core** (fetch layer), and **sub-bar** (display/UI).
+
+> **Unofficial provider APIs:** Cursor, OpenCode, and Command Code usage endpoints are unofficial and may change without notice. Failures soft-error in the UI; disable the provider in settings if an API shape breaks.
+
+### sub-shared
+1. Add provider name to `PROVIDERS` / `PROVIDER_METADATA` in `packages/sub-shared/index.ts`.
 
 ### sub-core
-1. Add provider name to `packages/sub-core/src/types.ts`.
-2. Implement fetcher in `packages/sub-core/src/providers/impl/<provider>.ts`.
-3. Register provider in `packages/sub-core/src/providers/registry.ts`.
-4. Add detection + status config in `packages/sub-core/src/providers/metadata.ts`.
-5. Add settings defaults in `packages/sub-core/src/settings-types.ts`.
+1. Implement fetcher in `packages/sub-core/src/providers/impl/<provider>.ts`.
+2. Register provider in `packages/sub-core/src/providers/registry.ts`.
+3. Add URL constants in `packages/sub-core/src/config.ts` when needed.
 
 ### sub-bar
-1. Add provider name to `packages/sub-bar/src/types.ts`.
-2. Add display metadata in `packages/sub-bar/src/providers/metadata.ts`.
-3. Add window visibility rules in `packages/sub-bar/src/providers/windows.ts`.
-4. Add extras (if needed) in `packages/sub-bar/src/providers/extras.ts`.
-5. Add settings UI + defaults in `packages/sub-bar/src/providers/settings.ts` and `packages/sub-bar/src/settings-types.ts`.
+1. Add display metadata in `packages/sub-bar/src/providers/metadata.ts`.
+2. Add settings UI + defaults in `packages/sub-bar/src/providers/settings.ts` and `packages/sub-bar/src/settings-types.ts`.
 
 ## Development
 

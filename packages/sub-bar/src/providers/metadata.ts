@@ -154,6 +154,32 @@ const openrouterWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, wi
 	return true;
 };
 
+const cursorWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, window, settings, _model) => {
+	if (!settings) return true;
+	const ps = settings.providers.cursor;
+	if (window.label === "Models") return ps.windows.showModels;
+	if (window.label === "Other") return ps.windows.showOther;
+	if (window.label === "On-Demand") return ps.windows.showOnDemand;
+	if (window.label === "Personal") return ps.windows.showPersonal;
+	return true;
+};
+
+const opencodeWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, window, settings, _model) => {
+	if (!settings) return true;
+	const ps = settings.providers.opencode;
+	if (window.label === "5h") return ps.windows.show5h;
+	if (window.label === "Week") return ps.windows.showWeek;
+	return true;
+};
+
+const commandCodeWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, window, settings, _model) => {
+	if (!settings) return true;
+	const ps = settings.providers["command-code"];
+	if (window.label === "5h") return ps.windows.show5h;
+	if (window.label === "Week") return ps.windows.showWeek;
+	return true;
+};
+
 function formatUsd(value: number, digits: number): string {
 	const safeValue = Object.is(value, -0) ? 0 : value;
 	return `$${safeValue.toFixed(digits)}`;
@@ -215,6 +241,21 @@ const openrouterExtras: ProviderMetadata["getExtras"] = (usage, settings) => {
 	return extras;
 };
 
+const commandCodeExtras: ProviderMetadata["getExtras"] = (usage, settings) => {
+	const extras: UsageExtra[] = [];
+	const showCredits = settings?.providers["command-code"].showCredits ?? true;
+	if (!showCredits) return extras;
+
+	const monthly = usage.creditRemaining;
+	if (monthly !== undefined) {
+		extras.push({ label: `monthly ${monthly}` });
+	}
+	if (usage.requestsSummary) {
+		extras.push({ label: usage.requestsSummary });
+	}
+	return extras;
+};
+
 export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 	anthropic: {
 		...BASE_METADATA.anthropic,
@@ -254,5 +295,18 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 		...BASE_METADATA.openrouter,
 		isWindowVisible: openrouterWindowVisible,
 		getExtras: openrouterExtras,
+	},
+	cursor: {
+		...BASE_METADATA.cursor,
+		isWindowVisible: cursorWindowVisible,
+	},
+	opencode: {
+		...BASE_METADATA.opencode,
+		isWindowVisible: opencodeWindowVisible,
+	},
+	"command-code": {
+		...BASE_METADATA["command-code"],
+		isWindowVisible: commandCodeWindowVisible,
+		getExtras: commandCodeExtras,
 	},
 };

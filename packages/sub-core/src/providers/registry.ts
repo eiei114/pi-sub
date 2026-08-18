@@ -11,6 +11,9 @@ export { KiroProvider } from "./impl/kiro.js";
 export { ZaiProvider } from "./impl/zai.js";
 export { KimiCodingProvider } from "./impl/kimi-coding.js";
 export { OpenRouterProvider } from "./impl/openrouter.js";
+export { CursorProvider } from "./impl/cursor.js";
+export { OpenCodeProvider } from "./impl/opencode.js";
+export { CommandCodeProvider } from "./impl/command-code.js";
 
 import type { Dependencies, ProviderName } from "../types.js";
 import type { UsageProvider } from "../provider.js";
@@ -24,6 +27,9 @@ import { KiroProvider } from "./impl/kiro.js";
 import { ZaiProvider } from "./impl/zai.js";
 import { KimiCodingProvider } from "./impl/kimi-coding.js";
 import { OpenRouterProvider } from "./impl/openrouter.js";
+import { CursorProvider } from "./impl/cursor.js";
+import { OpenCodeProvider } from "./impl/opencode.js";
+import { CommandCodeProvider } from "./impl/command-code.js";
 
 const PROVIDER_FACTORIES: Record<ProviderName, () => UsageProvider> = {
 	anthropic: () => new AnthropicProvider(),
@@ -35,6 +41,9 @@ const PROVIDER_FACTORIES: Record<ProviderName, () => UsageProvider> = {
 	zai: () => new ZaiProvider(),
 	"kimi-coding": () => new KimiCodingProvider(),
 	openrouter: () => new OpenRouterProvider(),
+	cursor: () => new CursorProvider(),
+	opencode: () => new OpenCodeProvider(),
+	"command-code": () => new CommandCodeProvider(),
 };
 
 /**
