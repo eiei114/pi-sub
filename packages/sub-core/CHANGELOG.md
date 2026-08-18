@@ -1,5 +1,14 @@
 # @eiei114/pi-sub-core
 
+## 2.1.2
+
+### Patch Changes
+
+- [#41](https://github.com/eiei114/pi-sub/pull/41) [`6fc531b`](https://github.com/eiei114/pi-sub/commit/6fc531b696e92dc0beb3b274b7328868ecf8a54f) Thanks [@eiei114](https://github.com/eiei114)! - Fix sub-core Settings hint overflow crash on narrow terminals by truncating after theme.hint.
+
+- Updated dependencies []:
+  - @eiei114/pi-sub-shared@2.1.2
+
 ## 2.1.1
 
 ### Patch Changes
