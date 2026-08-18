@@ -18,9 +18,9 @@ up, so the planner always has an accurate picture of "what's next".
 
 | Package | Latest | Published | Release group |
 | --- | --- | --- | --- |
-| [`@eiei114/pi-sub-core`](https://www.npmjs.com/package/@eiei114/pi-sub-core) | `2.1.1` | 2026-08-19 | **fixed** |
-| [`@eiei114/pi-sub-bar`](https://www.npmjs.com/package/@eiei114/pi-sub-bar) | `2.1.1` | 2026-08-19 | **fixed** |
-| [`@eiei114/pi-sub-shared`](https://www.npmjs.com/package/@eiei114/pi-sub-shared) | `2.1.1` | 2026-08-19 | **fixed** |
+| [`@eiei114/pi-sub-core`](https://www.npmjs.com/package/@eiei114/pi-sub-core) | `2.1.2` | 2026-08-19 | **fixed** |
+| [`@eiei114/pi-sub-bar`](https://www.npmjs.com/package/@eiei114/pi-sub-bar) | `2.1.2` | 2026-08-19 | **fixed** |
+| [`@eiei114/pi-sub-shared`](https://www.npmjs.com/package/@eiei114/pi-sub-shared) | `2.1.2` | 2026-08-19 | **fixed** |
 | [`@eiei114/pi-sub-status`](https://www.npmjs.com/package/@eiei114/pi-sub-status) | `2.0.2` | 2026-08-03 | independent |
 
 - `2.0.0` was a **major** bump ([PR #13](https://github.com/eiei114/pi-sub/pull/13),
@@ -31,6 +31,7 @@ up, so the planner always has an accurate picture of "what's next".
   published npm inventory with the workspace after the `2.0.0` release — no
   functional source changes.
 - `2.1.0` ([PR #35](https://github.com/eiei114/pi-sub/pull/35) / [Version Packages #36](https://github.com/eiei114/pi-sub/pull/36)) adds Cursor, OpenCode, and Command Code usage providers (unofficial APIs, soft-fail).
+- `2.1.2` ([PR #41](https://github.com/eiei114/pi-sub/pull/41) / [Version Packages #42](https://github.com/eiei114/pi-sub/pull/42)) fixes sub-core Settings crash on narrow terminals by truncating settings hint/help lines after `theme.hint`.
 - `2.1.1` ([PR #38](https://github.com/eiei114/pi-sub/pull/38) / [Version Packages #39](https://github.com/eiei114/pi-sub/pull/39)) exchanges Pi `crsr_` Cursor API keys for a JWT before usage fetch and prefers `GetCurrentPeriodUsage` for Models/Other rails.
 - `2.0.3` ([PR #32](https://github.com/eiei114/pi-sub/pull/32) / [Version Packages #33](https://github.com/eiei114/pi-sub/pull/33)) fixes Adv. Display settings crash on narrow terminals by truncating settings hint/help lines to the viewport width.
 - `2.0.2` ([PR #25](https://github.com/eiei114/pi-sub/pull/25)) shipped a batch
@@ -285,6 +286,7 @@ seed. Revisit only if a contributor volunteers to own one.
 
 ## 6. Changelog
 
+- **2026-08-19** — Roadmap refresh after Version Packages (#42). Bumped fixed-group release status to `2.1.2` (sub-core narrow Settings hint truncate from PR #41). Unblocks Release publish after Version Packages merge skipped `release.yml`.
 - **2026-08-19** — Roadmap refresh after Version Packages (#39). Bumped fixed-group release status to `2.1.1` (Cursor `crsr_` API key exchange from PR #38). Unblocks Release publish after Version Packages merge skipped `release.yml`.
 - **2026-08-19** — Roadmap refresh after Version Packages (#36). Bumped fixed-group release status to `2.1.0` (Cursor / OpenCode / Command Code providers from PR #35). Unblocks Release publish after Version Packages merge skipped `release.yml`.
 - **2026-08-18** — Roadmap refresh after Version Packages. Bumped fixed-group release status to `2.0.3` (narrow-terminal settings hint truncate).
