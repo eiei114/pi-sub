@@ -49,7 +49,7 @@ This repo uses [Changesets](https://github.com/changesets/changesets) to version
 - `@eiei114/pi-sub-core`, `@eiei114/pi-sub-bar`, and `@eiei114/pi-sub-shared` are a **fixed** release group — one changeset bumps all three together.
 - `@eiei114/pi-sub-status` is **independent** — version it in a separate changeset when only that package changes.
 
-When you run `npm run changeset`, select the fixed group if any of those three packages changed. Do not create separate version bumps for packages in the fixed group.
+When you run `npm run changeset`, select every package whose published contents or behavior changed. If any package in the fixed group changed, Changesets releases all three fixed-group packages together with one shared version bump; do not create separate changesets or different bump levels just to bump each fixed-group package independently.
 
 For the full automated publish flow (npm Trusted Publishing, Version Packages PR, auto-merge), see [RELEASE_PROCESS.md](./RELEASE_PROCESS.md).
 
@@ -57,7 +57,7 @@ For the full automated publish flow (npm Trusted Publishing, Version Packages PR
 
 **Add a changeset** when your PR includes user-facing changes to any publishable package (`@eiei114/pi-sub-core`, `@eiei114/pi-sub-bar`, `@eiei114/pi-sub-shared`, or `@eiei114/pi-sub-status`).
 
-**Skip the changeset** when the PR is docs-only, CI-only, or test-only with no package behavior changes.
+**Skip the changeset** only when the PR changes repository-only docs, CI, or tests that are not published and do not alter package contents or behavior. Package READMEs and public API documentation are published package contents, so include a changeset when they change.
 
 ```bash
 npm run changeset
