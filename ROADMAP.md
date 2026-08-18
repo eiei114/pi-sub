@@ -18,9 +18,9 @@ up, so the planner always has an accurate picture of "what's next".
 
 | Package | Latest | Published | Release group |
 | --- | --- | --- | --- |
-| [`@eiei114/pi-sub-core`](https://www.npmjs.com/package/@eiei114/pi-sub-core) | `2.0.3` | 2026-08-18 | **fixed** |
-| [`@eiei114/pi-sub-bar`](https://www.npmjs.com/package/@eiei114/pi-sub-bar) | `2.0.3` | 2026-08-18 | **fixed** |
-| [`@eiei114/pi-sub-shared`](https://www.npmjs.com/package/@eiei114/pi-sub-shared) | `2.0.3` | 2026-08-18 | **fixed** |
+| [`@eiei114/pi-sub-core`](https://www.npmjs.com/package/@eiei114/pi-sub-core) | `2.1.0` | 2026-08-19 | **fixed** |
+| [`@eiei114/pi-sub-bar`](https://www.npmjs.com/package/@eiei114/pi-sub-bar) | `2.1.0` | 2026-08-19 | **fixed** |
+| [`@eiei114/pi-sub-shared`](https://www.npmjs.com/package/@eiei114/pi-sub-shared) | `2.1.0` | 2026-08-19 | **fixed** |
 | [`@eiei114/pi-sub-status`](https://www.npmjs.com/package/@eiei114/pi-sub-status) | `2.0.2` | 2026-08-03 | independent |
 
 - `2.0.0` was a **major** bump ([PR #13](https://github.com/eiei114/pi-sub/pull/13),
@@ -30,15 +30,17 @@ up, so the planner always has an accurate picture of "what's next".
 - `2.0.1` ([PR #18](https://github.com/eiei114/pi-sub/pull/18)) reconciled the
   published npm inventory with the workspace after the `2.0.0` release — no
   functional source changes.
+- `2.1.0` ([PR #35](https://github.com/eiei114/pi-sub/pull/35) / [Version Packages #36](https://github.com/eiei114/pi-sub/pull/36)) adds Cursor, OpenCode, and Command Code usage providers (unofficial APIs, soft-fail).
 - `2.0.3` ([PR #32](https://github.com/eiei114/pi-sub/pull/32) / [Version Packages #33](https://github.com/eiei114/pi-sub/pull/33)) fixes Adv. Display settings crash on narrow terminals by truncating settings hint/help lines to the viewport width.
 - `2.0.2` ([PR #25](https://github.com/eiei114/pi-sub/pull/25)) shipped a batch
   patch release to verify Discord release webhook delivery ([PR #24](https://github.com/eiei114/pi-sub/pull/24)).
-  Consumers should pin `2.0.3` or later.
+  Consumers should pin `2.1.0` or later.
 - `sub-core`, `sub-bar`, and `sub-shared` form a **fixed release group** (one
   changeset bumps all three together — see `.changeset/config.json`).
   `sub-status` is versioned independently but currently tracks the same number.
-- 9 usage providers are supported: `anthropic`, `copilot`, `gemini`,
-  `antigravity`, `codex`, `kiro`, `zai`, `kimi-coding`, `openrouter`.
+- 12 usage providers are supported: `anthropic`, `copilot`, `gemini`,
+  `antigravity`, `codex`, `kiro`, `zai`, `kimi-coding`, `openrouter`,
+  `cursor`, `opencode`, `command-code`.
 
 ### Release pipeline
 
@@ -282,10 +284,11 @@ seed. Revisit only if a contributor volunteers to own one.
 
 ## 6. Changelog
 
+- **2026-08-19** — Roadmap refresh after Version Packages (#36). Bumped fixed-group release status to `2.1.0` (Cursor / OpenCode / Command Code providers from PR #35). Unblocks Release publish after Version Packages merge skipped `release.yml`.
+- **2026-08-18** — Roadmap refresh after Version Packages. Bumped fixed-group release status to `2.0.3` (narrow-terminal settings hint truncate).
 - **2026-08-10** — Roadmap refresh (DOT-1444). Marked seed S-3 done
   (DOT-1434 / PR #29) and removed stale claims that `sub-shared` still has no
   tests.
-- **2026-08-18** — Roadmap refresh after Version Packages. Bumped fixed-group release status to `2.0.3` (narrow-terminal settings hint truncate).
 - **2026-08-03** — Roadmap refresh (DOT-1335). Bumped release status to `2.0.2`
   (2026-08-03), marked seed S-2 done (DOT-1258 / PR #22), and removed stale
   claims that PR CI and the Windows matrix were still missing.
