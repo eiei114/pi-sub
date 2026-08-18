@@ -14,6 +14,7 @@ import {
 import { buildDisplayThemeItems, resolveDisplayThemeTarget, saveDisplayTheme, upsertDisplayTheme } from "../src/settings/themes.js";
 import { getDefaultSettings, mergeSettings, resolveBaseTextColor } from "../src/settings-types.js";
 import type { UsageSnapshot } from "../src/types.js";
+import { SettingsList } from "../src/ui/settings-list.js";
 
 const theme = {
 	fg: (_color: string, text: string) => text,
@@ -333,4 +334,43 @@ test("decodeDisplayShareString rejects invalid payloads", () => {
 
 	const nonObjectPayload = Buffer.from(JSON.stringify(42)).toString("base64url");
 	assert.equal(decodeDisplayShareString(`Name:${nonObjectPayload}`), null);
+});
+
+test("SettingsList hint stays within narrow terminal width", () => {
+	const longHint = "↓ navigate • ←/→ change • Enter/Space edit custom • Esc to cancel";
+	assert.ok(visibleWidth(longHint) > 51);
+
+	const list = new SettingsList(
+		[
+			{
+				id: "barType",
+				label: "Bar Type",
+				description: "Choose the bar glyph style for usage.",
+				currentValue: "horizontal-bar",
+				options: ["horizontal-bar", "vertical"],
+			},
+		],
+		10,
+		{
+			cursor: "→ ",
+			selected: (t: string) => t,
+			label: (t: string) => t,
+			value: (t: string) => t,
+			description: (t: string) => t,
+			separator: "  ",
+			hint: (text: string) => (text.includes("Enter/Space") ? longHint : text),
+		},
+		() => {},
+		() => {},
+	);
+
+	for (const width of [51, 40, 20]) {
+		const lines = list.render(width);
+		for (const line of lines) {
+			assert.ok(
+				visibleWidth(line) <= width,
+				`line exceeds width ${width}: ${visibleWidth(line)} > ${width} (${JSON.stringify(line)})`,
+			);
+		}
+	}
 });
