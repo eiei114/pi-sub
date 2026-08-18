@@ -17,6 +17,8 @@ import { createDeps, createJsonResponse, getAuthPath } from "./helpers.js";
 import type { UsageSnapshot } from "../src/types.js";
 import {
 	CURSOR_AUTH_USAGE_URL,
+	CURSOR_CURRENT_PERIOD_USAGE_URL,
+	CURSOR_EXCHANGE_API_KEY_URL,
 	CURSOR_USAGE_SUMMARY_URL,
 	COMMAND_CODE_WHOAMI_URL,
 	COMMAND_CODE_CREDITS_URL,
@@ -777,28 +779,60 @@ function encodeJwt(payload: Record<string, unknown>): string {
 	return `${header}.${body}.sig`;
 }
 
-test("cursor reads token from CURSOR_API_KEY env var", async () => {
+test("cursor exchanges crsr_ api_key before usage fetch", async () => {
 	const provider = new CursorProvider();
-	let authorization: string | undefined;
+	const accessToken = encodeJwt({ sub: "auth0|user-123" });
+	const seen: string[] = [];
+	let exchangedAuth: string | undefined;
+	let periodAuth: string | undefined;
 
-	const { deps } = createDeps({
-		env: { CURSOR_API_KEY: "env-token" },
-		fetch: async (_url, init) => {
-			authorization = (init as { headers?: { Authorization?: string } })?.headers?.Authorization;
-			return createJsonResponse({});
+	const { deps, files } = createDeps({
+		fetch: async (url, init) => {
+			const href = String(url);
+			seen.push(href);
+			if (href === CURSOR_EXCHANGE_API_KEY_URL) {
+				exchangedAuth = (init as { headers?: { Authorization?: string } })?.headers?.Authorization;
+				return createJsonResponse({ accessToken, refreshToken: "refresh" });
+			}
+			if (href === CURSOR_CURRENT_PERIOD_USAGE_URL) {
+				periodAuth = (init as { headers?: { Authorization?: string } })?.headers?.Authorization;
+				return createJsonResponse({
+					billingCycleEnd: "4099680000000",
+					planUsage: {
+						autoPercentUsed: 54.6,
+						apiPercentUsed: 27.1,
+						totalPercentUsed: 51.3,
+						limit: 7000,
+					},
+				});
+			}
+			if (href === CURSOR_AUTH_USAGE_URL || href === CURSOR_USAGE_SUMMARY_URL) {
+				return createJsonResponse({});
+			}
+			throw new Error(`unexpected url ${href}`);
 		},
 	});
+	withAuth(files, { cursor: { type: "api_key", key: "crsr_test_key_0123456789abcdef" } }, deps.homedir());
 
-	await provider.fetchUsage(deps);
-	assert.equal(authorization, "Bearer env-token");
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(exchangedAuth, "Bearer crsr_test_key_0123456789abcdef");
+	assert.equal(periodAuth, `Bearer ${accessToken}`);
+	assert.ok(seen.includes(CURSOR_EXCHANGE_API_KEY_URL));
+	assertWindow(usage, "Models");
+	assertWindow(usage, "Other");
+	assert.equal(usage.windows.find((w) => w.label === "Models")?.usedPercent, 54.6);
+	assert.equal(usage.windows.find((w) => w.label === "Other")?.usedPercent, 27.1);
 });
 
-test("cursor parses Models/Other/On-Demand from usage-summary", async () => {
+test("cursor parses Models/Other/On-Demand from usage-summary for JWT access", async () => {
 	const provider = new CursorProvider();
 	const token = encodeJwt({ sub: "auth0|user-123" });
 	const { deps, files } = createDeps({
 		fetch: async (url) => {
 			const href = String(url);
+			if (href === CURSOR_CURRENT_PERIOD_USAGE_URL) {
+				return createJsonResponse({});
+			}
 			if (href === CURSOR_USAGE_SUMMARY_URL) {
 				return createJsonResponse({
 					billingCycleEnd: "2099-01-01T00:00:00.000Z",
@@ -823,7 +857,7 @@ test("cursor parses Models/Other/On-Demand from usage-summary", async () => {
 			throw new Error(`unexpected url ${href}`);
 		},
 	});
-	withAuth(files, { cursor: { type: "api_key", key: token } }, deps.homedir());
+	withAuth(files, { cursor: { access: token } }, deps.homedir());
 
 	const usage = await provider.fetchUsage(deps);
 	assertWindow(usage, "Models");
@@ -834,12 +868,17 @@ test("cursor parses Models/Other/On-Demand from usage-summary", async () => {
 	assert.equal(usage.windows.find((w) => w.label === "On-Demand")?.usedPercent, 25);
 });
 
-test("cursor reports http errors", async () => {
+test("cursor reports http errors from api_key exchange", async () => {
 	const provider = new CursorProvider();
 	const { deps, files } = createDeps({
-		fetch: async () => createJsonResponse({}, { ok: false, status: 401 }),
+		fetch: async (url) => {
+			if (String(url) === CURSOR_EXCHANGE_API_KEY_URL) {
+				return createJsonResponse({}, { ok: false, status: 401 });
+			}
+			throw new Error(`unexpected url ${String(url)}`);
+		},
 	});
-	withAuth(files, { cursor: { access: "token" } }, deps.homedir());
+	withAuth(files, { cursor: { type: "api_key", key: "crsr_dead" } }, deps.homedir());
 
 	const usage = await provider.fetchUsage(deps);
 	assert.equal(usage.error?.code, "HTTP_ERROR");

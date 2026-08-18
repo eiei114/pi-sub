@@ -33,6 +33,11 @@ export const OPENROUTER_CREDITS_URL = "https://openrouter.ai/api/v1/credits";
  */
 export const CURSOR_AUTH_USAGE_URL = "https://api2.cursor.sh/auth/usage";
 export const CURSOR_USAGE_SUMMARY_URL = "https://cursor.com/api/usage-summary";
+/** Exchange `crsr_…` API keys for a short-lived JWT access token. */
+export const CURSOR_EXCHANGE_API_KEY_URL = "https://api2.cursor.sh/auth/exchange_user_api_key";
+/** Dashboard period usage (Models / Other rails) via Bearer access token. */
+export const CURSOR_CURRENT_PERIOD_USAGE_URL =
+	"https://api2.cursor.sh/aiserver.v1.DashboardService/GetCurrentPeriodUsage";
 
 /**
  * OpenCode Go usage endpoint (unofficial)
