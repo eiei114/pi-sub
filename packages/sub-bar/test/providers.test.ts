@@ -76,3 +76,31 @@ test("openrouter extras respect showRemainingCredit toggle", () => {
 	const extras = getUsageExtras(buildOpenRouterUsage(), settings);
 	assert.equal(extras.length, 0);
 });
+
+function buildCommandCodeUsage(): UsageSnapshot {
+	return {
+		provider: "command-code",
+		displayName: "Command Code",
+		windows: [
+			{ label: "5h", usedPercent: 10 },
+			{ label: "Week", usedPercent: 20 },
+		],
+		creditRemaining: 42,
+		requestsSummary: "purchased 10 · free 2",
+	};
+}
+
+test("command-code extras show monthly and credit parts", () => {
+	const settings = getDefaultSettings();
+	const extras = getUsageExtras(buildCommandCodeUsage(), settings);
+	assert.equal(extras.length, 2);
+	assert.equal(extras[0].label, "monthly 42");
+	assert.equal(extras[1].label, "purchased 10 · free 2");
+});
+
+test("command-code extras respect showCredits toggle", () => {
+	const settings = getDefaultSettings();
+	settings.providers["command-code"].showCredits = false;
+	const extras = getUsageExtras(buildCommandCodeUsage(), settings);
+	assert.equal(extras.length, 0);
+});

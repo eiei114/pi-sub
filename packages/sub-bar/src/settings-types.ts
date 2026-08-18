@@ -289,6 +289,30 @@ export interface OpenRouterProviderSettings extends BaseProviderSettings {
 	};
 }
 
+export interface CursorProviderSettings extends BaseProviderSettings {
+	windows: {
+		showModels: boolean;
+		showOther: boolean;
+		showOnDemand: boolean;
+		showPersonal: boolean;
+	};
+}
+
+export interface OpenCodeProviderSettings extends BaseProviderSettings {
+	windows: {
+		show5h: boolean;
+		showWeek: boolean;
+	};
+}
+
+export interface CommandCodeProviderSettings extends BaseProviderSettings {
+	showCredits: boolean;
+	windows: {
+		show5h: boolean;
+		showWeek: boolean;
+	};
+}
+
 export interface ProviderSettingsMap {
 	anthropic: AnthropicProviderSettings;
 	copilot: CopilotProviderSettings;
@@ -299,6 +323,9 @@ export interface ProviderSettingsMap {
 	zai: ZaiProviderSettings;
 	"kimi-coding": KimiCodingProviderSettings;
 	openrouter: OpenRouterProviderSettings;
+	cursor: CursorProviderSettings;
+	opencode: OpenCodeProviderSettings;
+	"command-code": CommandCodeProviderSettings;
 }
 
 export type { BehaviorSettings, CoreSettings } from "@eiei114/pi-sub-shared";
@@ -518,6 +545,30 @@ export function getDefaultSettings(): Settings {
 				showCreditBreakdown: false,
 				windows: {
 					showCredits: true,
+				},
+			},
+			cursor: {
+				showStatus: false,
+				windows: {
+					showModels: true,
+					showOther: true,
+					showOnDemand: true,
+					showPersonal: true,
+				},
+			},
+			opencode: {
+				showStatus: false,
+				windows: {
+					show5h: true,
+					showWeek: true,
+				},
+			},
+			"command-code": {
+				showStatus: false,
+				showCredits: true,
+				windows: {
+					show5h: true,
+					showWeek: true,
 				},
 			},
 		},

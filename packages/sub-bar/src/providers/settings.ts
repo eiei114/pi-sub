@@ -16,6 +16,9 @@ import type {
 	ZaiProviderSettings,
 	KimiCodingProviderSettings,
 	OpenRouterProviderSettings,
+	CursorProviderSettings,
+	OpenCodeProviderSettings,
+	CommandCodeProviderSettings,
 } from "../settings-types.js";
 
 function buildBaseProviderItems(ps: BaseProviderSettings): SettingItem[] {
@@ -274,6 +277,87 @@ export function buildProviderSettingsItems(settings: Settings, provider: Provide
 		);
 	}
 
+	if (provider === "cursor") {
+		const cursorSettings = ps as CursorProviderSettings;
+		items.push(
+			{
+				id: "showModels",
+				label: "Show Models Window",
+				currentValue: cursorSettings.windows.showModels ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the Cursor Models (auto) usage rail.",
+			},
+			{
+				id: "showOther",
+				label: "Show Other Window",
+				currentValue: cursorSettings.windows.showOther ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the Other Models usage rail.",
+			},
+			{
+				id: "showOnDemand",
+				label: "Show On-Demand Window",
+				currentValue: cursorSettings.windows.showOnDemand ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the On-Demand usage rail.",
+			},
+			{
+				id: "showPersonal",
+				label: "Show Personal Window",
+				currentValue: cursorSettings.windows.showPersonal ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the legacy Personal Usage rail when present.",
+			},
+		);
+	}
+
+	if (provider === "opencode") {
+		const openCodeSettings = ps as OpenCodeProviderSettings;
+		items.push(
+			{
+				id: "show5h",
+				label: "Show 5h Window",
+				currentValue: openCodeSettings.windows.show5h ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the rolling 5-hour usage window.",
+			},
+			{
+				id: "showWeek",
+				label: "Show Week Window",
+				currentValue: openCodeSettings.windows.showWeek ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the weekly usage window.",
+			},
+		);
+	}
+
+	if (provider === "command-code") {
+		const commandCodeSettings = ps as CommandCodeProviderSettings;
+		items.push(
+			{
+				id: "show5h",
+				label: "Show 5h Window",
+				currentValue: commandCodeSettings.windows.show5h ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the 5-hour usage window.",
+			},
+			{
+				id: "showWeek",
+				label: "Show Week Window",
+				currentValue: commandCodeSettings.windows.showWeek ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the weekly usage window.",
+			},
+			{
+				id: "showCredits",
+				label: "Show Credit Labels",
+				currentValue: commandCodeSettings.showCredits ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show monthly/purchased/free credit extras.",
+			},
+		);
+	}
+
 	return items;
 }
 
@@ -427,6 +511,51 @@ export function applyProviderSettingsChange(
 				break;
 			case "showCreditBreakdown":
 				openRouterSettings.showCreditBreakdown = value === "on";
+				break;
+		}
+	}
+
+	if (provider === "cursor") {
+		const cursorSettings = ps as CursorProviderSettings;
+		switch (id) {
+			case "showModels":
+				cursorSettings.windows.showModels = value === "on";
+				break;
+			case "showOther":
+				cursorSettings.windows.showOther = value === "on";
+				break;
+			case "showOnDemand":
+				cursorSettings.windows.showOnDemand = value === "on";
+				break;
+			case "showPersonal":
+				cursorSettings.windows.showPersonal = value === "on";
+				break;
+		}
+	}
+
+	if (provider === "opencode") {
+		const openCodeSettings = ps as OpenCodeProviderSettings;
+		switch (id) {
+			case "show5h":
+				openCodeSettings.windows.show5h = value === "on";
+				break;
+			case "showWeek":
+				openCodeSettings.windows.showWeek = value === "on";
+				break;
+		}
+	}
+
+	if (provider === "command-code") {
+		const commandCodeSettings = ps as CommandCodeProviderSettings;
+		switch (id) {
+			case "show5h":
+				commandCodeSettings.windows.show5h = value === "on";
+				break;
+			case "showWeek":
+				commandCodeSettings.windows.showWeek = value === "on";
+				break;
+			case "showCredits":
+				commandCodeSettings.showCredits = value === "on";
 				break;
 		}
 	}
