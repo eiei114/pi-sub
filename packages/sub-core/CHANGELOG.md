@@ -1,5 +1,14 @@
 # @eiei114/pi-sub-core
 
+## 2.1.1
+
+### Patch Changes
+
+- [#38](https://github.com/eiei114/pi-sub/pull/38) [`eb754ae`](https://github.com/eiei114/pi-sub/commit/eb754ae868bdd1d7bebc07e616feab6b583f0bb7) Thanks [@eiei114](https://github.com/eiei114)! - Fix Cursor usage for Pi `crsr_` API keys by exchanging them for a JWT before fetching Models/Other rails.
+
+- Updated dependencies []:
+  - @eiei114/pi-sub-shared@2.1.1
+
 ## 2.1.0
 
 ### Minor Changes
