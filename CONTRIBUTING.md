@@ -28,9 +28,12 @@ Workspace-specific commands:
 ```bash
 npm run check -w @eiei114/pi-sub-core
 npm run check -w @eiei114/pi-sub-bar
+npm run check -w @eiei114/pi-sub-status
 npm run check -w @eiei114/pi-sub-shared
 npm run test -w @eiei114/pi-sub-core
 npm run test -w @eiei114/pi-sub-bar
+npm run test -w @eiei114/pi-sub-status
+npm run test -w @eiei114/pi-sub-shared
 ```
 
 Watch mode:
@@ -38,8 +41,10 @@ Watch mode:
 ```bash
 npm run check:watch -w @eiei114/pi-sub-core
 npm run check:watch -w @eiei114/pi-sub-bar
+npm run check:watch -w @eiei114/pi-sub-status
 npm run check:watch -w @eiei114/pi-sub-shared
 npm run test:watch -w @eiei114/pi-sub-bar
+npm run test:watch -w @eiei114/pi-sub-status
 ```
 
 ## Release rules

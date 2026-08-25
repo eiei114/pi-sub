@@ -95,7 +95,6 @@ boring and defensive — the fork's value is reliability, not features.
 
 | Area | Detail | Source |
 | --- | --- | --- |
-| Thin `CONTRIBUTING.md` | Doesn't explain the `fixed` release group, Trusted Publishing, or the verify-before-merge gate. | `CONTRIBUTING.md` |
 | Aspirational extension list | README "Ideas / planned" lists `pi-sub-compare`, `pi-sub-model-switcher`, `pi-sub-account-switcher` with no tracking or owners. | `README.md` |
 
 ---
@@ -189,31 +188,26 @@ consume.
 
 ---
 
-### S-4 — Expand `CONTRIBUTING.md` with release/verify rules
+### S-4 — Expand `CONTRIBUTING.md` with release/verify rules ✅
 
-**Size:** ~45 min · **Type:** docs · **Changeset:** no
+**Size:** ~45 min · **Type:** docs · **Changeset:** no · **Status:** done
+(DOT-1575)
 
-`CONTRIBUTING.md` lists scripts but omits the rules that actually trip up
-contributors: the `fixed` release group, when a changeset is required, the
-Trusted Publishing flow, and the verify-before-merge gate.
-
-**Why needed:** first-time contributors routinely open PRs without changesets or
-run only `npm test` instead of `npm run verify`, slowing review.
+`CONTRIBUTING.md` now documents the `fixed` release group, changeset rules,
+Trusted Publishing pointer, verify-before-merge gate, and workspace commands for
+all packages including `sub-status`.
 
 **Acceptance criteria**
 
-- [ ] A "Release rules" section explains the `fixed` group
+- [x] A "Release rules" section explains the `fixed` group
       (`sub-core`/`sub-bar`/`sub-shared` bump together) and that `sub-status` is
       independent.
-- [ ] A "When to add a changeset" section: required for user-facing package
+- [x] A "When to add a changeset" section: required for user-facing package
       changes; skip for docs/CI/test-only changes.
-- [ ] A pointer to `RELEASE_PROCESS.md` for the full publish flow.
-- [ ] A "Before you merge" checklist: `npm run verify` (check + test + lint)
+- [x] A pointer to `RELEASE_PROCESS.md` for the full publish flow.
+- [x] A "Before you merge" checklist: `npm run verify` (check + test + lint)
       passes locally.
-- [ ] No source changes; no changeset.
-
-**Verification:** read-through confirms all four bullets present; `npm run lint`
-passes on the doc change.
+- [x] No source changes; no changeset.
 
 ---
 
@@ -286,6 +280,9 @@ seed. Revisit only if a contributor volunteers to own one.
 
 ## 6. Changelog
 
+- **2026-08-25** — Roadmap refresh (DOT-1575). Marked seed S-4 done; CONTRIBUTING now
+  lists workspace commands for all packages including `sub-status`, guarded by
+  `packages/sub-core/test/contributing-accuracy.test.ts`.
 - **2026-08-19** — Roadmap refresh after Version Packages (#42). Bumped fixed-group release status to `2.1.2` (sub-core narrow Settings hint truncate from PR #41). Unblocks Release publish after Version Packages merge skipped `release.yml`.
 - **2026-08-19** — Roadmap refresh after Version Packages (#39). Bumped fixed-group release status to `2.1.1` (Cursor `crsr_` API key exchange from PR #38). Unblocks Release publish after Version Packages merge skipped `release.yml`.
 - **2026-08-19** — Roadmap refresh after Version Packages (#36). Bumped fixed-group release status to `2.1.0` (Cursor / OpenCode / Command Code providers from PR #35). Unblocks Release publish after Version Packages merge skipped `release.yml`.
