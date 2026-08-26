@@ -196,7 +196,7 @@ npm install
 Common commands:
 
 - `npm run check` — typecheck all workspaces
-- `npm run test` — run workspace tests (sub-bar + sub-core + sub-status)
+- `npm run test` — run workspace tests (sub-bar + sub-core + sub-shared + sub-status)
 - `npm run lint` / `npm run lint:fix` — lint TypeScript
 - `npm run format` — format with Prettier
 - `npm run verify` — run check + test + lint
@@ -221,5 +221,6 @@ npm run check -w @eiei114/pi-sub-status
 npm run check -w @eiei114/pi-sub-shared
 npm run test -w @eiei114/pi-sub-core
 npm run test -w @eiei114/pi-sub-bar
+npm run test -w @eiei114/pi-sub-shared
 npm run test -w @eiei114/pi-sub-status
 ```
