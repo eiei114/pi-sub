@@ -42,34 +42,50 @@ function authFilePath(deps: Dependencies): string {
 	return path.join(dataHome, "opencode", "auth.json");
 }
 
+function piAuthFilePath(deps: Dependencies): string {
+	return path.join(deps.homedir(), ".pi", "agent", "auth.json");
+}
+
+function credentialKey(credential: unknown): string | undefined {
+	if (typeof credential === "string") return normalizeApiKey(credential);
+	if (!isRecord(credential)) return undefined;
+	if (credential.type === "api" || credential.type === "api_key") {
+		const key = normalizeApiKey(credential.key);
+		if (key) return key;
+	}
+	return normalizeApiKey(credential.key) ?? normalizeApiKey(credential.access);
+}
+
+function keyFromAuthContent(contents: string | undefined): string | undefined {
+	try {
+		if (!contents) return undefined;
+		const auth = JSON.parse(contents) as Record<string, unknown>;
+		return credentialKey(auth["opencode-go"]);
+	} catch {
+		// Ignore parse errors
+	}
+	return undefined;
+}
+
+function keyFromAuthFile(deps: Dependencies, filePath: string): string | undefined {
+	return keyFromAuthContent(deps.fileExists(filePath) ? deps.readFile(filePath) : undefined);
+}
+
 /**
- * Read OpenCode Go API key from local auth file, OPENCODE_AUTH_CONTENT, or env.
+ * Read OpenCode Go API key from env, OPENCODE_AUTH_CONTENT, opencode auth.json,
+ * or pi's agent auth.json (fallback for pi's own opencode-go provider credential).
  */
 function loadOpenCodeApiKey(deps: Dependencies): string | undefined {
 	const envKey = normalizeApiKey(deps.env.OPENCODE_API_KEY ?? deps.env.OPENCODE_GO_API_KEY);
 	if (envKey) return envKey;
 
-	try {
-		const contents = deps.env.OPENCODE_AUTH_CONTENT
-			? deps.env.OPENCODE_AUTH_CONTENT
-			: deps.fileExists(authFilePath(deps))
-				? deps.readFile(authFilePath(deps))
-				: undefined;
-		if (!contents) return undefined;
-		const auth = JSON.parse(contents) as Record<string, unknown>;
-		const credential = auth["opencode-go"];
-		if (isRecord(credential) && credential.type === "api") {
-			return normalizeApiKey(credential.key);
-		}
-		if (typeof credential === "string") return normalizeApiKey(credential);
-		if (isRecord(credential)) {
-			return normalizeApiKey(credential.key) ?? normalizeApiKey(credential.access);
-		}
-	} catch {
-		// Ignore parse errors
-	}
+	const fromEnvContent = keyFromAuthContent(deps.env.OPENCODE_AUTH_CONTENT);
+	if (fromEnvContent) return fromEnvContent;
 
-	return undefined;
+	return (
+		keyFromAuthFile(deps, authFilePath(deps))
+		?? keyFromAuthFile(deps, piAuthFilePath(deps))
+	);
 }
 
 function pushWindow(

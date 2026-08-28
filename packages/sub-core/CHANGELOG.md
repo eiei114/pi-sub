@@ -1,5 +1,14 @@
 # @eiei114/pi-sub-core
 
+## 2.1.3
+
+### Patch Changes
+
+- Read the OpenCode Go API key from pi's agent auth.json (`~/.pi/agent/auth.json`) as a fallback when neither the env vars nor opencode's own auth.json supply an `opencode-go` credential. This makes the usage widget work out of the box for pi sessions running the opencode-go provider.
+
+- Updated dependencies []:
+  - @eiei114/pi-sub-shared@2.1.3
+
 ## 2.1.2
 
 ### Patch Changes
