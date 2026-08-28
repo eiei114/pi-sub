@@ -4,6 +4,7 @@ import type { Theme } from "@earendil-works/pi-coding-agent";
 import { visibleWidth } from "@earendil-works/pi-tui";
 import { formatUsageStatus, formatUsageWindowParts } from "../src/formatting.js";
 import { buildDisplayShareString, decodeDisplayShareString } from "../src/share.js";
+import { buildProviderSettingsItems } from "../src/providers/settings.js";
 import {
 	applyDisplayChange,
 	buildDisplayBarItems,
@@ -44,6 +45,17 @@ test("custom provider label is appended", () => {
 	const output = formatUsageStatus(theme, buildUsage(), undefined, settings);
 	assert.ok(output);
 	assert.ok(output.startsWith("Codex Team:"));
+});
+
+test("cursor provider settings explain usage rail labels", () => {
+	const items = buildProviderSettingsItems(getDefaultSettings(), "cursor");
+	const byId = new Map(items.map((item) => [item.id, item]));
+
+	assert.equal(byId.get("showModels")?.label, "Show Auto Models Window");
+	assert.equal(byId.get("showModels")?.description, "Show the Cursor Auto Models usage rail.");
+	assert.equal(byId.get("showOther")?.label, "Show API Models Window");
+	assert.equal(byId.get("showOther")?.description, "Show the Cursor API Models usage rail.");
+	assert.equal(byId.get("showPersonal")?.label, "Show Personal Usage Window");
 });
 
 test("custom bar character is used", () => {

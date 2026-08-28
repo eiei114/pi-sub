@@ -380,6 +380,24 @@ test("codex spark provider label uses Codex (Spark)", () => {
 	assert.equal(output?.includes("Codex Plan"), false);
 });
 
+test("cursor usage windows use clear display labels", () => {
+	const settings = getDefaultSettings();
+	const usage: UsageSnapshot = {
+		provider: "cursor",
+		displayName: "Cursor",
+		windows: [
+			{ label: "Models", usedPercent: 3 },
+			{ label: "Other", usedPercent: 0 },
+			{ label: "Personal", usedPercent: 10 },
+		],
+	};
+
+	const labels = usage.windows.map((window) =>
+		formatUsageWindowParts(theme, window, false, settings, usage).label,
+	);
+	assert.deepEqual(labels, ["Auto Models", "API Models", "Personal Usage"]);
+});
+
 test("context bar appears as leftmost element when enabled", () => {
 	const settings = getDefaultSettings();
 	settings.display.showContextBar = true;

@@ -282,17 +282,17 @@ export function buildProviderSettingsItems(settings: Settings, provider: Provide
 		items.push(
 			{
 				id: "showModels",
-				label: "Show Models Window",
+				label: "Show Auto Models Window",
 				currentValue: cursorSettings.windows.showModels ? "on" : "off",
 				values: ["on", "off"],
-				description: "Show the Cursor Models (auto) usage rail.",
+				description: "Show the Cursor Auto Models usage rail.",
 			},
 			{
 				id: "showOther",
-				label: "Show Other Window",
+				label: "Show API Models Window",
 				currentValue: cursorSettings.windows.showOther ? "on" : "off",
 				values: ["on", "off"],
-				description: "Show the Other Models usage rail.",
+				description: "Show the Cursor API Models usage rail.",
 			},
 			{
 				id: "showOnDemand",
@@ -303,7 +303,7 @@ export function buildProviderSettingsItems(settings: Settings, provider: Provide
 			},
 			{
 				id: "showPersonal",
-				label: "Show Personal Window",
+				label: "Show Personal Usage Window",
 				currentValue: cursorSettings.windows.showPersonal ? "on" : "off",
 				values: ["on", "off"],
 				description: "Show the legacy Personal Usage rail when present.",
