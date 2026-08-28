@@ -1,5 +1,15 @@
 # @eiei114/pi-sub-bar
 
+## 2.1.4
+
+### Patch Changes
+
+- [#47](https://github.com/eiei114/pi-sub/pull/47) [`4120687`](https://github.com/eiei114/pi-sub/commit/41206877de5f40b73f0b18b898b4a35222b90127) Thanks [@eiei114](https://github.com/eiei114)! - Clarify Cursor usage rail labels as Auto Models, API Models, and Personal Usage.
+
+- Updated dependencies []:
+  - @eiei114/pi-sub-core@2.1.4
+  - @eiei114/pi-sub-shared@2.1.4
+
 ## 2.1.3
 
 ### Patch Changes
