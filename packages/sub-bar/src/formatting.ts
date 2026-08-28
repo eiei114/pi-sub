@@ -39,6 +39,12 @@ export interface ContextInfo {
 
 type ModelInput = ModelInfo | string | undefined;
 
+const CURSOR_DISPLAY_WINDOW_LABELS: Record<string, string> = {
+	Models: "Auto Models",
+	Other: "API Models",
+	Personal: "Personal Usage",
+};
+
 function resolveModelInfo(model?: ModelInput): ModelInfo | undefined {
 	if (!model) return undefined;
 	return typeof model === "string" ? { id: model } : model;
@@ -54,8 +60,12 @@ function isCodexSparkWindow(window: RateWindow): boolean {
 	return tokens.includes("codex") && tokens.includes("spark");
 }
 
-function getDisplayWindowLabel(window: RateWindow, model?: ModelInput): string {
-	if (!isCodexSparkWindow(window)) return window.label;
+function getDisplayWindowLabel(window: RateWindow, model?: ModelInput, usage?: UsageSnapshot): string {
+	const displayLabel = usage?.provider === "cursor"
+		? CURSOR_DISPLAY_WINDOW_LABELS[window.label] ?? window.label
+		: window.label;
+
+	if (!isCodexSparkWindow(window)) return displayLabel;
 	if (!isCodexSparkModel(model)) return window.label;
 	const parts = window.label.trim().split(/\s+/);
 	const suffix = parts.at(-1) ?? "";
@@ -569,7 +579,7 @@ export function formatUsageWindowParts(
 	const resetContainment = settings?.display.resetTimeContainment ?? "()";
 	const leftSuffix = resetText && resetTimeFormat === "relative" && showUsageLabels ? " left" : "";
 
-	const displayLabel = getDisplayWindowLabel(window, model);
+	const displayLabel = getDisplayWindowLabel(window, model, usage);
 	const coloredTitle = applyBaseTextColor(theme, titleColor, displayLabel);
 	const titlePart = showWindowTitle ? (boldWindowTitle ? theme.bold(coloredTitle) : coloredTitle) : "";
 
