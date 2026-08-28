@@ -1,5 +1,13 @@
 # @eiei114/pi-sub-bar
 
+## 2.1.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @eiei114/pi-sub-core@2.1.3
+  - @eiei114/pi-sub-shared@2.1.3
+
 ## 2.1.2
 
 ### Patch Changes

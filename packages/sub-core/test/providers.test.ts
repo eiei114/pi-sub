@@ -950,6 +950,62 @@ test("opencode reports missing credentials", async () => {
 	assert.equal(usage.error?.code, "NO_CREDENTIALS");
 });
 
+test("opencode falls back to pi agent auth.json", async () => {
+	const provider = new OpenCodeProvider();
+	let authorization: string | undefined;
+	const home = "/home/test";
+	const { deps, files } = createDeps({
+		homedir: home,
+		fetch: async (_url, init) => {
+			authorization = (init as { headers?: { Authorization?: string } })?.headers?.Authorization;
+			return createJsonResponse({
+				usage: {
+					rolling: { percent: 6, status: "ok", resetsAt: "2099-01-01T00:00:00.000Z" },
+					weekly: { percent: 4, status: "ok", resetsAt: "2099-01-08T00:00:00.000Z" },
+				},
+			});
+		},
+	});
+	files.set(
+		path.join(home, ".pi", "agent", "auth.json"),
+		JSON.stringify({ "opencode-go": { type: "api_key", key: "pi-key" } })
+	);
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(authorization, "Bearer pi-key");
+	assertWindow(usage, "5h");
+	assertWindow(usage, "Week");
+	assert.equal(usage.windows.find((w) => w.label === "5h")?.usedPercent, 6);
+});
+
+test("opencode prefers opencode auth.json over pi agent auth.json", async () => {
+	const provider = new OpenCodeProvider();
+	let authorization: string | undefined;
+	const home = "/home/test";
+	const { deps, files } = createDeps({
+		homedir: home,
+		fetch: async (_url, init) => {
+			authorization = (init as { headers?: { Authorization?: string } })?.headers?.Authorization;
+			return createJsonResponse({
+				usage: {
+					rolling: { percent: 10, status: "ok", resetsAt: "2099-01-01T00:00:00.000Z" },
+				},
+			});
+		},
+	});
+	files.set(
+		path.join(home, ".local", "share", "opencode", "auth.json"),
+		JSON.stringify({ "opencode-go": { type: "api", key: "oc-key" } })
+	);
+	files.set(
+		path.join(home, ".pi", "agent", "auth.json"),
+		JSON.stringify({ "opencode-go": { type: "api_key", key: "pi-key" } })
+	);
+
+	await provider.fetchUsage(deps);
+	assert.equal(authorization, "Bearer oc-key");
+});
+
 test("opencode reports invalid responses", async () => {
 	const provider = new OpenCodeProvider();
 	const { deps } = createDeps({
