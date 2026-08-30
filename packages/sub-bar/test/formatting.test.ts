@@ -228,6 +228,26 @@ test("reset timer placement works without titles or usage labels", () => {
 	}
 });
 
+test("opencode monthly window hides when showMonth is off", () => {
+	const settings = getDefaultSettings();
+	const usage: UsageSnapshot = {
+		provider: "opencode",
+		displayName: "OpenCode",
+		windows: [
+			{ label: "5h", usedPercent: 10 },
+			{ label: "Week", usedPercent: 20 },
+			{ label: "Month", usedPercent: 30 },
+		],
+	};
+
+	assert.ok(shouldShowWindow(usage, usage.windows[2], settings));
+
+	settings.providers.opencode.windows.showMonth = false;
+	assert.equal(shouldShowWindow(usage, usage.windows[2], settings), false);
+	assert.ok(shouldShowWindow(usage, usage.windows[0], settings));
+	assert.ok(shouldShowWindow(usage, usage.windows[1], settings));
+});
+
 test("extras render even when usage windows are hidden", () => {
 	const settings = getDefaultSettings();
 	settings.providers.anthropic.windows.show5h = false;

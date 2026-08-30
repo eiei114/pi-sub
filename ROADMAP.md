@@ -18,9 +18,9 @@ up, so the planner always has an accurate picture of "what's next".
 
 | Package | Latest | Published | Release group |
 | --- | --- | --- | --- |
-| [`@eiei114/pi-sub-core`](https://www.npmjs.com/package/@eiei114/pi-sub-core) | `2.1.3` | 2026-08-28 | **fixed** |
-| [`@eiei114/pi-sub-bar`](https://www.npmjs.com/package/@eiei114/pi-sub-bar) | `2.1.3` | 2026-08-28 | **fixed** |
-| [`@eiei114/pi-sub-shared`](https://www.npmjs.com/package/@eiei114/pi-sub-shared) | `2.1.3` | 2026-08-28 | **fixed** |
+| [`@eiei114/pi-sub-core`](https://www.npmjs.com/package/@eiei114/pi-sub-core) | `2.1.4` | 2026-08-28 | **fixed** |
+| [`@eiei114/pi-sub-bar`](https://www.npmjs.com/package/@eiei114/pi-sub-bar) | `2.1.4` | 2026-08-28 | **fixed** |
+| [`@eiei114/pi-sub-shared`](https://www.npmjs.com/package/@eiei114/pi-sub-shared) | `2.1.4` | 2026-08-28 | **fixed** |
 | [`@eiei114/pi-sub-status`](https://www.npmjs.com/package/@eiei114/pi-sub-status) | `2.0.2` | 2026-08-03 | independent |
 
 - `2.0.0` was a **major** bump ([PR #13](https://github.com/eiei114/pi-sub/pull/13),
@@ -30,6 +30,7 @@ up, so the planner always has an accurate picture of "what's next".
 - `2.0.1` ([PR #18](https://github.com/eiei114/pi-sub/pull/18)) reconciled the
   published npm inventory with the workspace after the `2.0.0` release — no
   functional source changes.
+- `2.2.0` adds the OpenCode Monthly usage window, using `usage.monthly` (billing cycle) from the unofficial opencode.ai usage API; sub-bar shows `5h → Week → Month` and gains an `showMonth` window toggle (default on).
 - `2.1.3` adds a pi agent auth.json (`~/.pi/agent/auth.json`) fallback for the OpenCode Go API key so the usage widget works out of the box for pi sessions running the opencode-go provider.
 - `2.1.0` ([PR #35](https://github.com/eiei114/pi-sub/pull/35) / [Version Packages #36](https://github.com/eiei114/pi-sub/pull/36)) adds Cursor, OpenCode, and Command Code usage providers (unofficial APIs, soft-fail).
 - `2.1.2` ([PR #41](https://github.com/eiei114/pi-sub/pull/41) / [Version Packages #42](https://github.com/eiei114/pi-sub/pull/42)) fixes sub-core Settings crash on narrow terminals by truncating settings hint/help lines after `theme.hint`.

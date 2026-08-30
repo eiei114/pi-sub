@@ -328,6 +328,13 @@ export function buildProviderSettingsItems(settings: Settings, provider: Provide
 				values: ["on", "off"],
 				description: "Show the weekly usage window.",
 			},
+			{
+				id: "showMonth",
+				label: "Show Month Window",
+				currentValue: openCodeSettings.windows.showMonth ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the monthly (billing cycle) usage window.",
+			},
 		);
 	}
 

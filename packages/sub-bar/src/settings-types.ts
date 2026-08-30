@@ -302,6 +302,7 @@ export interface OpenCodeProviderSettings extends BaseProviderSettings {
 	windows: {
 		show5h: boolean;
 		showWeek: boolean;
+		showMonth: boolean;
 	};
 }
 
@@ -561,6 +562,7 @@ export function getDefaultSettings(): Settings {
 				windows: {
 					show5h: true,
 					showWeek: true,
+					showMonth: true,
 				},
 			},
 			"command-code": {
