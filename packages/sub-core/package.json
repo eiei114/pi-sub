@@ -1,6 +1,6 @@
 {
   "name": "@eiei114/pi-sub-core",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "description": "Shared usage data core for pi extensions",
   "keywords": [
     "pi-package"
@@ -32,7 +32,7 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@eiei114/pi-sub-shared": "^2.1.4"
+    "@eiei114/pi-sub-shared": "^2.2.0"
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "^0.80.0",

@@ -1,5 +1,17 @@
 # @eiei114/pi-sub-bar
 
+## 2.2.0
+
+### Minor Changes
+
+- [#49](https://github.com/eiei114/pi-sub/pull/49) [`fc591ad`](https://github.com/eiei114/pi-sub/commit/fc591ada8b90273295b7d1f0505c514b4d9933b6) Thanks [@eiei114](https://github.com/eiei114)! - Add Monthly usage window for OpenCode. The bar now shows `5h → Week → Month` for OpenCode Go plans using `usage.monthly` from the unofficial usage API, and sub-bar gains an `showMonth` window toggle (default on).
+
+### Patch Changes
+
+- Updated dependencies [[`fc591ad`](https://github.com/eiei114/pi-sub/commit/fc591ada8b90273295b7d1f0505c514b4d9933b6)]:
+  - @eiei114/pi-sub-core@2.2.0
+  - @eiei114/pi-sub-shared@2.2.0
+
 ## 2.1.4
 
 ### Patch Changes
