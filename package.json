@@ -19,7 +19,7 @@
     "format": "prettier --write .",
     "verify": "npm run check && npm run test && npm run lint",
     "changeset": "changeset",
-    "version": "changeset version",
+    "version": "changeset version && node scripts/sync-roadmap-versions.mjs",
     "release": "changeset publish"
   },
   "devDependencies": {
