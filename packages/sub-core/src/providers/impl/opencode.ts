@@ -146,9 +146,10 @@ export class OpenCodeProvider extends BaseProvider {
 			}
 
 			const windows: RateWindow[] = [];
-			// Primary quota: rolling 5h + weekly (plan: 1–2 windows).
+			// Primary quota: rolling 5h + weekly + monthly (billing cycle).
 			pushWindow(windows, "5h", data.usage?.rolling);
 			pushWindow(windows, "Week", data.usage?.weekly);
+			pushWindow(windows, "Month", data.usage?.monthly);
 
 			if (windows.length === 0) {
 				return this.emptySnapshot(apiError("Invalid OpenCode usage response"));

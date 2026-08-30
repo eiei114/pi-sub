@@ -169,6 +169,7 @@ const opencodeWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, wind
 	const ps = settings.providers.opencode;
 	if (window.label === "5h") return ps.windows.show5h;
 	if (window.label === "Week") return ps.windows.showWeek;
+	if (window.label === "Month") return ps.windows.showMonth;
 	return true;
 };
 

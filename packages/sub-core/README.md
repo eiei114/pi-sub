@@ -98,6 +98,7 @@ Legacy cache files next to the extension entry or in the agent root are migrated
 | Google Gemini | Pro/Flash quotas | ✅ | Aggregated by model family |
 | Antigravity | Model quotas | ✅ | Sandbox Cloud Code Assist quotas (tested) |
 | OpenAI Codex | Primary/secondary windows | ✅ | Credits not yet supported (PRs welcome!) |
+| OpenCode | 5h/Week/Month windows | - | Go subscription quotas from opencode.ai usage API; unofficial |
 | AWS Kiro | Credits | - | `kiro-cli /usage` (stdout+stderr); tested on Windows |
 | z.ai | Tokens/monthly limits | - | API quota limits |
 | Kimi for Coding | Week + 5h rolling windows | - | OAuth; tested with `pi-provider-kimi-code` |

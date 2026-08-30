@@ -907,6 +907,7 @@ test("opencode reads key from local auth.json", async () => {
 				usage: {
 					rolling: { percent: 10, status: "ok", resetsAt: "2099-01-01T00:00:00.000Z" },
 					weekly: { percent: 20, status: "ok", resetsAt: "2099-01-08T00:00:00.000Z" },
+					monthly: { percent: 30, status: "ok", resetsAt: "2099-02-01T00:00:00.000Z" },
 				},
 			});
 		},
@@ -920,7 +921,13 @@ test("opencode reads key from local auth.json", async () => {
 	assert.equal(authorization, "Bearer oc-key");
 	assertWindow(usage, "5h");
 	assertWindow(usage, "Week");
+	assertWindow(usage, "Month");
 	assert.equal(usage.windows.find((w) => w.label === "5h")?.usedPercent, 10);
+	assert.equal(usage.windows.find((w) => w.label === "Month")?.usedPercent, 30);
+	assert.deepEqual(
+		usage.windows.map((w) => w.label),
+		["5h", "Week", "Month"]
+	);
 });
 
 test("opencode reports http errors", async () => {
@@ -962,6 +969,7 @@ test("opencode falls back to pi agent auth.json", async () => {
 				usage: {
 					rolling: { percent: 6, status: "ok", resetsAt: "2099-01-01T00:00:00.000Z" },
 					weekly: { percent: 4, status: "ok", resetsAt: "2099-01-08T00:00:00.000Z" },
+					monthly: { percent: 8, status: "ok", resetsAt: "2099-02-01T00:00:00.000Z" },
 				},
 			});
 		},

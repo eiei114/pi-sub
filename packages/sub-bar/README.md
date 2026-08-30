@@ -34,6 +34,7 @@ https://github.com/user-attachments/assets/d61d82f6-afd0-45fc-82f3-69910543aa7a
 | Google Gemini | Pro/Flash quotas | ✅ |
 | Antigravity | Model quotas | ✅ |
 | OpenAI Codex | Primary/secondary windows | ✅ |
+| OpenCode | 5h/Week/Month windows | - |
 | AWS Kiro | Credits | - |
 | z.ai | Tokens/monthly limits | - |
 
@@ -46,6 +47,7 @@ https://github.com/user-attachments/assets/d61d82f6-afd0-45fc-82f3-69910543aa7a
 | Google Gemini | Pro, Flash | - | ✅ | - | Quotas aggregated per model family |
 | Antigravity | Models | - | ✅ | ✅ | Sandbox Cloud Code Assist quotas |
 | OpenAI Codex | Primary, Secondary | - | ✅ | ✅ | Credits not yet supported (PRs welcome!) |
+| OpenCode | 5h, Week, Month | - | - | ✅ | Go subscription quotas, unofficial API |
 | AWS Kiro | Credits | - | - | - | - |
 | z.ai | Tokens, Monthly | - | - | - | API quota limits |
 
