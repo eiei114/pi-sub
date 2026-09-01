@@ -1025,6 +1025,87 @@ test("opencode reports invalid responses", async () => {
 	assert.equal(usage.error?.code, "API_ERROR");
 });
 
+test("opencode falls back to stored credentials when the env key is stale (401)", async () => {
+	const provider = new OpenCodeProvider();
+	const home = "/home/test";
+	const authorization: string[] = [];
+	const { deps, files } = createDeps({
+		homedir: home,
+		env: { OPENCODE_API_KEY: "stale-env-key" },
+		fetch: async (_url, init) => {
+			const auth = (init as { headers?: { Authorization?: string } })?.headers?.Authorization;
+			authorization.push(auth ?? "");
+			if (auth === "Bearer stale-env-key") {
+				return createJsonResponse({}, { ok: false, status: 401 });
+			}
+			return createJsonResponse({
+				usage: {
+					rolling: { percent: 12, status: "ok", resetsAt: "2099-01-01T00:00:00.000Z" },
+				},
+			});
+		},
+	});
+	files.set(
+		path.join(home, ".pi", "agent", "auth.json"),
+		JSON.stringify({ "opencode-go": { type: "api_key", key: "valid-pi-key" } })
+	);
+
+	const usage = await provider.fetchUsage(deps);
+	assert.deepEqual(authorization, ["Bearer stale-env-key", "Bearer valid-pi-key"]);
+	assertWindow(usage, "5h");
+	assert.equal(usage.windows.find((w) => w.label === "5h")?.usedPercent, 12);
+});
+
+test("opencode reports the last auth error when every key is rejected", async () => {
+	const provider = new OpenCodeProvider();
+	const home = "/home/test";
+	const authorization: string[] = [];
+	const { deps, files } = createDeps({
+		homedir: home,
+		env: { OPENCODE_API_KEY: "stale-env-key" },
+		fetch: async (_url, init) => {
+			const auth = (init as { headers?: { Authorization?: string } })?.headers?.Authorization;
+			authorization.push(auth ?? "");
+			return createJsonResponse({}, { ok: false, status: 401 });
+		},
+	});
+	files.set(
+		path.join(home, ".pi", "agent", "auth.json"),
+		JSON.stringify({ "opencode-go": { type: "api_key", key: "also-stale-pi-key" } })
+	);
+
+	const usage = await provider.fetchUsage(deps);
+	assert.deepEqual(authorization, ["Bearer stale-env-key", "Bearer also-stale-pi-key"]);
+	assert.equal(usage.error?.code, "HTTP_ERROR");
+	assert.equal(usage.error?.httpStatus, 401);
+});
+
+test("opencode skips duplicate keys across sources", async () => {
+	const provider = new OpenCodeProvider();
+	const home = "/home/test";
+	let fetchCount = 0;
+	const { deps, files } = createDeps({
+		homedir: home,
+		env: { OPENCODE_API_KEY: "same-key" },
+		fetch: async () => {
+			fetchCount += 1;
+			return createJsonResponse({
+				usage: {
+					rolling: { percent: 1, status: "ok", resetsAt: "2099-01-01T00:00:00.000Z" },
+				},
+			});
+		},
+	});
+	files.set(
+		path.join(home, ".local", "share", "opencode", "auth.json"),
+		JSON.stringify({ "opencode-go": { type: "api", key: "same-key" } })
+	);
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(fetchCount, 1);
+	assertWindow(usage, "5h");
+});
+
 test("command-code parses 5h/week windows and credit extras", async () => {
 	const provider = new CommandCodeProvider();
 	const home = "/home/test";

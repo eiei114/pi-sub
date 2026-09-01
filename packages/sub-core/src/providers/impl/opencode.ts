@@ -72,20 +72,27 @@ function keyFromAuthFile(deps: Dependencies, filePath: string): string | undefin
 }
 
 /**
- * Read OpenCode Go API key from env, OPENCODE_AUTH_CONTENT, opencode auth.json,
- * or pi's agent auth.json (fallback for pi's own opencode-go provider credential).
+ * Collect OpenCode Go API key candidates in priority order: env,
+ * OPENCODE_AUTH_CONTENT, opencode auth.json, then pi's agent auth.json
+ * (fallback for pi's own opencode-go provider credential).
+ *
+ * Duplicates are removed and stale keys are not trusted blindly: fetchUsage
+ * tries each candidate in order and only accepts one that authenticates.
  */
-function loadOpenCodeApiKey(deps: Dependencies): string | undefined {
-	const envKey = normalizeApiKey(deps.env.OPENCODE_API_KEY ?? deps.env.OPENCODE_GO_API_KEY);
-	if (envKey) return envKey;
+function loadOpenCodeApiKeys(deps: Dependencies): string[] {
+	const candidates: string[] = [];
+	const push = (key: string | undefined) => {
+		const normalized = normalizeApiKey(key);
+		if (normalized && !candidates.includes(normalized)) {
+			candidates.push(normalized);
+		}
+	};
 
-	const fromEnvContent = keyFromAuthContent(deps.env.OPENCODE_AUTH_CONTENT);
-	if (fromEnvContent) return fromEnvContent;
-
-	return (
-		keyFromAuthFile(deps, authFilePath(deps))
-		?? keyFromAuthFile(deps, piAuthFilePath(deps))
-	);
+	push(normalizeApiKey(deps.env.OPENCODE_API_KEY ?? deps.env.OPENCODE_GO_API_KEY));
+	push(keyFromAuthContent(deps.env.OPENCODE_AUTH_CONTENT));
+	push(keyFromAuthFile(deps, authFilePath(deps)));
+	push(keyFromAuthFile(deps, piAuthFilePath(deps)));
+	return candidates;
 }
 
 function pushWindow(
@@ -112,15 +119,10 @@ export class OpenCodeProvider extends BaseProvider {
 	readonly displayName = "OpenCode";
 
 	hasCredentials(deps: Dependencies): boolean {
-		return Boolean(loadOpenCodeApiKey(deps));
+		return loadOpenCodeApiKeys(deps).length > 0;
 	}
 
-	async fetchUsage(deps: Dependencies): Promise<UsageSnapshot> {
-		const apiKey = loadOpenCodeApiKey(deps);
-		if (!apiKey) {
-			return this.emptySnapshot(noCredentials());
-		}
-
+	private async fetchUsageWithKey(deps: Dependencies, apiKey: string): Promise<UsageSnapshot> {
 		const { controller, clear } = createTimeoutController(API_TIMEOUT_MS);
 
 		try {
@@ -160,5 +162,29 @@ export class OpenCodeProvider extends BaseProvider {
 			clear();
 			return this.emptySnapshot(fetchFailed());
 		}
+	}
+
+	async fetchUsage(deps: Dependencies): Promise<UsageSnapshot> {
+		const candidates = loadOpenCodeApiKeys(deps);
+		if (candidates.length === 0) {
+			return this.emptySnapshot(noCredentials());
+		}
+
+		// Try each candidate until one authenticates. A stale env key must not
+		// shadow valid stored credentials: only auth failures (401/403) fall
+		// through; network errors and malformed responses are final.
+		let lastResult: UsageSnapshot | undefined;
+		for (let i = 0; i < candidates.length; i += 1) {
+			const result = await this.fetchUsageWithKey(deps, candidates[i]);
+			lastResult = result;
+			const error = result.error;
+			const isAuthError =
+				error?.code === "HTTP_ERROR" &&
+				(error.httpStatus === 401 || error.httpStatus === 403);
+			if (!isAuthError || i === candidates.length - 1) {
+				return result;
+			}
+		}
+		return lastResult ?? this.emptySnapshot(noCredentials());
 	}
 }
