@@ -12,6 +12,12 @@ export interface StorageAdapter {
 	exists(path: string): boolean;
 	removeFile(path: string): void;
 	ensureDir(path: string): void;
+	/**
+	 * Optional file modification time in ms since epoch. Used to age-check
+	 * unparseable (e.g. empty, crash-leftover) lock files so they can be
+	 * reclaimed instead of blocking refreshes forever.
+	 */
+	mtimeMs?(filePath: string): number | undefined;
 }
 
 export function createFsStorage(): StorageAdapter {
@@ -42,6 +48,14 @@ export function createFsStorage(): StorageAdapter {
 				fs.unlinkSync(filePath);
 			} catch {
 				// Ignore remove errors
+			}
+		},
+		mtimeMs(filePath: string): number | undefined {
+			try {
+				const stat = fs.statSync(filePath);
+				return stat.mtimeMs;
+			} catch {
+				return undefined;
 			}
 		},
 		ensureDir(dirPath: string): void {

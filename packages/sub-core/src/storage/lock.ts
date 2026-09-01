@@ -17,10 +17,12 @@ export function tryAcquireFileLock(lockPath: string, staleAfterMs: number): stri
 	}
 
 	const observed = readLockRecord(storage, lockPath);
-	if (!observed) {
-		return null;
-	}
-	if (!isLockStale(observed.acquiredAt, staleAfterMs)) {
+	const stale = observed
+		? isLockStale(observed.acquiredAt, staleAfterMs)
+		: isLockFileStale(storage, lockPath, staleAfterMs);
+	if (!stale) {
+		// Fresh lock held by another process, or an unparseable lock we
+		// cannot age-check yet (likely mid-write). Treat as held.
 		return null;
 	}
 	if (!removeObservedStaleLock(storage, lockPath, observed)) {
@@ -80,24 +82,51 @@ function tryCreateLock(storage: ReturnType<typeof getStorage>, lockPath: string,
 function removeObservedStaleLock(
 	storage: ReturnType<typeof getStorage>,
 	lockPath: string,
-	observed: LockRecord
+	observed: LockRecord | null
 ): boolean {
 	try {
-		const current = readLockRecord(storage, lockPath);
-		if (!current) {
-			return false;
-		}
-		if (current.acquiredAt !== observed.acquiredAt) {
-			return false;
-		}
-		if (current.token !== observed.token) {
-			return false;
+		if (observed) {
+			const current = readLockRecord(storage, lockPath);
+			if (!current) {
+				return false;
+			}
+			if (current.acquiredAt !== observed.acquiredAt) {
+				return false;
+			}
+			if (current.token !== observed.token) {
+				return false;
+			}
+		} else {
+			// observed was an unparseable (empty/corrupt) lock file: only remove it
+			// while it is still unparseable, so a concurrent writer that just
+			// created a fresh valid lock is never clobbered.
+			if (readLockRecord(storage, lockPath) !== null) {
+				return false;
+			}
 		}
 		storage.removeFile(lockPath);
 		return !storage.exists(lockPath);
 	} catch {
 		return false;
 	}
+}
+
+/**
+ * An unparseable lock file (e.g. empty, leftover from a crashed process) is
+ * only reclaimable once it is older than the stale window. Without a parseable
+ * record we fall back to the file mtime; storages without mtime support keep
+ * the previous behavior (treated as held) to avoid deleting a live writer's
+ * in-flight lock.
+ */
+function isLockFileStale(storage: ReturnType<typeof getStorage>, lockPath: string, staleAfterMs: number): boolean {
+	if (staleAfterMs <= 0) {
+		return true;
+	}
+	const mtimeMs = storage.mtimeMs?.(lockPath);
+	if (mtimeMs === undefined) {
+		return false;
+	}
+	return Date.now() - mtimeMs > staleAfterMs;
 }
 
 function readLockRecord(storage: ReturnType<typeof getStorage>, lockPath: string): LockRecord | null {
