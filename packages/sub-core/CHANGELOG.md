@@ -1,5 +1,27 @@
 # @eiei114/pi-sub-core
 
+## 2.2.1
+
+### Patch Changes
+
+- [#52](https://github.com/eiei114/pi-sub/pull/52) [`2095068`](https://github.com/eiei114/pi-sub/commit/20950683b09cff0bbf5146419dfef71023a5dcdb) Thanks [@eiei114](https://github.com/eiei114)! - fix(sub-core): fall back to stored OpenCode credentials when the env key is stale
+
+  A stale `OPENCODE_API_KEY` env var shadowed valid stored credentials (opencode auth.json /
+  pi agent auth.json) and permanently returned 401, hiding the OpenCode usage windows. The
+  provider now tries every credential candidate in priority order and only accepts one that
+  authenticates, so an expired env key no longer blocks the stored key.
+
+- [#52](https://github.com/eiei114/pi-sub/pull/52) [`576e257`](https://github.com/eiei114/pi-sub/commit/576e2579fd87c9f6c5e1e427c9e4cdfd47a21d22) Thanks [@eiei114](https://github.com/eiei114)! - fix(sub-core): reclaim unparseable lock files that permanently block usage refresh
+
+  An empty/corrupt `cache.lock` (e.g. leftover from a hard-killed process) was never reclaimed
+  because stale-lock detection only handled parseable records. Every refresh then fell back to
+  the last cached usage forever, so macOS bars could show a frozen `0%` even while the API was
+  healthy. Unparseable lock files are now age-checked via file mtime and reclaimed past the stale
+  window.
+
+- Updated dependencies []:
+  - @eiei114/pi-sub-shared@2.2.1
+
 ## 2.2.0
 
 ### Minor Changes
