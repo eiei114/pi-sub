@@ -25,6 +25,8 @@ Initial changes in this fork:
 - Cache lock ownership is safer so one process does not release another process's lock.
 - `turn_end` and `tool_result` refreshes now respect the cache TTL instead of forcing network requests every turn.
 
+See [docs/WINDOWS_CACHE_CONTRACT.md](docs/WINDOWS_CACHE_CONTRACT.md) for the exact cache/lock/TTL contract and the source files that implement it.
+
 ## Overview
 
 - **sub-core**: fetches usage + status, manages cache/locks, owns provider selection, and emits updates via `pi.events`.
