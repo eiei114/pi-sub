@@ -473,3 +473,23 @@ test("context bar not shown when contextWindow is 0", () => {
 	assert.ok(!output.includes("Ctx"));
 
 });
+
+test("narrow widths keep percent with top priority", () => {
+	const settings = getDefaultSettings();
+	settings.display.barWidth = 6;
+	const usage = buildUsage();
+	for (const width of [30, 20, 15, 12, 10, 8, 6, 4, 2]) {
+		const output = formatUsageStatusWithWidth(theme, usage, width, undefined, settings);
+		assert.ok(output !== undefined, `width ${width} must return a line`);
+		assert.ok(visibleWidth(output) <= width, `width ${width} overflows: ${JSON.stringify(output)}`);
+		assert.ok(output.includes("%"), `width ${width} must keep percent: ${JSON.stringify(output)}`);
+	}
+});
+
+test("narrow widths hide when even percent cannot fit", () => {
+	const settings = getDefaultSettings();
+	settings.display.barWidth = 6;
+	const output = formatUsageStatusWithWidth(theme, buildUsage(), 1, undefined, settings);
+	assert.ok(output !== undefined);
+	assert.ok(visibleWidth(output) <= 1, `must fit width 1: ${JSON.stringify(output)}`);
+});

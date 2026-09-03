@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import type { ProviderStatus, UsageSnapshot } from "@eiei114/pi-sub-shared";
-import { formatCompactStatus } from "../src/format.js";
+import { formatCompactStatus, formatCompactStatusWithWidth } from "../src/format.js";
 
 function buildUsage(overrides?: Partial<UsageSnapshot>): UsageSnapshot {
 	return {
@@ -106,4 +106,22 @@ test("returns undefined for missing usage", () => {
 
 test("returns undefined for usage with no windows", () => {
 	assert.equal(formatCompactStatus(buildUsage({ windows: [] })), undefined);
+});
+
+test("width-aware compact status keeps full text when it fits", () => {
+	assert.equal(formatCompactStatusWithWidth(buildUsage(), 80), "3h4m 3% · 6d11h 7%");
+});
+
+test("width-aware compact status keeps percent with top priority on narrow widths", () => {
+	const usage = buildUsage();
+	for (const width of [20, 15, 10, 8, 6, 5, 4, 2]) {
+		const output = formatCompactStatusWithWidth(usage, width);
+		assert.ok(output !== undefined, `width ${width} must return a line`);
+		assert.ok(Array.from(output).length <= width, `width ${width} overflows: ${JSON.stringify(output)}`);
+		assert.ok(output.includes("%"), `width ${width} must keep percent: ${JSON.stringify(output)}`);
+	}
+});
+
+test("width-aware compact status hides when even percent cannot fit", () => {
+	assert.equal(formatCompactStatusWithWidth(buildUsage(), 1), "");
 });

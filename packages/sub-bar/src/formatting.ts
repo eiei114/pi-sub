@@ -704,6 +704,85 @@ export function formatUsageStatus(
 	return label + labelGap + parts.join(divider);
 }
 
+/**
+ * Percent-first fallback for narrow widths.
+ *
+ * Priority (highest first): percent > window title > bar > reset timer >
+ * provider label > extras > dividers.
+ *
+ * Degraded candidates join with a single ASCII space and the narrowest levels
+ * use pure ASCII percent text, so the measured width is identical on macOS
+ * and Windows. If even the first window percent does not fit, returns "" so
+ * callers hide the line instead of showing a misleading partial percent.
+ */
+function formatPercentPriorityFallback(
+	theme: Theme,
+	windows: RateWindow[],
+	invertUsage: boolean,
+	usage: UsageSnapshot,
+	settings: Settings | undefined,
+	modelInfo: ModelInfo | undefined,
+	contextWindowIndex: number,
+	width: number,
+): string {
+	const asciiGap = ' ';
+	const fixedBarWidth = typeof settings?.display.barWidth === 'number' ? settings.display.barWidth : 0;
+	const renderWindow = (
+		w: RateWindow,
+		i: number,
+		displayOverrides: Partial<Settings['display']>,
+		barWidthOverride: number,
+	): string => {
+		const merged = {
+			...(settings ?? {}),
+			display: { ...(settings?.display ?? {}), containBar: false, ...displayOverrides },
+		} as Settings;
+		return formatUsageWindow(
+			theme,
+			w,
+			i === contextWindowIndex ? false : invertUsage,
+			merged,
+			i === contextWindowIndex ? undefined : usage,
+			{ barWidthOverride },
+			modelInfo,
+		);
+	};
+	const nonEmpty = (parts: string[]): string => parts.filter(Boolean).join(asciiGap);
+	const candidates: string[] = [
+		// L1: drop provider label + extras, keep everything else.
+		nonEmpty(windows.map((w, i) => renderWindow(w, i, {}, fixedBarWidth))),
+		// L2: also drop reset timers.
+		nonEmpty(windows.map((w, i) => renderWindow(w, i, { resetTimePosition: 'off' }, fixedBarWidth))),
+		// L3: also drop bars, keep title + percent.
+		nonEmpty(windows.map((w, i) => renderWindow(w, i, { resetTimePosition: 'off', barStyle: 'percentage' }, 0))),
+		// L4: percent-only (suffix kept when configured).
+		nonEmpty(
+			windows.map((w, i) =>
+				renderWindow(w, i, { resetTimePosition: 'off', barStyle: 'percentage', showWindowTitle: false }, 0),
+			),
+		),
+	];
+	// L5: shortest percent-only with no usage-label suffix.
+	const shortPcts = windows
+		.map((w, i) =>
+			renderWindow(
+				w,
+				i,
+				{ resetTimePosition: 'off', barStyle: 'percentage', showWindowTitle: false, showUsageLabels: false },
+				0,
+			),
+		)
+		.filter(Boolean);
+	candidates.push(nonEmpty(shortPcts));
+	// L6: first window percent only (minimal display).
+	const firstPct = shortPcts[0];
+	if (firstPct) candidates.push(firstPct);
+	for (const candidate of candidates) {
+		if (candidate && visibleWidth(candidate) <= width) return candidate;
+	}
+	return '';
+}
+
 export function formatUsageStatusWithWidth(
 	theme: Theme,
 	usage: UsageSnapshot,
@@ -934,7 +1013,22 @@ export function formatUsageStatusWithWidth(
 	output += rest;
 
 	if (width > 0 && visibleWidth(output) > width) {
-		return truncateToWidth(output, width, "");
+		if (windows.length > 0) {
+			const fallback = formatPercentPriorityFallback(
+				theme,
+				windows,
+				invertUsage,
+				usage,
+				settings,
+				modelInfo,
+				contextWindowIndex,
+				width,
+			);
+			if (fallback && visibleWidth(fallback) <= width) return fallback;
+			// Even the minimal percent does not fit: hide instead of a misleading partial.
+			if (fallback === '') return '';
+		}
+		return truncateToWidth(output, width, '');
 	}
 
 	return output;

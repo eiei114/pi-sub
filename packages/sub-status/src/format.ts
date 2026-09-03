@@ -61,3 +61,32 @@ export function formatCompactStatus(usage: UsageSnapshot | undefined): string | 
 
 	return parts.join(" · ");
 }
+
+function textWidth(text: string): number {
+	return Array.from(text).length;
+}
+
+/**
+ * Width-aware compact status with percent top priority.
+ *
+ * Priority (highest first): percent > window label > stale/incident suffixes.
+ * Degraded levels join with a single ASCII space and the narrowest levels use
+ * pure ASCII percent text, so the result is identical on macOS and Windows.
+ * Returns "" when even the first window percent does not fit, so callers hide
+ * the line instead of showing a misleading partial percent.
+ */
+export function formatCompactStatusWithWidth(usage: UsageSnapshot | undefined, width: number): string | undefined {
+	const full = formatCompactStatus(usage);
+	if (full === undefined) return undefined;
+	if (!(width > 0)) return full;
+	if (textWidth(full) <= width) return full;
+	if (!usage || usage.windows.length === 0) return full;
+	const windows = usage.windows.slice(0, 2);
+	const labeled = windows.map(formatWindow).filter(Boolean).join(' ');
+	if (labeled && textWidth(labeled) <= width) return labeled;
+	const pcts = windows.map((w) => `${clampPercent(w.usedPercent)}%`).join(' ');
+	if (pcts && textWidth(pcts) <= width) return pcts;
+	const first = windows.length > 0 ? `${clampPercent(windows[0].usedPercent)}%` : '';
+	if (first && textWidth(first) <= width) return first;
+	return '';
+}
