@@ -89,7 +89,7 @@ pi.on("turn_end", async (_event, ctx) => {
 });
 ```
 
-`refresh()` in `src/usage/controller.ts` reads the on-disk cache via `getCachedData(provider, settings.behavior.refreshInterval * 1000)` before calling `fetchUsageForProvider()`. `fetchUsageForProvider()` in `src/usage/fetch.ts` checks the minimum refresh interval before the TTL/force logic. While a cached usage entry is within `behavior.minRefreshInterval`, it returns cached usage without a network request. Otherwise, it skips the network while the entry is within the TTL unless `options.force === true`.
+`refresh()` in `src/usage/controller.ts` reads the on-disk cache via `getCachedData(provider, settings.behavior.refreshInterval * 1000)` before calling `fetchUsageForProvider()`. `fetchUsageForProvider()` in `src/usage/fetch.ts` checks the minimum refresh interval before the TTL/force logic. While a cached usage entry is within `behavior.minRefreshInterval`, it returns cached usage without a network request. Otherwise, while the entry is within the TTL it skips the usage fetch unless `options.force === true`; a TTL cache hit can still call `refreshStatusForProvider()` when `options.forceStatus === true`.
 
 Default behavior settings (`behavior.refreshInterval`, typically 60 s) define the TTL window. A separate minimum interval (`behavior.minRefreshInterval`, typically 10 s) applies before the TTL/force logic to cached usage fetches, including status refresh calls.
 
