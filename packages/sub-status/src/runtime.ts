@@ -1,6 +1,6 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import type { SubCoreState } from "@eiei114/pi-sub-shared";
-import { formatCompactStatus } from "./format.js";
+import { formatCompactStatusWithWidth } from "./format.js";
 
 const STATUS_KEY = "sub-status:usage";
 const DEFAULT_PROBE_TIMEOUT_MS = 200;
@@ -109,7 +109,9 @@ export function createStatusRuntime(pi: ExtensionAPI, dependencies: RuntimeDepen
 	const logWarning = dependencies.logWarning ?? ((message: string, error: unknown) => console.warn(`${message}:`, error));
 
 	function renderStatus(ctx: ExtensionContext, state: SubCoreState | undefined): void {
-		const nextStatus = formatCompactStatus(state?.usage);
+		const columns = typeof process.stdout?.columns === "number" ? process.stdout.columns : 80;
+		const terminalWidth = columns > 0 ? columns : 80;
+		const nextStatus = formatCompactStatusWithWidth(state?.usage, terminalWidth);
 		if (nextStatus === lastRenderedStatus) {
 			return;
 		}
