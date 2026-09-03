@@ -1,5 +1,12 @@
 # @eiei114/pi-sub-core
 
+## 2.2.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @eiei114/pi-sub-shared@2.2.2
+
 ## 2.2.1
 
 ### Patch Changes

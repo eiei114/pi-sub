@@ -1,5 +1,15 @@
 # @eiei114/pi-sub-status
 
+## 2.0.3
+
+### Patch Changes
+
+- [#56](https://github.com/eiei114/pi-sub/pull/56) [`ddc685b`](https://github.com/eiei114/pi-sub/commit/ddc685b5d813d119ee1e75c92602c36972a40e0d) Thanks [@eiei114](https://github.com/eiei114)! - Keep usage percent visible with top priority on narrow terminals. Narrow widths now degrade in priority order (percent first, dividers and provider chrome last) using ASCII-only minimal text so macOS and Windows render identically. Lines hide only when even the first window percent cannot fit.
+
+- Updated dependencies []:
+  - @eiei114/pi-sub-core@2.2.2
+  - @eiei114/pi-sub-shared@2.2.2
+
 ## 2.0.2
 
 ### Patch Changes
