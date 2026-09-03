@@ -499,13 +499,23 @@ export default function createExtension(pi: ExtensionAPI) {
 			? { tokens: ctxUsage.tokens ?? 0, contextWindow: ctxUsage.contextWindow, percent: ctxUsage.percent ?? 0 }
 			: undefined;
 
-		const formatted = message
+		let formatted = message
 			? applyBaseTextColor(theme, baseTextColor, message)
 			: (!usage)
 				? undefined
 				: (hasFill || wantsSplit)
 					? formatUsageStatusWithWidth(theme, usage, innerWidth, modelInfo, settings, { labelGapFill: wantsSplit }, contextInfo)
 					: formatUsageStatus(theme, usage, modelInfo, settings, contextInfo);
+
+		// Narrow fixed-width path: formatUsageStatus has no width budget, so the
+		// outer truncate below would cut trailing percent text first. Re-render
+		// with the width-aware formatter so percent (top priority) survives.
+		if (!message && usage && formatted && innerWidth > 0 && visibleWidth(formatted) > innerWidth && !hasFill && !wantsSplit) {
+			const squeezed = formatUsageStatusWithWidth(theme, usage, innerWidth, modelInfo, settings, { labelGapFill: wantsSplit }, contextInfo);
+			if (squeezed !== undefined && (squeezed === '' || visibleWidth(squeezed) <= innerWidth)) {
+				formatted = squeezed;
+			}
+		}
 
 		const alignLine = (line: string) => {
 			if (!shouldAlign) return line;
@@ -603,6 +613,11 @@ export default function createExtension(pi: ExtensionAPI) {
 				if (settings.display.statusTrailingDivider) {
 					statusLine = `${statusLine}${edgeDivider}`;
 				}
+			}
+			// Percent priority: edge dividers are lowest priority. Drop them
+			// before truncating so narrow status lines keep percent text.
+			if (visibleWidth(statusLine) > terminalWidth) {
+				statusLine = lines.join(' ');
 			}
 			ctx.ui.setStatus("sub-bar", truncateToWidth(statusLine, terminalWidth, theme.fg("dim", "...")));
 			return;
