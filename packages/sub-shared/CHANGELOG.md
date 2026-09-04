@@ -1,5 +1,11 @@
 # @eiei114/pi-sub-shared
 
+## 2.2.3
+
+### Patch Changes
+
+- [#58](https://github.com/eiei114/pi-sub/pull/58) [`a304bb7`](https://github.com/eiei114/pi-sub/commit/a304bb7ec274a5d65031431f918a03427b1bb747) Thanks [@eiei114](https://github.com/eiei114)! - Republish the unpublished 2.2.2 payload as 2.2.3. The npm publish of `@eiei114/pi-sub-shared@2.2.2` failed during the 2.2.2 release, leaving `core/bar@2.2.2` and `status@2.0.3` requiring a `shared@^2.2.2` that does not exist on the registry.
+
 ## 2.2.2
 
 ## 2.2.1
