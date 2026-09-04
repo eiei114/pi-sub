@@ -1,5 +1,13 @@
 # @eiei114/pi-sub-bar
 
+## 2.2.3
+
+### Patch Changes
+
+- Updated dependencies [[`a304bb7`](https://github.com/eiei114/pi-sub/commit/a304bb7ec274a5d65031431f918a03427b1bb747)]:
+  - @eiei114/pi-sub-shared@2.2.3
+  - @eiei114/pi-sub-core@2.2.3
+
 ## 2.2.2
 
 ### Patch Changes
