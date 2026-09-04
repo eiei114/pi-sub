@@ -21,7 +21,7 @@ up, so the planner always has an accurate picture of "what's next".
 | [`@eiei114/pi-sub-core`](https://www.npmjs.com/package/@eiei114/pi-sub-core) | `2.2.3` | 2026-08-28 | **fixed** |
 | [`@eiei114/pi-sub-bar`](https://www.npmjs.com/package/@eiei114/pi-sub-bar) | `2.2.3` | 2026-08-28 | **fixed** |
 | [`@eiei114/pi-sub-shared`](https://www.npmjs.com/package/@eiei114/pi-sub-shared) | `2.2.3` | 2026-08-28 | **fixed** |
-| [`@eiei114/pi-sub-status`](https://www.npmjs.com/package/@eiei114/pi-sub-status) | `2.0.3` | 2026-08-03 | independent |
+| [`@eiei114/pi-sub-status`](https://www.npmjs.com/package/@eiei114/pi-sub-status) | `2.0.4` | 2026-08-03 | independent |
 
 - `2.0.0` was a **major** bump ([PR #13](https://github.com/eiei114/pi-sub/pull/13),
   DOT-771): the Pi SDK peer dependency moved from the frozen `@mariozechner/*`

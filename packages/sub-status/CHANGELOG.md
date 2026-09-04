@@ -1,5 +1,11 @@
 # @eiei114/pi-sub-status
 
+## 2.0.4
+
+### Patch Changes
+
+- [#60](https://github.com/eiei114/pi-sub/pull/60) [`51aa19b`](https://github.com/eiei114/pi-sub/commit/51aa19b2f94d3e461a6d3f881060f1c36124616a) Thanks [@eiei114](https://github.com/eiei114)! - Align status internal deps to the 2.2.3 line. status@2.0.3 requires shared@^2.2.2 and core@^2.2.2, but shared@2.2.2 was never published (registry only has up to 2.2.1), breaking npm install @latest with ETARGET. This republish lets Version Packages rewrite the ranges to ^2.2.3 once shared/core/bar@2.2.3 ([#59](https://github.com/eiei114/pi-sub/issues/59)) are published.
+
 ## 2.0.3
 
 ### Patch Changes
