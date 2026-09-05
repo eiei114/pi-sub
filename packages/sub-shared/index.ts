@@ -45,9 +45,26 @@ export interface UsageSnapshot {
 	requestsSummary?: string;
 	requestsRemaining?: number;
 	requestsEntitlement?: number;
+	/** Account-level (wallet) credit. Never used for per-key spending caps. */
 	creditTotal?: number;
 	creditUsage?: number;
 	creditRemaining?: number;
+	/**
+	 * True when account-level credit was attempted but could not be read on this
+	 * refresh. Distinguishes "wallet unknown" from "wallet is empty", and keeps
+	 * callers from presenting stale wallet numbers as fresh.
+	 */
+	creditUnavailable?: boolean;
+	/**
+	 * Spending cap of the credential in use, in account currency.
+	 * `null` means the credential has no cap (which is not the same as an
+	 * unlimited wallet); omitted means the cap could not be determined.
+	 */
+	keyLimit?: number | null;
+	/** Remaining amount of `keyLimit` as reported by the provider (never derived). */
+	keyRemaining?: number;
+	/** Amount already spent on the credential in use. */
+	keyUsage?: number;
 }
 
 export type UsageErrorCode =

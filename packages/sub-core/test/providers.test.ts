@@ -9,7 +9,6 @@ import { CodexProvider } from "../src/providers/impl/codex.js";
 import { KiroProvider } from "../src/providers/impl/kiro.js";
 import { ZaiProvider } from "../src/providers/impl/zai.js";
 import { KimiCodingProvider } from "../src/providers/impl/kimi-coding.js";
-import { OpenRouterProvider } from "../src/providers/impl/openrouter.js";
 import { CursorProvider } from "../src/providers/impl/cursor.js";
 import { OpenCodeProvider } from "../src/providers/impl/opencode.js";
 import { CommandCodeProvider } from "../src/providers/impl/command-code.js";
@@ -214,113 +213,6 @@ test("zai reads token from ZAI_API_KEY env var", async () => {
 
 	await provider.fetchUsage(deps);
 	assert.equal(authorization, "Bearer z-token");
-});
-
-test("openrouter reads token from OPENROUTER_API_KEY env var", async () => {
-	const provider = new OpenRouterProvider();
-	let authorization: string | undefined;
-
-	const { deps } = createDeps({
-		env: { OPENROUTER_API_KEY: "or-token" },
-		fetch: async (_url, init) => {
-			authorization = (init as any)?.headers?.Authorization;
-			return createJsonResponse({ data: { total_credits: 10, total_usage: 2 } });
-		},
-	});
-
-	await provider.fetchUsage(deps);
-	assert.equal(authorization, "Bearer or-token");
-});
-
-test("openrouter env token overrides auth.json", async () => {
-	const provider = new OpenRouterProvider();
-	let authorization: string | undefined;
-
-	const { deps, files } = createDeps({
-		env: { OPENROUTER_API_KEY: "env-token" },
-		fetch: async (_url, init) => {
-			authorization = (init as any)?.headers?.Authorization;
-			return createJsonResponse({ data: { total_credits: 10, total_usage: 1 } });
-		},
-	});
-	withAuth(files, { openrouter: { access: "file-token" } }, deps.homedir());
-
-	await provider.fetchUsage(deps);
-	assert.equal(authorization, "Bearer env-token");
-});
-
-test("openrouter parses credits and usage window", async () => {
-	const provider = new OpenRouterProvider();
-	const { deps, files } = createDeps({
-		fetch: async () => createJsonResponse({ data: { total_credits: 20, total_usage: 5 } }),
-	});
-	withAuth(files, { openrouter: { access: "token" } }, deps.homedir());
-
-	const usage = await provider.fetchUsage(deps);
-	assertWindow(usage, "Credits");
-	assert.equal(usage.windows[0]?.usedPercent, 25);
-	assert.equal(usage.creditTotal, 20);
-	assert.equal(usage.creditUsage, 5);
-	assert.equal(usage.creditRemaining, 15);
-});
-
-test("openrouter reports http errors", async () => {
-	const provider = new OpenRouterProvider();
-	const { deps, files } = createDeps({
-		fetch: async () => createJsonResponse({}, { ok: false, status: 401 }),
-	});
-	withAuth(files, { openrouter: { access: "token" } }, deps.homedir());
-
-	const usage = await provider.fetchUsage(deps);
-	assert.equal(usage.error?.code, "HTTP_ERROR");
-});
-
-test("openrouter reports invalid API responses", async () => {
-	const provider = new OpenRouterProvider();
-	const { deps, files } = createDeps({
-		fetch: async () => createJsonResponse({ data: { total_credits: "10" } }),
-	});
-	withAuth(files, { openrouter: { access: "token" } }, deps.homedir());
-
-	const usage = await provider.fetchUsage(deps);
-	assert.equal(usage.error?.code, "API_ERROR");
-});
-
-test("openrouter clamps creditRemaining when usage exceeds credits", async () => {
-	const provider = new OpenRouterProvider();
-	const { deps, files } = createDeps({
-		fetch: async () => createJsonResponse({ data: { total_credits: 10, total_usage: 15 } }),
-	});
-	withAuth(files, { openrouter: { access: "token" } }, deps.homedir());
-
-	const usage = await provider.fetchUsage(deps);
-	assert.equal(usage.creditRemaining, 0);
-	assert.equal(usage.windows[0]?.usedPercent, 100);
-});
-
-test("openrouter reports malformed JSON as API error", async () => {
-	const provider = new OpenRouterProvider();
-	const { deps, files } = createDeps({
-		fetch: async () => ({
-			ok: true,
-			status: 200,
-			json: async () => {
-				throw new SyntaxError("Unexpected token");
-			},
-		}),
-	});
-	withAuth(files, { openrouter: { access: "token" } }, deps.homedir());
-
-	const usage = await provider.fetchUsage(deps);
-	assert.equal(usage.error?.code, "API_ERROR");
-});
-
-test("openrouter reports missing credentials", async () => {
-	const provider = new OpenRouterProvider();
-	const { deps } = createDeps();
-
-	const usage = await provider.fetchUsage(deps);
-	assert.equal(usage.error?.code, "NO_CREDENTIALS");
 });
 
 test("copilot handles missing quota snapshots", async () => {
