@@ -200,7 +200,7 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 	},
 	zai: {
 		displayName: "z.ai",
-		detection: { providerTokens: ["zai", "z.ai", "xai"], modelTokens: [] },
+		detection: { providerTokens: ["zai", "z.ai"], modelTokens: [] },
 	},
 	"kimi-coding": {
 		displayName: "Kimi for Coding",

@@ -47,3 +47,12 @@ test("detectProviderFromModel detects command-code by provider", () => {
 	const provider = detectProviderFromModel({ provider: "command-code", id: "auto" });
 	assert.equal(provider, "command-code");
 });
+
+test("xAI is not z.ai and must not display its unrelated quota", () => {
+	for (const provider of ["xai", "XAI", "xai-2"]) {
+		assert.equal(detectProviderFromModel({ provider, id: "grok-code-fast-1" }), undefined);
+	}
+	for (const provider of ["zai", "z.ai", "ZAI", "zai-2"]) {
+		assert.equal(detectProviderFromModel({ provider, id: "glm-5" }), "zai");
+	}
+});
