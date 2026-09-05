@@ -1,6 +1,7 @@
 import "./cache.test.js";
 import "./detection.test.js";
 import "./providers.test.js";
+import "./xai.test.js";
 import "./settings-list.test.js";
 import "./prioritize.test.js";
 import "./controller.test.js";

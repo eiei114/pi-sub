@@ -15,6 +15,7 @@ export const PROVIDERS = [
 	"cursor",
 	"opencode",
 	"command-code",
+	"xai",
 ] as const;
 
 export type ProviderName = (typeof PROVIDERS)[number];
@@ -200,7 +201,7 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 	},
 	zai: {
 		displayName: "z.ai",
-		detection: { providerTokens: ["zai", "z.ai", "xai"], modelTokens: [] },
+		detection: { providerTokens: ["zai", "z.ai"], modelTokens: [] },
 	},
 	"kimi-coding": {
 		displayName: "Kimi for Coding",
@@ -221,6 +222,16 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 	"command-code": {
 		displayName: "Command Code",
 		detection: { providerTokens: ["command-code", "commandcode"], modelTokens: [] },
+	},
+	xai: {
+		displayName: "xAI (Grok)",
+		// Detection is handled by a dedicated xAI-only rule in sub-core
+		// (`detectProviderFromModel`) instead of substring tokens: the
+		// subscription quota can only be read for the single base `xai`
+		// credential, so numbered aliases (`xai-2`, …) must not resolve here and
+		// display another account's quota. Grok models routed through other
+		// providers (e.g. OpenRouter) keep resolving to that provider.
+		detection: { providerTokens: [], modelTokens: [] },
 	},
 };
 

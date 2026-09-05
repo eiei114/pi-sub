@@ -181,6 +181,15 @@ const commandCodeWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, w
 	return true;
 };
 
+const xaiWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, window, settings, _model) => {
+	if (!settings) return true;
+	const ps = settings.providers.xai;
+	if (window.label === "Week") return ps.windows.showWeek;
+	if (window.label === "Month") return ps.windows.showMonth;
+	if (window.label === "Usage") return ps.windows.showUsage;
+	return true;
+};
+
 function formatUsd(value: number, digits: number): string {
 	const safeValue = Object.is(value, -0) ? 0 : value;
 	return `$${safeValue.toFixed(digits)}`;
@@ -309,5 +318,9 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 		...BASE_METADATA["command-code"],
 		isWindowVisible: commandCodeWindowVisible,
 		getExtras: commandCodeExtras,
+	},
+	xai: {
+		...BASE_METADATA.xai,
+		isWindowVisible: xaiWindowVisible,
 	},
 };

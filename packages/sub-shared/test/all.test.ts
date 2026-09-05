@@ -23,6 +23,16 @@ test("provider display name keys match providers", () => {
 	assert.deepEqual(Object.keys(PROVIDER_DISPLAY_NAMES).sort(), [...PROVIDERS].sort());
 });
 
+test("xAI and z.ai are separate providers with separate labels", () => {
+	assert.ok(PROVIDERS.includes("xai"));
+	assert.ok(PROVIDERS.includes("zai"));
+	assert.equal(PROVIDER_DISPLAY_NAMES.xai, "xAI (Grok)");
+	assert.notEqual(PROVIDER_DISPLAY_NAMES.xai, PROVIDER_DISPLAY_NAMES.zai);
+	// xAI has no status page wired up, so status fetching stays off by default.
+	assert.equal(PROVIDER_METADATA.xai.status, undefined);
+	assert.equal(getDefaultCoreProviderSettings().xai.fetchStatus, false);
+});
+
 test("default provider settings include every provider as auto", () => {
 	const settings = getDefaultCoreProviderSettings();
 

@@ -19,6 +19,7 @@ import type {
 	CursorProviderSettings,
 	OpenCodeProviderSettings,
 	CommandCodeProviderSettings,
+	XaiProviderSettings,
 } from "../settings-types.js";
 
 function buildBaseProviderItems(ps: BaseProviderSettings): SettingItem[] {
@@ -365,6 +366,33 @@ export function buildProviderSettingsItems(settings: Settings, provider: Provide
 		);
 	}
 
+	if (provider === "xai") {
+		const xaiSettings = ps as XaiProviderSettings;
+		items.push(
+			{
+				id: "showWeek",
+				label: "Show Week Window",
+				currentValue: xaiSettings.windows.showWeek ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the weekly subscription quota window.",
+			},
+			{
+				id: "showMonth",
+				label: "Show Month Window",
+				currentValue: xaiSettings.windows.showMonth ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the monthly subscription quota window.",
+			},
+			{
+				id: "showUsage",
+				label: "Show Usage Window",
+				currentValue: xaiSettings.windows.showUsage ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the quota window when the period type is unknown.",
+			},
+		);
+	}
+
 	return items;
 }
 
@@ -563,6 +591,21 @@ export function applyProviderSettingsChange(
 				break;
 			case "showCredits":
 				commandCodeSettings.showCredits = value === "on";
+				break;
+		}
+	}
+
+	if (provider === "xai") {
+		const xaiSettings = ps as XaiProviderSettings;
+		switch (id) {
+			case "showWeek":
+				xaiSettings.windows.showWeek = value === "on";
+				break;
+			case "showMonth":
+				xaiSettings.windows.showMonth = value === "on";
+				break;
+			case "showUsage":
+				xaiSettings.windows.showUsage = value === "on";
 				break;
 		}
 	}

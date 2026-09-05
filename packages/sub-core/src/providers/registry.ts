@@ -14,6 +14,7 @@ export { OpenRouterProvider } from "./impl/openrouter.js";
 export { CursorProvider } from "./impl/cursor.js";
 export { OpenCodeProvider } from "./impl/opencode.js";
 export { CommandCodeProvider } from "./impl/command-code.js";
+export { XaiProvider } from "./impl/xai.js";
 
 import type { Dependencies, ProviderName } from "../types.js";
 import type { UsageProvider } from "../provider.js";
@@ -30,6 +31,7 @@ import { OpenRouterProvider } from "./impl/openrouter.js";
 import { CursorProvider } from "./impl/cursor.js";
 import { OpenCodeProvider } from "./impl/opencode.js";
 import { CommandCodeProvider } from "./impl/command-code.js";
+import { XaiProvider } from "./impl/xai.js";
 
 const PROVIDER_FACTORIES: Record<ProviderName, () => UsageProvider> = {
 	anthropic: () => new AnthropicProvider(),
@@ -44,6 +46,7 @@ const PROVIDER_FACTORIES: Record<ProviderName, () => UsageProvider> = {
 	cursor: () => new CursorProvider(),
 	opencode: () => new OpenCodeProvider(),
 	"command-code": () => new CommandCodeProvider(),
+	xai: () => new XaiProvider(),
 };
 
 /**

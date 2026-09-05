@@ -314,6 +314,15 @@ export interface CommandCodeProviderSettings extends BaseProviderSettings {
 	};
 }
 
+export interface XaiProviderSettings extends BaseProviderSettings {
+	windows: {
+		showWeek: boolean;
+		showMonth: boolean;
+		/** Fallback window for an unknown subscription period type. */
+		showUsage: boolean;
+	};
+}
+
 export interface ProviderSettingsMap {
 	anthropic: AnthropicProviderSettings;
 	copilot: CopilotProviderSettings;
@@ -327,6 +336,7 @@ export interface ProviderSettingsMap {
 	cursor: CursorProviderSettings;
 	opencode: OpenCodeProviderSettings;
 	"command-code": CommandCodeProviderSettings;
+	xai: XaiProviderSettings;
 }
 
 export type { BehaviorSettings, CoreSettings } from "@eiei114/pi-sub-shared";
@@ -571,6 +581,14 @@ export function getDefaultSettings(): Settings {
 				windows: {
 					show5h: true,
 					showWeek: true,
+				},
+			},
+			xai: {
+				showStatus: false,
+				windows: {
+					showWeek: true,
+					showMonth: true,
+					showUsage: true,
 				},
 			},
 		},
