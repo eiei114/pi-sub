@@ -84,6 +84,8 @@ Sub-core stores a shared cache and lock file:
 
 Legacy cache files next to the extension entry or in the agent root are migrated to the cache directory and removed on first run.
 
+Current-session Codex usage is an exception: it resolves credentials from the selected Pi model, including numbered multi-pass providers such as `openai-codex-2`, and keeps a credential-scoped in-memory cache rather than sharing the base provider's disk entry. Switching models clears the old account's display immediately; late responses and reload callbacks cannot restore it. Authentication failure does not fall back to another account. The sub-bar label identifies the selected Codex provider. This does not add an all-account quota API or change other providers' credential selection.
+
 ## Security notes
 
 - Keep `~/.pi/agent/auth.json` readable only by your user (e.g. `chmod 600 ~/.pi/agent/auth.json`).

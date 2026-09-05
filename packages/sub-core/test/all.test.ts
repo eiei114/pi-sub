@@ -1,6 +1,8 @@
 import "./cache.test.js";
 import "./detection.test.js";
 import "./providers.test.js";
+import "./active-codex.test.js";
+import "./active-codex-extension.test.js";
 import "./settings-list.test.js";
 import "./prioritize.test.js";
 import "./controller.test.js";
