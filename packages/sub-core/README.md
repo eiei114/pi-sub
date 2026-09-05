@@ -103,6 +103,15 @@ Legacy cache files next to the extension entry or in the agent root are migrated
 | z.ai | Tokens/monthly limits | - | API quota limits |
 | Kimi for Coding | Week + 5h rolling windows | - | OAuth; tested with `pi-provider-kimi-code` |
 | OpenRouter | Credits | - | API credits endpoint |
+| xAI (Grok) | Subscription quota window (Week/Month) | - | SuperGrok/Grok plan quota via an undocumented CLI billing endpoint; OAuth only; base `xai` account only |
+
+### xAI (Grok) subscription usage
+
+- **What it shows:** the subscription quota percentage of the current billing period plus its reset time, as one window (`Week`, `Month`, or `Usage` when the period type is unknown). Nothing else is derived from the payload — prepaid balance, on-demand spend, credit/unit counts, and plan names are deliberately not shown because their meaning in this undocumented response is unverified.
+- **Credentials:** the OAuth access token from `~/.pi/agent/auth.json` under `xai` (only when the entry has `"type": "oauth"` and a non-blank `access`), or the `XAI_OAUTH_TOKEN` override. Tokens are never refreshed and no login flow is triggered; when the token is rejected the widget reports the HTTP status and you re-authenticate with pi's normal `/login`.
+- **API keys are not a substitute:** `XAI_API_KEY` and `api_key` auth entries are never used here. They are valid credentials for the xAI developer API, but that is a different billing bucket and cannot report subscription quota.
+- **Single account:** usage is read for the base `xai` credential only. Numbered aliases (`xai-2`, …) resolve to no provider rather than displaying the base account's quota.
+- **Unofficial endpoint:** the endpoint and its client headers are derived from client behavior, not from public docs, and can break at any time. HTTP 426 means the pinned client version is no longer accepted; it is reported as a plain error and never retried with a spoofed version. All failures soft-error with a static message plus HTTP status — response bodies are never surfaced or logged.
 
 ## Development
 

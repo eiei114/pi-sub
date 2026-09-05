@@ -37,6 +37,7 @@ https://github.com/user-attachments/assets/d61d82f6-afd0-45fc-82f3-69910543aa7a
 | OpenCode | 5h/Week/Month windows | - |
 | AWS Kiro | Credits | - |
 | z.ai | Tokens/monthly limits | - |
+| xAI (Grok) | Subscription quota window | - |
 
 ### Provider Feature Matrix
 
@@ -50,6 +51,7 @@ https://github.com/user-attachments/assets/d61d82f6-afd0-45fc-82f3-69910543aa7a
 | OpenCode | 5h, Week, Month | - | - | ✅ | Go subscription quotas, unofficial API |
 | AWS Kiro | Credits | - | - | - | - |
 | z.ai | Tokens, Monthly | - | - | - | API quota limits |
+| xAI (Grok) | Week, Month, Usage | - | - | - | Subscription (SuperGrok/Grok) quota only, unofficial endpoint, base `xai` OAuth account only |
 
 ## Installation
 
@@ -141,7 +143,9 @@ Credentials are loaded by sub-core from:
 - `~/.pi/agent/auth.json` - pi's auth file
 - Provider-specific locations (e.g., `~/.codex/auth.json`, `~/.gemini/oauth_creds.json`)
 - macOS Keychain for Claude Code credentials
-- Environment variables (e.g., `Z_AI_API_KEY`)
+- Environment variables (e.g., `Z_AI_API_KEY`, `XAI_OAUTH_TOKEN`)
+
+xAI (Grok) shows the **subscription** quota of the base `xai` OAuth entry only. `XAI_API_KEY` is not used: it is a valid developer-API credential, but that API cannot report subscription quota. Numbered accounts (`xai-2`, …) show no usage rather than the base account's numbers, and the endpoint is unofficial, so it can break without notice.
 
 ## Development
 

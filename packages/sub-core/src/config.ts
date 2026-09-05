@@ -51,6 +51,25 @@ export const COMMAND_CODE_WHOAMI_URL = "https://api.commandcode.ai/alpha/whoami"
 export const COMMAND_CODE_CREDITS_URL = "https://api.commandcode.ai/alpha/billing/credits";
 
 /**
+ * xAI (Grok) subscription billing endpoint (unofficial, source-derived).
+ *
+ * This is the CLI billing endpoint used by the Grok CLI for subscription
+ * (SuperGrok/Grok) quota. It is undocumented and can change or disappear
+ * without notice. It is NOT the documented developer API (`XAI_API_KEY`)
+ * billing bucket.
+ */
+export const XAI_BILLING_URL = "https://cli-chat-proxy.grok.com/v1/billing?format=credits";
+
+/**
+ * Client headers required by the xAI CLI billing endpoint. The version is
+ * pinned to a known-good client version; an HTTP 426 answer means the pinned
+ * version is no longer accepted and is reported as a plain HTTP error instead
+ * of being retried with a different version.
+ */
+export const XAI_CLI_CLIENT_MODE = "cli";
+export const XAI_CLI_CLIENT_VERSION = "1.0.4";
+
+/**
  * Timeout for CLI commands in milliseconds
  */
 export const CLI_TIMEOUT_MS = 10000;
