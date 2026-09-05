@@ -350,6 +350,104 @@ test("fill bars with extras stay within width", () => {
 });
 
 
+function buildUncappedOpenRouterUsage(): UsageSnapshot {
+	return {
+		provider: "openrouter",
+		displayName: "OpenRouter",
+		windows: [],
+		keyUsage: 4.2,
+		keyLimit: null,
+		creditUnavailable: true,
+	};
+}
+
+test("extras-only snapshots still render without any window", () => {
+	const settings = getDefaultSettings();
+
+	const output = formatUsageStatus(theme, buildUncappedOpenRouterUsage(), undefined, settings);
+	assert.ok(output);
+	assert.ok(output.includes("Key spend: $4.20"));
+	assert.ok(output.includes("Key cap: none"));
+	assert.ok(output.includes("Account credit: unavailable"));
+});
+
+test("extras-only snapshots render within a fixed width", () => {
+	const settings = getDefaultSettings();
+
+	const output = formatUsageStatusWithWidth(theme, buildUncappedOpenRouterUsage(), 90, undefined, settings, {
+		labelGapFill: true,
+	});
+	assert.ok(output);
+	assert.ok(output.includes("Key spend: $4.20"));
+	assert.ok(visibleWidth(output) <= 90);
+});
+
+test("extras-only snapshots truncate instead of overflowing narrow widths", () => {
+	const settings = getDefaultSettings();
+
+	const output = formatUsageStatusWithWidth(theme, buildUncappedOpenRouterUsage(), 12, undefined, settings);
+	assert.ok(output !== undefined);
+	assert.ok(visibleWidth(output) <= 12);
+});
+
+test("snapshots with neither windows nor extras still show the error", () => {
+	const settings = getDefaultSettings();
+	const usage: UsageSnapshot = {
+		provider: "openrouter",
+		displayName: "OpenRouter",
+		windows: [],
+		error: { code: "NO_CREDENTIALS", message: "No credentials found" },
+	};
+
+	const output = formatUsageStatus(theme, usage, undefined, settings);
+	assert.ok(output);
+	assert.ok(output.includes("No creds"));
+});
+
+test("extras never hide the error on a window-less failed snapshot", () => {
+	const settings = getDefaultSettings();
+	const usage: UsageSnapshot = {
+		provider: "copilot",
+		displayName: "GitHub Copilot",
+		windows: [],
+		error: { code: "NO_CREDENTIALS", message: "No credentials found" },
+	};
+
+	// Copilot builds a multiplier extra purely from the active model, so an
+	// error snapshot must not be turned into an extras-only line.
+	const output = formatUsageStatus(theme, usage, "GPT-5", settings);
+	assert.ok(output);
+	assert.ok(output.includes("No creds"));
+	assert.ok(!output.includes("Model multiplier"));
+});
+
+test("a capped key and the account wallet render as separate windows", () => {
+	const settings = getDefaultSettings();
+	const usage: UsageSnapshot = {
+		provider: "openrouter",
+		displayName: "OpenRouter",
+		windows: [
+			{ label: "Key limit", usedPercent: 75 },
+			{ label: "Credits", usedPercent: 36 },
+		],
+		keyLimit: 10,
+		keyRemaining: 2.5,
+		keyUsage: 7.5,
+		creditTotal: 20,
+		creditUsage: 7.25,
+		creditRemaining: 12.75,
+	};
+
+	const output = formatUsageStatus(theme, usage, undefined, settings);
+	assert.ok(output);
+	assert.ok(output.includes("Key limit"));
+	assert.ok(output.includes("75% used"));
+	assert.ok(output.includes("Credits"));
+	assert.ok(output.includes("36% used"));
+	assert.ok(output.includes("Key cap: $10.00"));
+	assert.ok(output.includes("Account credit: $12.75 left"));
+});
+
 test("codex shows model-specific usage for GPT-5.3-Codex-Spark", () => {
 	const settings = getDefaultSettings();
 	const usage: UsageSnapshot = {

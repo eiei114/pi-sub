@@ -71,6 +71,41 @@ Antigravity usage requires an OAuth token in `~/.pi/agent/auth.json` under the `
 
 Anthropic extra usage formatting is controlled in Provider Settings (currency symbol + decimal separator).
 
+### OpenRouter
+
+OpenRouter usage is read from two endpoints with the same inference credential:
+
+| Endpoint | Scope | Required? |
+|----------|-------|-----------|
+| [`GET /api/v1/key`](https://openrouter.ai/docs/api-reference/limits) | The key doing the request: its spending cap (`limit` / `limit_remaining`) and its spend (`usage`) | Yes — authoritative |
+| [`GET /api/v1/credits`](https://openrouter.ai/docs/api-reference/get-credits) | The account wallet (`total_credits` / `total_usage`) | No — best effort |
+
+`/credits` is documented as needing a management key. Some ordinary keys are
+served it anyway, so it is still attempted, but a failure (typically `403`)
+never discards the key data: the snapshot keeps the key numbers and reports the
+wallet as unavailable rather than reusing an older wallet reading.
+
+The two are surfaced separately and are never mixed:
+
+- `keyLimit` / `keyRemaining` / `keyUsage` describe **this key**. A `Key limit`
+  window is only produced for a real numeric cap; a zero cap counts as fully
+  used. `limit: null` means the key itself is uncapped — not that the wallet is
+  unlimited — so it yields no percentage at all.
+- `creditTotal` / `creditUsage` / `creditRemaining` stay **account-level**. A
+  wallet with zero total credit counts as fully used.
+
+Two fields are deliberately ignored: `limit_reset` is a period name such as
+`daily`, not a timestamp, so no reset date is ever shown for a key cap or for
+the top-up wallet; `rate_limit` is deprecated.
+
+Credential lookup order is `OPENROUTER_API_KEY`, then `OPENROUTER_KEY`, then
+`~/.pi/agent/auth.json` (`openrouter.access` / `.key` / `.apiKey`). Blank and
+non-string values are skipped, and a `!command` value is not a credential
+because no command is executed to resolve it. Both hosts are fixed constants —
+there is no base-URL override — and requests refuse redirects so a bearer token
+cannot follow a hop to another host. Picking a specific account out of a
+multi-account auth file is a separate concern and is **not** handled here.
+
 Settings are stored in `~/.pi/agent/pi-sub-core-settings.json` (migrated from the legacy extension `settings.json` when present; the legacy file is removed after a successful migration).
 
 **Settings migrations:** settings are merged with defaults on load, but renames/removals are not migrated automatically. When adding new settings or changing schema, update the defaults/merge logic and provide a migration (or instruct users to reset `pi-sub-core-settings.json`).
@@ -102,7 +137,7 @@ Legacy cache files next to the extension entry or in the agent root are migrated
 | AWS Kiro | Credits | - | `kiro-cli /usage` (stdout+stderr); tested on Windows |
 | z.ai | Tokens/monthly limits | - | API quota limits |
 | Kimi for Coding | Week + 5h rolling windows | - | OAuth; tested with `pi-provider-kimi-code` |
-| OpenRouter | Credits | - | API credits endpoint |
+| OpenRouter | Key spending cap + account credit | - | `/api/v1/key` (authoritative) plus best-effort `/api/v1/credits` |
 
 ## Development
 

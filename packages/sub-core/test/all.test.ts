@@ -1,8 +1,10 @@
 import "./cache.test.js";
 import "./detection.test.js";
 import "./providers.test.js";
+import "./openrouter.test.js";
 import "./settings-list.test.js";
 import "./prioritize.test.js";
+import "./usable.test.js";
 import "./controller.test.js";
 import "./extension.test.js";
 import "./lock.test.js";
