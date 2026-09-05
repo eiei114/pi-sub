@@ -7,6 +7,8 @@ import "./devin.test.js";
 import "./ollama-cloud.test.js";
 import "./openrouter.test.js";
 import "./command-code-credentials.test.js";
+import "./active-codex.test.js";
+import "./active-codex-extension.test.js";
 import "./settings-list.test.js";
 import "./prioritize.test.js";
 import "./usable.test.js";

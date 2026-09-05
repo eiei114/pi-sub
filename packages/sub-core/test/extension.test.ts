@@ -26,6 +26,10 @@ function createPiHarness(): PiHarness {
 			const list = eventListeners.get(event) ?? [];
 			list.push(handler);
 			eventListeners.set(event, list);
+			return () => {
+				const index = list.indexOf(handler);
+				if (index >= 0) list.splice(index, 1);
+			};
 		},
 		emit(event: string, payload?: unknown) {
 			for (const handler of eventListeners.get(event) ?? []) {

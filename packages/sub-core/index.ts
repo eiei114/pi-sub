@@ -17,8 +17,13 @@ import { prioritizeWindowsForModel } from "./src/utils.js";
 
 import { clearSettingsCache, loadSettings, saveSettings, SETTINGS_PATH } from "./src/settings.js";
 import { showSettingsUI } from "./src/settings-ui.js";
+<<<<<<< HEAD
 import { SCOPED_USAGE_EVENT, type ScopedUsageRequest } from "@eiei114/pi-sub-shared";
 import { readScopedUsage } from "./src/usage/scoped-request.js";
+=======
+import { createActiveCodexUsage, isActiveCodex } from "./src/usage/active-codex.js";
+import { refreshStatusForProvider } from "./src/usage/fetch.js";
+>>>>>>> 7ac057f (fix(codex): isolate selected subscription usage and reload lifecycle)
 
 type SubCoreRequest =
 	| {
@@ -100,8 +105,28 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 	let settingsPoll: NodeJS.Timeout | undefined;
 	let settingsWatchStarted = false;
 	const scopedLifecycle = new AbortController();
+	let disposed = false;
+	let startupWatchTimer: NodeJS.Timeout | undefined;
+	const eventUnsubscribers: Array<() => void> = [];
+	function onBus(event: string, handler: (payload: unknown) => void): void {
+		eventUnsubscribers.push(pi.events.on(event, (payload) => {
+			if (!disposed) return handler(payload);
+		}));
+	}
 
 	const controller = createUsageController(deps);
+	const activeCodex = createActiveCodexUsage(deps);
+	let selectionVersion = 0;
+	let selection: string | undefined;
+	function selectContext(ctx: ExtensionContext): void {
+		const next = `${ctx.model?.provider}/${ctx.model?.id}`;
+		if (selection !== next) {
+			selection = next;
+			selectionVersion++;
+			activeCodex.clear();
+		}
+		lastContext = ctx;
+	}
 	const controllerState = {
 		currentProvider: undefined as ProviderName | undefined,
 		cachedUsage: undefined as UsageSnapshot | undefined,
@@ -112,6 +137,7 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 	let lastCurrentSnapshot = "";
 
 	const emitCurrentUpdate = (provider?: ProviderName, usage?: UsageSnapshot): void => {
+		if (disposed) return;
 		const model = lastContext?.model;
 		const sorted = usage && model
 			? { ...usage, windows: prioritizeWindowsForModel(usage.windows, model) }
@@ -128,6 +154,10 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 		const now = Date.now();
 		const entries: ProviderUsageEntry[] = [];
 		for (const provider of settings.providerOrder) {
+			if (provider === "codex" && activeCodex.provider) {
+				if (activeCodex.usage) entries.push({ provider, usage: activeCodex.usage });
+				continue;
+			}
 			const entry = cache[provider];
 			if (!entry || !entry.usage) continue;
 			if (now - entry.fetchedAt >= ttlMs) continue;
@@ -144,6 +174,7 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 	});
 
 	const unsubscribeCache = onCacheUpdate((provider, entry) => {
+		if (provider === "codex" && activeCodex.provider) return;
 		if (!controllerState.currentProvider || provider !== controllerState.currentProvider) return;
 		const usage = entry?.usage ? { ...entry.usage, status: entry.status } : undefined;
 		controllerState.cachedUsage = usage;
@@ -167,10 +198,32 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 		ctx: ExtensionContext,
 		options?: { force?: boolean; allowStaleCache?: boolean; skipFetch?: boolean }
 	) {
-		lastContext = ctx;
+		if (disposed) return;
+		selectContext(ctx);
 		ensureSettingsLoaded();
+		const version = selectionVersion;
 		try {
-			await controller.refresh(ctx, settings, controllerState, emitUpdate, options);
+			if (isActiveCodex(ctx)) {
+				const enabled = settings.providers.codex.enabled;
+				if (enabled === "off" || enabled === false) {
+					controllerState.currentProvider = undefined;
+					controllerState.cachedUsage = undefined;
+					activeCodex.clear();
+					emitCurrentUpdate();
+					return;
+				}
+				controllerState.currentProvider = "codex";
+				await activeCodex.refresh(ctx, settings.behavior.refreshInterval * 1000,
+					settings.behavior.minRefreshInterval * 1000, (usage) => {
+						if (version !== selectionVersion) return;
+						controllerState.cachedUsage = usage;
+						emitCurrentUpdate("codex", usage);
+					}, options);
+				return;
+			}
+			await controller.refresh(ctx, settings, controllerState, (update) => {
+				if (version === selectionVersion) emitUpdate(update);
+			}, options);
 		} finally {
 			if (!options?.skipFetch) {
 				lastUsageRefreshAt = Date.now();
@@ -182,10 +235,22 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 		ctx: ExtensionContext,
 		options?: { force?: boolean; allowStaleCache?: boolean; skipFetch?: boolean }
 	) {
-		lastContext = ctx;
+		if (disposed) return;
+		selectContext(ctx);
 		ensureSettingsLoaded();
+		const version = selectionVersion;
 		try {
-			await controller.refreshStatus(ctx, settings, controllerState, emitUpdate, options);
+			if (isActiveCodex(ctx)) {
+				if (options?.skipFetch) return;
+				const status = await refreshStatusForProvider(deps, settings, "codex", options);
+				if (version === selectionVersion && activeCodex.usage) {
+					emitCurrentUpdate("codex", { ...activeCodex.usage, status });
+				}
+				return;
+			}
+			await controller.refreshStatus(ctx, settings, controllerState, (update) => {
+				if (version === selectionVersion) emitUpdate(update);
+			}, options);
 		} finally {
 			if (!options?.skipFetch) {
 				lastStatusRefreshAt = Date.now();
@@ -199,6 +264,7 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 	}
 
 	function setupRefreshInterval(): void {
+		if (disposed) return;
 		if (usageRefreshInterval) {
 			clearInterval(usageRefreshInterval);
 			usageRefreshInterval = undefined;
@@ -293,6 +359,7 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 	}
 
 	function startSettingsWatch(): void {
+		if (disposed) return;
 		if (settingsWatchStarted) return;
 		settingsWatchStarted = true;
 		if (!settingsSnapshot) {
@@ -319,12 +386,17 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 
 	async function getEntries(force?: boolean): Promise<ProviderUsageEntry[]> {
 		ensureSettingsLoaded();
-		const enabledProviders = controller.getEnabledProviders(settings);
-		if (enabledProviders.length === 0) return [];
-		if (force) {
-			return fetchUsageEntries(deps, settings, enabledProviders, { force: true });
+		const scopedCodex = lastContext && isActiveCodex(lastContext);
+		const enabledProviders = controller.getEnabledProviders(settings)
+			.filter((provider) => !scopedCodex || provider !== "codex");
+		const entries = force
+			? await fetchUsageEntries(deps, settings, enabledProviders, { force: true })
+			: await getCachedUsageEntries(enabledProviders, settings);
+		if (lastContext && isActiveCodex(lastContext)) {
+			if (force) await refresh(lastContext, { force });
+			if (activeCodex.usage) entries.push({ provider: "codex", usage: activeCodex.usage });
 		}
-		return getCachedUsageEntries(enabledProviders, settings);
+		return entries;
 	}
 
 	const registerUsageTool = (name: ToolName): void => {
@@ -394,11 +466,12 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 		settingsLoaded = true;
 		registerToolsFromSettings(settings);
 		setupRefreshInterval();
-		const watchTimer = setTimeout(() => {
+		startupWatchTimer = setTimeout(() => {
+			if (disposed) return;
 			startCacheWatch();
 			startSettingsWatch();
 		}, 0);
-		watchTimer.unref?.();
+		startupWatchTimer.unref?.();
 	}
 	pi.registerCommand("sub-core:settings", {
 		description: "Open sub-core settings",
@@ -443,7 +516,7 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 		}
 	});
 
-	pi.events.on("sub-core:request", async (payload) => {
+	onBus("sub-core:request", async (payload) => {
 		ensureSettingsLoaded();
 		const request = payload as SubCoreRequest;
 		if (request.type === "entries") {
@@ -460,7 +533,7 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 		});
 	});
 
-	pi.events.on("sub-core:settings:patch", (payload) => {
+	onBus("sub-core:settings:patch", (payload) => {
 		const patch = (payload as { patch?: Partial<Settings> }).patch;
 		if (!patch) return;
 		applySettingsPatch(patch);
@@ -469,7 +542,7 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 		}
 	});
 
-	pi.events.on("sub-core:action", (payload) => {
+	onBus("sub-core:action", (payload) => {
 		const action = payload as SubCoreAction;
 		if (!lastContext) return;
 		switch (action.type) {
@@ -485,7 +558,7 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 	pi.on("session_start", async (_event, ctx) => {
 		lastContext = ctx;
 		ensureSettingsLoaded();
-		void refresh(ctx, { allowStaleCache: true, skipFetch: true });
+		void refresh(ctx, { allowStaleCache: true, skipFetch: !isActiveCodex(ctx) });
 		void refreshStatus(ctx, { allowStaleCache: true, skipFetch: true });
 		pi.events.emit("sub-core:ready", { state: lastState, settings });
 	});
@@ -537,6 +610,11 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 	pi.on("session_shutdown", async () => {
 		scopedLifecycle.abort();
 		if (typeof unsubscribeScopedUsage === "function") unsubscribeScopedUsage();
+		disposed = true;
+		if (startupWatchTimer) clearTimeout(startupWatchTimer);
+		for (const unsubscribe of eventUnsubscribers) unsubscribe();
+		selectionVersion++;
+		activeCodex.clear();
 		if (usageRefreshInterval) {
 			clearInterval(usageRefreshInterval);
 			usageRefreshInterval = undefined;
