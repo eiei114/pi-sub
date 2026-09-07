@@ -4,7 +4,7 @@
 
 import type { RateWindow, UsageSnapshot, ProviderName, ModelInfo } from "../types.js";
 import type { Settings } from "../settings-types.js";
-import { getModelMultiplier, normalizeTokens } from "../utils.js";
+import { getModelMultiplier, normalizeTokens } from "@eiei114/pi-sub-shared";
 import { PROVIDER_METADATA as BASE_METADATA, type ProviderMetadata as BaseProviderMetadata } from "@eiei114/pi-sub-shared";
 
 export { PROVIDERS, PROVIDER_DISPLAY_NAMES } from "@eiei114/pi-sub-shared";
