@@ -1,9 +1,8 @@
+import { MODEL_MULTIPLIERS } from "./model-multipliers.js";
+
 /**
- * Utility functions for the sub-bar display layer.
+ * Normalize a string into tokens for fuzzy matching.
  */
-
-import { MODEL_MULTIPLIERS } from "@eiei114/pi-sub-shared";
-
 export function normalizeTokens(value: string): string[] {
 	return value
 		.toLowerCase()
@@ -20,8 +19,8 @@ const MODEL_MULTIPLIER_TOKENS = Object.entries(MODEL_MULTIPLIERS).map(([label, m
 }));
 
 /**
- * Get the request multiplier for a model ID
- * Uses fuzzy matching against known model names
+ * Get the request multiplier for a model ID.
+ * Uses fuzzy matching against known model names.
  */
 export function getModelMultiplier(modelId: string | undefined): number | undefined {
 	if (!modelId) return undefined;
