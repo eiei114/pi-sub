@@ -1,5 +1,15 @@
 # @eiei114/pi-sub-core
 
+## 2.3.1
+
+### Patch Changes
+
+- [#74](https://github.com/eiei114/pi-sub/pull/74) [`29e0f83`](https://github.com/eiei114/pi-sub/commit/29e0f83baafab49fe6eb489b680f2a6e07b87de2) Thanks [@eiei114](https://github.com/eiei114)! - Stop detecting xAI (Grok) as z.ai. These are unrelated providers; an xAI session must not display the user's z.ai subscription quota. z.ai detection remains unchanged. This fix does not add xAI billing support.
+
+- [#76](https://github.com/eiei114/pi-sub/pull/76) [`96281bd`](https://github.com/eiei114/pi-sub/commit/96281bdee0dd7432b58dcc0598e74b3ab0ca830b) Thanks [@eiei114](https://github.com/eiei114)! - Restrict root-level Command Code API-key discovery to its own native auth file. Shared Pi and OMP auth files now require a provider-scoped Command Code entry, so unrelated root credentials cannot be selected. Environment precedence and native-file compatibility are unchanged.
+- Updated dependencies [[`29e0f83`](https://github.com/eiei114/pi-sub/commit/29e0f83baafab49fe6eb489b680f2a6e07b87de2)]:
+  - @eiei114/pi-sub-shared@2.3.1
+
 ## 2.3.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @eiei114/pi-sub-shared
 
+## 2.3.1
+
+### Patch Changes
+
+- [#74](https://github.com/eiei114/pi-sub/pull/74) [`29e0f83`](https://github.com/eiei114/pi-sub/commit/29e0f83baafab49fe6eb489b680f2a6e07b87de2) Thanks [@eiei114](https://github.com/eiei114)! - Stop detecting xAI (Grok) as z.ai. These are unrelated providers; an xAI session must not display the user's z.ai subscription quota. z.ai detection remains unchanged. This fix does not add xAI billing support.
+
 ## 2.3.0
 
 ### Minor Changes
