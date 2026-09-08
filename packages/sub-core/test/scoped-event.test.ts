@@ -8,6 +8,7 @@ import { CACHE_PATH, clearCache } from '../src/cache.js';
 import { SETTINGS_PATH, clearSettingsCache } from '../src/settings.js';
 import { getDefaultSettings } from '../src/settings-types.js';
 import { SCOPED_USAGE_EVENT, type ScopedUsageResponse } from '@eiei114/pi-sub-shared';
+import { OPENROUTER_CREDITS_URL, OPENROUTER_KEY_URL } from '../src/config.js';
 
 const tick = () => new Promise((resolve) => setTimeout(resolve, 5));
 
@@ -133,9 +134,14 @@ test('initialized scoped events use the existing adapter without shared cache, b
 	settings.behavior.refreshInterval = 0;
 	settings.statusRefresh.refreshInterval = 0;
 	const h = harness(settings, async (url, init) => {
-		calls.push(String(url));
+		const href = String(url);
+		calls.push(href);
 		assert.equal(init?.method, 'GET');
 		assert.equal(init?.redirect, 'error');
+		if (href === OPENROUTER_KEY_URL) {
+			return Response.json({ data: { limit: null, usage: 3 } });
+		}
+		assert.equal(href, OPENROUTER_CREDITS_URL);
 		return Response.json({ data: { total_credits: 10, total_usage: 3 } });
 	});
 	try {
@@ -146,7 +152,7 @@ test('initialized scoped events use the existing adapter without shared cache, b
 		assert.equal(response.provider, 'openrouter');
 		assert.equal(response.usage?.provider, 'openrouter');
 		assert.equal(response.usage?.creditRemaining, 7);
-		assert.deepEqual(calls, ['https://openrouter.ai/api/v1/credits']);
+		assert.deepEqual(calls, [OPENROUTER_KEY_URL, OPENROUTER_CREDITS_URL]);
 		assert.deepEqual(h.reads, []);
 		assert.deepEqual(h.mutations, []);
 		assert.deepEqual(h.broadcasts, []);
@@ -158,7 +164,7 @@ test('initialized scoped events use the existing adapter without shared cache, b
 			},
 		});
 		await h.invoke({ provider: 'openrouter', reply: null });
-		assert.equal(calls.length, 2);
+		assert.equal(calls.length, 4);
 	} finally {
 		await h.restore();
 	}
