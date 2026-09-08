@@ -46,9 +46,26 @@ export interface UsageSnapshot {
 	requestsSummary?: string;
 	requestsRemaining?: number;
 	requestsEntitlement?: number;
+	/** Account-level (wallet) credit. Never used for per-key spending caps. */
 	creditTotal?: number;
 	creditUsage?: number;
 	creditRemaining?: number;
+	/**
+	 * True when account-level credit was attempted but could not be read on this
+	 * refresh. Distinguishes "wallet unknown" from "wallet is empty", and keeps
+	 * callers from presenting stale wallet numbers as fresh.
+	 */
+	creditUnavailable?: boolean;
+	/**
+	 * Spending cap of the credential in use, in account currency.
+	 * `null` means the credential has no cap (which is not the same as an
+	 * unlimited wallet); omitted means the cap could not be determined.
+	 */
+	keyLimit?: number | null;
+	/** Remaining amount of `keyLimit` as reported by the provider (never derived). */
+	keyRemaining?: number;
+	/** Amount already spent on the credential in use. */
+	keyUsage?: number;
 }
 
 export type UsageErrorCode =
@@ -71,6 +88,24 @@ export interface ProviderUsageEntry {
 	provider: ProviderName;
 	usage?: UsageSnapshot;
 }
+
+/** Optional selective GET-only read; exact base Pi identity, not multi-account support. */
+export interface ScopedUsageRequest {
+	provider: string;
+	signal?: AbortSignal;
+	reply: (response: ScopedUsageResponse) => void;
+}
+
+export interface ScopedUsageResponse {
+	version: 1;
+	provider: string;
+	usage?: UsageSnapshot;
+	error?: {
+		code: "UNSUPPORTED_PROVIDER" | "DISABLED" | "NO_CREDENTIALS" | "FETCH_FAILED" | "TIMEOUT" | "CANCELLED";
+	};
+}
+
+export const SCOPED_USAGE_EVENT = "sub-core:usage-request:v1";
 
 export type ProviderEnabledSetting = "auto" | "on" | "off" | boolean;
 
@@ -239,25 +274,5 @@ export const PROVIDER_DISPLAY_NAMES = Object.fromEntries(
 	PROVIDERS.map((provider) => [provider, PROVIDER_METADATA[provider].displayName])
 ) as Record<ProviderName, string>;
 
-export const MODEL_MULTIPLIERS: Record<string, number> = {
-	"Claude Haiku 4.5": 0.33,
-	"Claude Opus 4.1": 10,
-	"Claude Opus 4.5": 3,
-	"Claude Sonnet 4": 1,
-	"Claude Sonnet 4.5": 1,
-	"Gemini 2.5 Pro": 1,
-	"Gemini 3 Flash": 0.33,
-	"Gemini 3 Pro": 1,
-	"GPT-4.1": 0,
-	"GPT-4o": 0,
-	"GPT-5": 1,
-	"GPT-5 mini": 0,
-	"GPT-5-Codex": 1,
-	"GPT-5.1": 1,
-	"GPT-5.1-Codex": 1,
-	"GPT-5.1-Codex-Mini": 0.33,
-	"GPT-5.1-Codex-Max": 1,
-	"GPT-5.2": 1,
-	"Grok Code Fast 1": 0.25,
-	"Raptor mini": 0,
-};
+export { MODEL_MULTIPLIERS } from "./model-multipliers.js";
+export { getModelMultiplier, normalizeTokens } from "./model-utils.js";

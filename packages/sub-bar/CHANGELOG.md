@@ -1,5 +1,32 @@
 # @eiei114/pi-sub-bar
 
+## 2.3.1
+
+### Patch Changes
+
+- [#74](https://github.com/eiei114/pi-sub/pull/74) [`29e0f83`](https://github.com/eiei114/pi-sub/commit/29e0f83baafab49fe6eb489b680f2a6e07b87de2) Thanks [@eiei114](https://github.com/eiei114)! - Stop detecting xAI (Grok) as z.ai. These are unrelated providers; an xAI session must not display the user's z.ai subscription quota. z.ai detection remains unchanged. This fix does not add xAI billing support.
+- Updated dependencies [[`29e0f83`](https://github.com/eiei114/pi-sub/commit/29e0f83baafab49fe6eb489b680f2a6e07b87de2), [`96281bd`](https://github.com/eiei114/pi-sub/commit/96281bdee0dd7432b58dcc0598e74b3ab0ca830b)]:
+  - @eiei114/pi-sub-shared@2.3.1
+  - @eiei114/pi-sub-core@2.3.1
+
+## 2.3.0
+
+### Patch Changes
+
+- Updated dependencies [[`c41b535`](https://github.com/eiei114/pi-sub/commit/c41b535d66fa90eb60a19ec4db5dd6f1ac69b9c0)]:
+  - @eiei114/pi-sub-core@2.3.0
+  - @eiei114/pi-sub-shared@2.3.0
+
+## 2.2.4
+
+### Patch Changes
+
+- [#70](https://github.com/eiei114/pi-sub/pull/70) [`3c01d47`](https://github.com/eiei114/pi-sub/commit/3c01d47a8f55dca03d5635a4a992277538c13a42) Thanks [@eiei114](https://github.com/eiei114)! - Consolidate duplicated model token normalization and multiplier lookup into `@eiei114/pi-sub-shared`.
+
+- Updated dependencies [[`3c01d47`](https://github.com/eiei114/pi-sub/commit/3c01d47a8f55dca03d5635a4a992277538c13a42)]:
+  - @eiei114/pi-sub-shared@2.2.4
+  - @eiei114/pi-sub-core@2.2.4
+
 ## 2.2.3
 
 ### Patch Changes
