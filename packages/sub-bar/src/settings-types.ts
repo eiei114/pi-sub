@@ -282,10 +282,14 @@ export interface KimiCodingProviderSettings extends BaseProviderSettings {
 }
 
 export interface OpenRouterProviderSettings extends BaseProviderSettings {
+	/** Account wallet lines only — never relabels per-key data. */
 	showRemainingCredit: boolean;
 	showCreditBreakdown: boolean;
+	/** Per-key spend/cap lines, independent of the wallet toggles. */
+	showKeySpend: boolean;
 	windows: {
 		showCredits: boolean;
+		showKeyLimit: boolean;
 	};
 }
 
@@ -544,8 +548,10 @@ export function getDefaultSettings(): Settings {
 				showStatus: false,
 				showRemainingCredit: true,
 				showCreditBreakdown: false,
+				showKeySpend: true,
 				windows: {
 					showCredits: true,
+					showKeyLimit: true,
 				},
 			},
 			cursor: {

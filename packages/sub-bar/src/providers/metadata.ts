@@ -150,7 +150,9 @@ const kimiCodingWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, wi
 const openrouterWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, window, settings, _model) => {
 	if (!settings) return true;
 	const ps = settings.providers.openrouter;
+	// "Credits" is the account wallet; "Key limit" is this key's spending cap.
 	if (window.label === "Credits") return ps.windows.showCredits;
+	if (window.label === "Key limit") return ps.windows.showKeyLimit;
 	return true;
 };
 
@@ -214,31 +216,59 @@ const copilotExtras: ProviderMetadata["getExtras"] = (usage, settings, modelId) 
 	return extras;
 };
 
+/** Small amounts need more precision than the usual two decimals. */
+function formatAmount(value: number): string {
+	return formatUsd(value, value >= 1 ? 2 : 4);
+}
+
+/**
+ * OpenRouter reports two independent things, and they are labelled separately
+ * so a per-key spending cap is never read as account wallet credit:
+ * - "Key spend" / "Key cap" come from `/key` and describe this credential.
+ * - "Account credit" comes from `/credits` and describes the wallet.
+ */
 const openrouterExtras: ProviderMetadata["getExtras"] = (usage, settings) => {
 	const extras: UsageExtra[] = [];
+	const showKeySpend = settings?.providers.openrouter.showKeySpend ?? true;
 	const showRemainingCredit = settings?.providers.openrouter.showRemainingCredit ?? true;
 	const showCreditBreakdown = settings?.providers.openrouter.showCreditBreakdown ?? false;
+
+	if (showKeySpend) {
+		if (usage.keyUsage !== undefined) {
+			extras.push({ label: `Key spend: ${formatAmount(usage.keyUsage)}` });
+		}
+		// `null` means the key is uncapped; an unknown cap prints nothing rather
+		// than implying either a cap or unlimited spend.
+		if (usage.keyLimit === null) {
+			extras.push({ label: "Key cap: none" });
+		} else if (usage.keyLimit !== undefined) {
+			extras.push({ label: `Key cap: ${formatUsd(usage.keyLimit, 2)}` });
+		}
+	}
+
 	if (!showRemainingCredit) return extras;
 
 	const remaining = usage.creditRemaining;
-	if (remaining === undefined) return extras;
-
-	const remainingLabel = formatUsd(remaining, remaining >= 1 ? 2 : 4);
-	if (!showCreditBreakdown) {
-		extras.push({ label: `${remainingLabel} left` });
+	if (remaining === undefined) {
+		// Say so instead of silently omitting the wallet, which would look like
+		// the account simply has no credit.
+		if (usage.creditUnavailable) {
+			extras.push({ label: "Account credit: unavailable" });
+		}
 		return extras;
 	}
 
+	const remainingLabel = formatAmount(remaining);
 	const total = usage.creditTotal;
 	const used = usage.creditUsage;
-	if (total === undefined || used === undefined) {
-		extras.push({ label: `${remainingLabel} left` });
+	if (!showCreditBreakdown || total === undefined || used === undefined) {
+		extras.push({ label: `Account credit: ${remainingLabel} left` });
 		return extras;
 	}
 
 	const usedLabel = formatUsd(used, 2);
 	const totalLabel = formatUsd(total, 2);
-	extras.push({ label: `${remainingLabel} left (${usedLabel}/${totalLabel} used)` });
+	extras.push({ label: `Account credit: ${remainingLabel} left (${usedLabel}/${totalLabel} used)` });
 	return extras;
 };
 

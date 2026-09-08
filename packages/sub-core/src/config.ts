@@ -24,8 +24,18 @@ export { MODEL_MULTIPLIERS } from "@eiei114/pi-sub-shared";
 export const API_TIMEOUT_MS = 5000;
 
 /**
- * OpenRouter credits endpoint
+ * OpenRouter endpoints.
+ *
+ * Both hosts are fixed on purpose: base-URL overrides are not honoured, so an
+ * environment variable can never redirect a bearer token to another host.
+ *
+ * - `/key` describes the credential doing the request (cap + spend).
+ *   https://openrouter.ai/docs/api-reference/limits
+ * - `/credits` describes the account wallet and is documented as requiring a
+ *   management key, so it is only ever best-effort enrichment.
+ *   https://openrouter.ai/docs/api-reference/get-credits
  */
+export const OPENROUTER_KEY_URL = "https://openrouter.ai/api/v1/key";
 export const OPENROUTER_CREDITS_URL = "https://openrouter.ai/api/v1/credits";
 
 /**

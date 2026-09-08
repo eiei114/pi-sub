@@ -124,6 +124,21 @@ Display and provider UI settings are stored in `~/.pi/agent/pi-sub-bar-settings.
 
 Use `sub-bar:settings` → Provider Settings to control enabled state (auto/on/off), status indicators, and per-provider window visibility.
 
+OpenRouter separates the API key in use from the account wallet, so each has its
+own toggles and neither set relabels the other's data:
+
+| Setting | Default | Shows |
+|---------|---------|-------|
+| Show Key Limit Window | on | `Key limit` percentage window (only for a real numeric cap) |
+| Show Key Spend | on | `Key spend: $…` and `Key cap: $…` / `Key cap: none` |
+| Show Credits Window | on | `Credits` percentage window for the account wallet |
+| Show Remaining Credit | on | `Account credit: $… left`, or `Account credit: unavailable` when the wallet could not be read |
+| Show Credit Breakdown | off | Appends used/total to the account credit line |
+
+An uncapped key has nothing to draw a bar for, so it shows only the key and
+account lines — a snapshot without windows is still rendered when it carries
+these extras.
+
 ### Core Settings
 
 Use `sub-core:settings` to configure provider enablement (auto/on/off), fetch status, usage refresh settings, status refresh settings, and provider order.

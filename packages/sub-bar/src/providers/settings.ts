@@ -254,25 +254,39 @@ export function buildProviderSettingsItems(settings: Settings, provider: Provide
 		const openRouterSettings = ps as OpenRouterProviderSettings;
 		items.push(
 			{
+				id: "showKeyLimit",
+				label: "Show Key Limit Window",
+				currentValue: openRouterSettings.windows.showKeyLimit ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the spending cap window for the API key in use.",
+			},
+			{
+				id: "showKeySpend",
+				label: "Show Key Spend",
+				currentValue: openRouterSettings.showKeySpend ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show spend and cap for the API key in use.",
+			},
+			{
 				id: "showCredits",
 				label: "Show Credits Window",
 				currentValue: openRouterSettings.windows.showCredits ? "on" : "off",
 				values: ["on", "off"],
-				description: "Show the credits usage window.",
+				description: "Show the account credit usage window.",
 			},
 			{
 				id: "showRemainingCredit",
 				label: "Show Remaining Credit",
 				currentValue: openRouterSettings.showRemainingCredit ? "on" : "off",
 				values: ["on", "off"],
-				description: "Show the remaining OpenRouter credit line.",
+				description: "Show the remaining account credit line.",
 			},
 			{
 				id: "showCreditBreakdown",
 				label: "Show Credit Breakdown",
 				currentValue: openRouterSettings.showCreditBreakdown ? "on" : "off",
 				values: ["on", "off"],
-				description: "Append used/total credit details next to remaining credit.",
+				description: "Append used/total details next to remaining account credit.",
 			},
 		);
 	}
@@ -512,6 +526,12 @@ export function applyProviderSettingsChange(
 		switch (id) {
 			case "showCredits":
 				openRouterSettings.windows.showCredits = value === "on";
+				break;
+			case "showKeyLimit":
+				openRouterSettings.windows.showKeyLimit = value === "on";
+				break;
+			case "showKeySpend":
+				openRouterSettings.showKeySpend = value === "on";
 				break;
 			case "showRemainingCredit":
 				openRouterSettings.showRemainingCredit = value === "on";

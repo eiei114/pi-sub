@@ -648,9 +648,14 @@ export function formatUsageStatus(
 	const baseTextColor = resolveBaseTextColor(settings?.display.baseTextColor);
 	const modelInfo = resolveModelInfo(model);
 	const label = formatProviderLabel(theme, usage, settings, modelInfo);
+	const modelId = modelInfo?.id;
+	// Add extra usage lines (extra usage off, copilot multiplier, etc.)
+	const extras = getUsageExtras(usage, settings, modelId);
 
-	// If no windows, just show the provider name with error
-	if (usage.windows.length === 0) {
+	// Without windows there can still be something to show: some providers report
+	// usable amounts that have no percentage (e.g. an uncapped OpenRouter key).
+	// A failed snapshot keeps reporting the error, so extras can never hide it.
+	if (usage.windows.length === 0 && (extras.length === 0 || usage.error)) {
 		const errorMsg = usage.error
 			? applyBaseTextColor(theme, baseTextColor, `(${formatErrorForDisplay(usage.error)})`)
 			: "";
@@ -664,7 +669,6 @@ export function formatUsageStatus(
 	const parts: string[] = [];
 	const isCodex = usage.provider === "codex";
 	const invertUsage = isCodex && (settings?.providers.codex.invertUsage ?? false);
-	const modelId = modelInfo?.id;
 
 	// Add context bar as leftmost element if enabled
 	const showContextBar = settings?.display.showContextBar ?? false;
@@ -680,8 +684,6 @@ export function formatUsageStatus(
 		parts.push(formatUsageWindow(theme, w, invertUsage, settings, usage, undefined, modelInfo));
 	}
 
-	// Add extra usage lines (extra usage off, copilot multiplier, etc.)
-	const extras = getUsageExtras(usage, settings, modelId);
 	for (const extra of extras) {
 		parts.push(applyBaseTextColor(theme, baseTextColor, extra.label));
 	}
@@ -798,9 +800,13 @@ export function formatUsageStatusWithWidth(
 	const label = formatProviderLabel(theme, usage, settings, modelInfo);
 	const showContextBar = settings?.display.showContextBar ?? false;
 	const hasContext = showContextBar && context && context.contextWindow > 0;
+	const modelId = modelInfo?.id;
+	const extras = getUsageExtras(usage, settings, modelId);
 
-	// If no windows, just show the provider name with error
-	if (usage.windows.length === 0) {
+	// Without windows there can still be something to show: some providers report
+	// usable amounts that have no percentage (e.g. an uncapped OpenRouter key).
+	// A failed snapshot keeps reporting the error, so extras can never hide it.
+	if (usage.windows.length === 0 && (extras.length === 0 || usage.error)) {
 		const errorMsg = usage.error
 			? applyBaseTextColor(theme, baseTextColor, `(${formatErrorForDisplay(usage.error)})`)
 			: "";
@@ -832,7 +838,6 @@ export function formatUsageStatusWithWidth(
 	const windows: RateWindow[] = [];
 	const isCodex = usage.provider === "codex";
 	const invertUsage = isCodex && (settings?.providers.codex.invertUsage ?? false);
-	const modelId = modelInfo?.id;
 
 	// Add context window as first entry if enabled
 	let contextWindowIndex = -1;
@@ -852,7 +857,6 @@ export function formatUsageStatusWithWidth(
 	}
 
 	const barEligibleCount = hasBar ? windows.length : 0;
-	const extras = getUsageExtras(usage, settings, modelId);
 	const extraParts = extras.map((extra) => applyBaseTextColor(theme, baseTextColor, extra.label));
 
 	const barSpacerWidth = hasBar ? 1 : 0;

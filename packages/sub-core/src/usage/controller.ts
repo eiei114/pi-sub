@@ -9,6 +9,7 @@ import { detectProviderFromModel } from "../providers/detection.js";
 import { isExpectedMissingData } from "../errors.js";
 import { formatElapsedSince } from "../utils.js";
 import { fetchUsageForProvider, refreshStatusForProvider } from "./fetch.js";
+import { hasUsableUsageData } from "./usable.js";
 import type { Dependencies } from "../types.js";
 import { getCachedData, readCache } from "../cache.js";
 import { hasProviderCredentials } from "../providers/registry.js";
@@ -112,13 +113,13 @@ export function createUsageController(deps: Dependencies) {
 		if (fetchError) {
 			let fallback = state.cachedUsage;
 			let fallbackFetchedAt = state.lastSuccessAt;
-			if (!fallback || fallback.windows.length === 0) {
+			if (!hasUsableUsageData(fallback)) {
 				const cachedEntry = cache[provider];
 				const cachedUsage = cachedEntry?.usage ? { ...cachedEntry.usage, status: cachedEntry.status } : undefined;
-				fallback = cachedUsage && cachedUsage.windows.length > 0 ? cachedUsage : undefined;
+				fallback = hasUsableUsageData(cachedUsage) ? cachedUsage : undefined;
 				if (cachedEntry?.fetchedAt) fallbackFetchedAt = cachedEntry.fetchedAt;
 			}
-			if (fallback && fallback.windows.length > 0) {
+			if (fallback && hasUsableUsageData(fallback)) {
 				const lastSuccessAt = fallbackFetchedAt ?? state.lastSuccessAt;
 				const elapsed = lastSuccessAt ? formatElapsedSince(lastSuccessAt) : undefined;
 				const description = elapsed ? (elapsed === "just now" ? "just now" : `${elapsed} ago`) : "Fetch failed";
@@ -235,7 +236,7 @@ export function createUsageController(deps: Dependencies) {
 
 	function isUsageAvailable(usage: UsageSnapshot | undefined): usage is UsageSnapshot {
 		if (!usage) return false;
-		if (usage.windows.length > 0) return true;
+		if (hasUsableUsageData(usage)) return true;
 		if (!usage.error) return false;
 		return !isExpectedMissingData(usage.error);
 	}
