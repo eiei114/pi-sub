@@ -43,6 +43,8 @@ console.log(PROVIDERS, defaults, snapshot);
 - `BehaviorSettings`, `DEFAULT_BEHAVIOR_SETTINGS`
 - `getDefaultCoreSettings`, `getDefaultCoreProviderSettings`
 - `SubCoreState`, `SubCoreAllState`, `SubCoreEvents`
+- `ScopedUsageRequest`, `ScopedUsageResponse`, `SCOPED_USAGE_EVENT` — optional
+  [selective base-provider read contract](../sub-core/README.md#selective-read-only-usage-optional-v1-contract), not account-level identity resolution
 - `ProviderMetadata`, `ProviderDetectionConfig`, `ProviderStatusConfig`
 - `PROVIDER_METADATA`, `PROVIDER_DISPLAY_NAMES`
 - `MODEL_MULTIPLIERS`

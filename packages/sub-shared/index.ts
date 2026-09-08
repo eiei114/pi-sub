@@ -71,6 +71,24 @@ export interface ProviderUsageEntry {
 	usage?: UsageSnapshot;
 }
 
+/** Optional selective GET-only read; exact base Pi identity, not multi-account support. */
+export interface ScopedUsageRequest {
+	provider: string;
+	signal?: AbortSignal;
+	reply: (response: ScopedUsageResponse) => void;
+}
+
+export interface ScopedUsageResponse {
+	version: 1;
+	provider: string;
+	usage?: UsageSnapshot;
+	error?: {
+		code: "UNSUPPORTED_PROVIDER" | "DISABLED" | "NO_CREDENTIALS" | "FETCH_FAILED" | "TIMEOUT" | "CANCELLED";
+	};
+}
+
+export const SCOPED_USAGE_EVENT = "sub-core:usage-request:v1";
+
 export type ProviderEnabledSetting = "auto" | "on" | "off" | boolean;
 
 export interface CoreProviderSettings {
