@@ -17,6 +17,8 @@ import { prioritizeWindowsForModel } from "./src/utils.js";
 
 import { clearSettingsCache, loadSettings, saveSettings, SETTINGS_PATH } from "./src/settings.js";
 import { showSettingsUI } from "./src/settings-ui.js";
+import { SCOPED_USAGE_EVENT, type ScopedUsageRequest } from "@eiei114/pi-sub-shared";
+import { readScopedUsage } from "./src/usage/scoped-request.js";
 
 type SubCoreRequest =
 	| {
@@ -97,6 +99,7 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 	let settingsWatcher: fs.FSWatcher | undefined;
 	let settingsPoll: NodeJS.Timeout | undefined;
 	let settingsWatchStarted = false;
+	const scopedLifecycle = new AbortController();
 
 	const controller = createUsageController(deps);
 	const controllerState = {
@@ -417,6 +420,29 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 		},
 	});
 
+	const unsubscribeScopedUsage = pi.events.on(SCOPED_USAGE_EVENT, async (payload) => {
+		if (scopedLifecycle.signal.aborted || !payload || typeof payload !== "object") return;
+		const request = payload as ScopedUsageRequest;
+		if (
+			typeof request.reply !== "function"
+			|| typeof request.provider !== "string"
+			|| request.provider.length > 100
+		) return;
+		// Reading usage must not initialize settings, migrations, timers or tool registration.
+		if (!settingsLoaded) {
+			try {
+				request.reply({ version: 1, provider: request.provider, error: { code: "FETCH_FAILED" } });
+			} catch { /* Consumer callback. */ }
+			return;
+		}
+		const response = await readScopedUsage(request, deps, settings, scopedLifecycle.signal);
+		if (!scopedLifecycle.signal.aborted && response) {
+			try {
+				request.reply(response);
+			} catch { /* Consumers own their callback failures. */ }
+		}
+	});
+
 	pi.events.on("sub-core:request", async (payload) => {
 		ensureSettingsLoaded();
 		const request = payload as SubCoreRequest;
@@ -509,6 +535,8 @@ export default function createExtension(pi: ExtensionAPI, deps: Dependencies = c
 	});
 
 	pi.on("session_shutdown", async () => {
+		scopedLifecycle.abort();
+		if (typeof unsubscribeScopedUsage === "function") unsubscribeScopedUsage();
 		if (usageRefreshInterval) {
 			clearInterval(usageRefreshInterval);
 			usageRefreshInterval = undefined;
