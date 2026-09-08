@@ -1,5 +1,25 @@
 # @eiei114/pi-sub-core
 
+## 2.3.0
+
+### Minor Changes
+
+- [#69](https://github.com/eiei114/pi-sub/pull/69) [`c41b535`](https://github.com/eiei114/pi-sub/commit/c41b535d66fa90eb60a19ec4db5dd6f1ac69b9c0) Thanks [@tryingET](https://github.com/tryingET)! - Add an optional versioned, selective read-only usage event for exact base providers. Consumers can inspect a supported provider without changing selection, querying all providers, or reusing shared provider-cache data. Bound reads by cancellation and timeout; preserve disabled settings and reject account aliases.
+
+### Patch Changes
+
+- Updated dependencies [[`c41b535`](https://github.com/eiei114/pi-sub/commit/c41b535d66fa90eb60a19ec4db5dd6f1ac69b9c0)]:
+  - @eiei114/pi-sub-shared@2.3.0
+
+## 2.2.4
+
+### Patch Changes
+
+- [#70](https://github.com/eiei114/pi-sub/pull/70) [`3c01d47`](https://github.com/eiei114/pi-sub/commit/3c01d47a8f55dca03d5635a4a992277538c13a42) Thanks [@eiei114](https://github.com/eiei114)! - Consolidate duplicated model token normalization and multiplier lookup into `@eiei114/pi-sub-shared`.
+
+- Updated dependencies [[`3c01d47`](https://github.com/eiei114/pi-sub/commit/3c01d47a8f55dca03d5635a4a992277538c13a42)]:
+  - @eiei114/pi-sub-shared@2.2.4
+
 ## 2.2.3
 
 ### Patch Changes

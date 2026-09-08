@@ -3,7 +3,7 @@
  */
 
 import type { Dependencies, RateWindow } from "./types.js";
-import { MODEL_MULTIPLIERS } from "./config.js";
+import { normalizeTokens } from "@eiei114/pi-sub-shared";
 
 // Only allow simple CLI names (no spaces/paths) to avoid unsafe command execution.
 const SAFE_CLI_NAME = /^[a-zA-Z0-9._-]+$/;
@@ -55,18 +55,6 @@ export function stripAnsi(text: string): string {
 }
 
 /**
- * Normalize a string into tokens for fuzzy matching
- */
-export function normalizeTokens(value: string): string[] {
-	return value
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, " ")
-		.trim()
-		.split(" ")
-		.filter(Boolean);
-}
-
-/**
  * Reorder usage windows so those matching the active model come first.
  * A window matches when every model-ID token appears in the window label
  * AND the model tokens form a strict majority of the label tokens.
@@ -100,35 +88,6 @@ export function prioritizeWindowsForModel(
 	if (matched.length === 0 || matched.length === windows.length) return windows;
 
 	return [...matched, ...rest];
-}
-
-// Pre-computed token entries for model multiplier matching
-const MODEL_MULTIPLIER_TOKENS = Object.entries(MODEL_MULTIPLIERS).map(([label, multiplier]) => ({
-	label,
-	multiplier,
-	tokens: normalizeTokens(label),
-}));
-
-/**
- * Get the request multiplier for a model ID
- * Uses fuzzy matching against known model names
- */
-export function getModelMultiplier(modelId: string | undefined): number | undefined {
-	if (!modelId) return undefined;
-	const modelTokens = normalizeTokens(modelId);
-	if (modelTokens.length === 0) return undefined;
-
-	let bestMatch: { multiplier: number; tokenCount: number } | undefined;
-	for (const entry of MODEL_MULTIPLIER_TOKENS) {
-		const isMatch = entry.tokens.every((token) => modelTokens.includes(token));
-		if (!isMatch) continue;
-		const tokenCount = entry.tokens.length;
-		if (!bestMatch || tokenCount > bestMatch.tokenCount) {
-			bestMatch = { multiplier: entry.multiplier, tokenCount };
-		}
-	}
-
-	return bestMatch?.multiplier;
 }
 
 /**
