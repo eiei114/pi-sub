@@ -19,7 +19,7 @@ import { formatErrorForDisplay, isExpectedMissingData } from "./errors.js";
 import { getStatusIcon, getStatusLabel } from "./status.js";
 import { shouldShowWindow } from "./providers/windows.js";
 import { getUsageExtras } from "./providers/extras.js";
-import { normalizeTokens } from "./utils.js";
+import { normalizeTokens } from "@eiei114/pi-sub-shared";
 
 export interface UsageWindowParts {
 	label: string;

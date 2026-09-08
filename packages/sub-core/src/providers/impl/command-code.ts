@@ -57,7 +57,8 @@ function extractKeyFromAuthObject(entry: unknown): string | undefined {
 }
 
 /**
- * Auth order: ~/.commandcode/auth.json → Pi auth.json → ~/.omp/agent/auth.json → env.
+ * Auth order: env → ~/.commandcode/auth.json → Pi auth.json → ~/.omp/agent/auth.json.
+ * Only the provider-native file may supply an unscoped root apiKey.
  */
 function loadCommandCodeApiKey(deps: Dependencies): string | undefined {
 	const envKey = normalizeApiKey(
@@ -65,8 +66,9 @@ function loadCommandCodeApiKey(deps: Dependencies): string | undefined {
 	);
 	if (envKey) return envKey;
 
+	const nativeAuthPath = path.join(deps.homedir(), ".commandcode", "auth.json");
 	const candidates = [
-		path.join(deps.homedir(), ".commandcode", "auth.json"),
+		nativeAuthPath,
 		path.join(deps.homedir(), ".pi", "agent", "auth.json"),
 		path.join(deps.homedir(), ".omp", "agent", "auth.json"),
 	];
@@ -75,8 +77,10 @@ function loadCommandCodeApiKey(deps: Dependencies): string | undefined {
 		try {
 			if (!deps.fileExists(authPath)) continue;
 			const auth = JSON.parse(deps.readFile(authPath) ?? "{}") as Record<string, unknown>;
-			const fromRoot = extractKeyFromAuthObject(auth.apiKey);
-			if (fromRoot) return fromRoot;
+			if (authPath === nativeAuthPath) {
+				const fromRoot = extractKeyFromAuthObject(auth.apiKey);
+				if (fromRoot) return fromRoot;
+			}
 			const fromCommandCode =
 				extractKeyFromAuthObject(auth["command-code"])
 				?? extractKeyFromAuthObject(auth.commandcode)

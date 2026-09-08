@@ -200,6 +200,45 @@ Sub-core uses `pi.events` as an in-process pub/sub bus. Any `sub-*` extension ca
 
 The `reply` callback receives `{ state }` or `{ entries }` immediately if available.
 
+#### Selective read-only usage (optional v1 contract)
+
+`sub-core:usage-request:v1` accepts `{ provider, signal?, reply }`. It replies with
+`{ version: 1, provider, usage?, error?: { code } }`. Types and the event constant
+are exported by sub-shared as `ScopedUsageRequest`, `ScopedUsageResponse` and
+`SCOPED_USAGE_EVENT`.
+
+Allowed **exact base Pi identities**: `anthropic`, `github-copilot`, `zai`,
+`openrouter`, `opencode-go`, `xai`. An identity also requires an installed adapter.
+Current main provides the first five; `xai` returns `UNSUPPORTED_PROVIDER` before
+credential access until [xAI provider support](https://github.com/eiei114/pi-sub/pull/66)
+is available. This event does not add provider implementations or change their
+response semantics; enhanced OpenRouter key/wallet support is separate
+([#65](https://github.com/eiei114/pi-sub/pull/65)).
+
+The outer provider echoes the requested Pi ID;
+`usage.provider` is the adapter ID (`copilot` / `opencode` where applicable).
+Aliases and Codex are deliberately rejected: this is not an account-resolution
+contract. Codex consumers must retain their account-bound credential path.
+
+Each request reads only the selected provider through its existing credential
+resolver and adapter. It honors disabled settings, uses GET only with redirects
+prohibited, and composes caller cancellation, a 15-second deadline and runtime
+shutdown. Native credential subprocesses receive a requested timeout of at most
+five seconds (or the remaining deadline). This is not a hard wall-clock guarantee:
+Node can wait for child termination and synchronous filesystem work is not
+preemptible. Cancellation takes effect when synchronous work yields.
+Requests before normal session initialization return `FETCH_FAILED` without
+starting migrations; retry after `session_start` finishes.
+It does not select a provider/model, read/write shared usage cache,
+broadcast updates, refresh status, or spend credits. Base provider resolution
+may use the adapter's normal native CLI credential fallback; it does not assert
+that every custom model credential override identifies that same account.
+
+Consumers must filter project permissions **before emitting**, validate both
+identities, bound their own wait (older cores have no listener), and ignore late
+responses after disposal. Never fall back to bulk entries to satisfy a scoped
+read. Existing autonomous sub-core refresh behavior is unchanged by this API.
+
 #### Actions (mutate core state)
 - `sub-core:settings:patch` → `{ patch }` (updates refresh interval/provider settings and persists)
 - `sub-core:action` → `{ type: "refresh" | "cycleProvider", force? }`
