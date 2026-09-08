@@ -13,5 +13,6 @@ import "./ci-workflow.test.js";
 import "./contributing-accuracy.test.js";
 import "./readme-accuracy.test.js";
 import "./roadmap-accuracy.test.js";
+import "./release-publish-order.test.js";
 import "./scoped-request.test.js";
 import "./scoped-event.test.js";
