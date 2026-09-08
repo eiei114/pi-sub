@@ -140,7 +140,9 @@ Settings live in the agent directory to survive updates (legacy extension `setti
 
 You must update **sub-shared** (provider id + metadata), **sub-core** (fetch layer), and **sub-bar** (display/UI).
 
-> **Unofficial provider APIs:** Cursor, OpenCode, and Command Code usage endpoints are unofficial and may change without notice. Failures soft-error in the UI; disable the provider in settings if an API shape breaks.
+> **Unofficial provider APIs:** Cursor, OpenCode, Command Code, and xAI (Grok) usage endpoints are unofficial and may change without notice. Failures soft-error in the UI; disable the provider in settings if an API shape breaks.
+
+> **xAI (Grok) limitations:** the xAI provider reports the **subscription** quota (SuperGrok/Grok plan) of the single base `xai` OAuth credential in `~/.pi/agent/auth.json`. xAI API keys (`XAI_API_KEY`) are not accepted for this endpoint — they are valid credentials for the developer API, just not for subscription quota. Additional numbered accounts (`xai-2`, …) are not supported and intentionally show no usage instead of the base account's numbers.
 
 ### sub-shared
 1. Add provider name to `PROVIDERS` / `PROVIDER_METADATA` in `packages/sub-shared/index.ts`.

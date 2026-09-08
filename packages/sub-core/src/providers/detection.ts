@@ -22,6 +22,16 @@ const PROVIDER_DETECTION_HINTS: ProviderDetectionHint[] = PROVIDERS.map((provide
 });
 
 /**
+ * xAI subscription usage is scoped to the single base `xai` credential in pi's
+ * auth.json, so only the exact base provider id maps to the xAI provider.
+ * Numbered aliases (`xai-2`, `xai2`, …) are separate accounts whose quota this
+ * extension cannot read; they resolve to no provider instead of showing the
+ * base account's usage.
+ */
+const XAI_PROVIDER_PREFIXES = ["xai", "x-ai", "x.ai"];
+const XAI_BASE_PROVIDER_IDS = new Set(["xai"]);
+
+/**
  * Detect the provider from model metadata.
  */
 export function detectProviderFromModel(
@@ -33,6 +43,10 @@ export function detectProviderFromModel(
 
 	if (providerValue.includes("antigravity") || idValue.includes("antigravity")) {
 		return "antigravity";
+	}
+
+	if (XAI_PROVIDER_PREFIXES.some((prefix) => providerValue.startsWith(prefix))) {
+		return XAI_BASE_PROVIDER_IDS.has(providerValue) ? "xai" : undefined;
 	}
 
 	for (const hint of PROVIDER_DETECTION_HINTS) {
