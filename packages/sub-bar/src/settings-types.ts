@@ -327,6 +327,13 @@ export interface XaiProviderSettings extends BaseProviderSettings {
 	};
 }
 
+export interface DevinProviderSettings extends BaseProviderSettings {
+	windows: {
+		showDay: boolean;
+		showWeek: boolean;
+	};
+}
+
 export interface ProviderSettingsMap {
 	anthropic: AnthropicProviderSettings;
 	copilot: CopilotProviderSettings;
@@ -341,6 +348,7 @@ export interface ProviderSettingsMap {
 	opencode: OpenCodeProviderSettings;
 	"command-code": CommandCodeProviderSettings;
 	xai: XaiProviderSettings;
+	devin: DevinProviderSettings;
 }
 
 export type { BehaviorSettings, CoreSettings } from "@eiei114/pi-sub-shared";
@@ -595,6 +603,13 @@ export function getDefaultSettings(): Settings {
 					showWeek: true,
 					showMonth: true,
 					showUsage: true,
+				},
+			},
+			devin: {
+				showStatus: false,
+				windows: {
+					showDay: true,
+					showWeek: true,
 				},
 			},
 		},
