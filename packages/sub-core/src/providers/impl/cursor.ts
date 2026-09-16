@@ -14,6 +14,7 @@ import * as path from "node:path";
 import type { Dependencies, RateWindow, UsageSnapshot } from "../../types.js";
 import { BaseProvider } from "../../provider.js";
 import { noCredentials, fetchFailed, httpError, apiError } from "../../errors.js";
+import { isRecord, normalizeCredentialString } from "../../credentials.js";
 import { formatReset, createTimeoutController } from "../../utils.js";
 import {
 	API_TIMEOUT_MS,
@@ -29,11 +30,7 @@ type FetchWindowsResult = {
 	windows: RateWindow[];
 };
 
-function normalizeToken(value: unknown): string | undefined {
-	if (typeof value !== "string") return undefined;
-	const trimmed = value.trim();
-	return trimmed.length > 0 ? trimmed : undefined;
-}
+const normalizeToken = normalizeCredentialString;
 
 function toFiniteNumber(value: unknown): number | undefined {
 	if (typeof value === "number" && Number.isFinite(value)) return value;
@@ -46,10 +43,6 @@ function toFiniteNumber(value: unknown): number | undefined {
 
 function clampPercent(value: number): number {
 	return Math.max(0, Math.min(100, value));
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function looksLikeCursorApiKey(token: string): boolean {

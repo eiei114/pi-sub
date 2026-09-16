@@ -1,3 +1,4 @@
+import "./credentials.test.js";
 import "./cache.test.js";
 import "./detection.test.js";
 import "./providers.test.js";
