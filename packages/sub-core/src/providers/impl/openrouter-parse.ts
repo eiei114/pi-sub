@@ -6,6 +6,8 @@
  * (key label, account id, error body); only numbers are read.
  */
 
+import { isRecord } from "../../credentials.js";
+
 /** Per-credential cap and spend, from `GET /api/v1/key`. */
 export interface OpenRouterKeyInfo {
 	/** All-time spend on this credential, in account currency. */
@@ -28,10 +30,6 @@ export interface OpenRouterKeyInfo {
 export interface OpenRouterCreditsInfo {
 	total: number;
 	usage: number;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 /**

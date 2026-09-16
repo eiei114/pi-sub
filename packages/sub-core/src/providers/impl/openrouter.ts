@@ -11,6 +11,7 @@ import * as path from "node:path";
 import type { Dependencies, RateWindow, UsageError, UsageSnapshot } from "../../types.js";
 import { BaseProvider } from "../../provider.js";
 import { noCredentials, fetchFailed, httpError, apiError } from "../../errors.js";
+import { normalizeCredentialString } from "../../credentials.js";
 import { createTimeoutController } from "../../utils.js";
 import { API_TIMEOUT_MS, OPENROUTER_CREDITS_URL, OPENROUTER_KEY_URL } from "../../config.js";
 import {
@@ -31,15 +32,8 @@ export const OPENROUTER_CREDITS_WINDOW = "Credits";
 const INVALID_KEY_RESPONSE = "Invalid OpenRouter key response";
 const INVALID_CREDITS_RESPONSE = "Invalid OpenRouter credits response";
 
-function normalizeApiKey(value: unknown): string | undefined {
-	if (typeof value !== "string") return undefined;
-	const trimmed = value.trim();
-	if (trimmed.length === 0) return undefined;
-	// `!command` values mean "run this to get the secret". This provider never
-	// executes commands, so such a value is not a usable credential.
-	if (trimmed.startsWith("!")) return undefined;
-	return trimmed;
-}
+const normalizeApiKey = (value: unknown) =>
+	normalizeCredentialString(value, { rejectCommandPrefix: true });
 
 /**
  * Auth precedence (unchanged): `OPENROUTER_API_KEY` → `OPENROUTER_KEY` →
