@@ -38,6 +38,7 @@ https://github.com/user-attachments/assets/d61d82f6-afd0-45fc-82f3-69910543aa7a
 | AWS Kiro | Credits | - |
 | z.ai | Tokens/monthly limits | - |
 | xAI (Grok) | Subscription quota window | - |
+| Devin | Daily/Weekly organization quota | - |
 
 ### Provider Feature Matrix
 
@@ -52,6 +53,7 @@ https://github.com/user-attachments/assets/d61d82f6-afd0-45fc-82f3-69910543aa7a
 | AWS Kiro | Credits | - | - | - | - |
 | z.ai | Tokens, Monthly | - | - | - | API quota limits |
 | xAI (Grok) | Week, Month, Usage | - | - | - | Subscription (SuperGrok/Grok) quota only, unofficial endpoint, base `xai` OAuth account only |
+| Devin | Day, Week | - | - | - | Organization quota, unofficial endpoint, session token from the `devin` auth.json entry |
 
 ## Installation
 

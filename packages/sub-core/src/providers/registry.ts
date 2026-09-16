@@ -15,6 +15,7 @@ export { CursorProvider } from "./impl/cursor.js";
 export { OpenCodeProvider } from "./impl/opencode.js";
 export { CommandCodeProvider } from "./impl/command-code.js";
 export { XaiProvider } from "./impl/xai.js";
+export { DevinProvider } from "./impl/devin.js";
 
 import type { Dependencies, ProviderName } from "../types.js";
 import type { UsageProvider } from "../provider.js";
@@ -32,6 +33,7 @@ import { CursorProvider } from "./impl/cursor.js";
 import { OpenCodeProvider } from "./impl/opencode.js";
 import { CommandCodeProvider } from "./impl/command-code.js";
 import { XaiProvider } from "./impl/xai.js";
+import { DevinProvider } from "./impl/devin.js";
 
 const PROVIDER_FACTORIES: Record<ProviderName, () => UsageProvider> = {
 	anthropic: () => new AnthropicProvider(),
@@ -47,6 +49,7 @@ const PROVIDER_FACTORIES: Record<ProviderName, () => UsageProvider> = {
 	opencode: () => new OpenCodeProvider(),
 	"command-code": () => new CommandCodeProvider(),
 	xai: () => new XaiProvider(),
+	devin: () => new DevinProvider(),
 };
 
 /**

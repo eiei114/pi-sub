@@ -16,6 +16,7 @@ export const PROVIDERS = [
 	"opencode",
 	"command-code",
 	"xai",
+	"devin",
 ] as const;
 
 export type ProviderName = (typeof PROVIDERS)[number];
@@ -267,6 +268,13 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 		// display another account's quota. Grok models routed through other
 		// providers (e.g. OpenRouter) keep resolving to that provider.
 		detection: { providerTokens: [], modelTokens: [] },
+	},
+	devin: {
+		displayName: "Devin",
+		// Devin model ids are account-specific (`swe-2`, `claude-opus-5`, …), so
+		// only the provider id identifies this account. There is no model-token
+		// fallback: a model id alone does not tell us the credential it used.
+		detection: { providerTokens: ["devin"], modelTokens: [] },
 	},
 };
 

@@ -192,6 +192,14 @@ const xaiWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, window, s
 	return true;
 };
 
+const devinWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, window, settings, _model) => {
+	if (!settings) return true;
+	const ps = settings.providers.devin;
+	if (window.label === "Day") return ps.windows.showDay;
+	if (window.label === "Week") return ps.windows.showWeek;
+	return true;
+};
+
 function formatUsd(value: number, digits: number): string {
 	const safeValue = Object.is(value, -0) ? 0 : value;
 	return `$${safeValue.toFixed(digits)}`;
@@ -352,5 +360,9 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 	xai: {
 		...BASE_METADATA.xai,
 		isWindowVisible: xaiWindowVisible,
+	},
+	devin: {
+		...BASE_METADATA.devin,
+		isWindowVisible: devinWindowVisible,
 	},
 };
