@@ -16,6 +16,7 @@ export const PROVIDERS = [
 	"opencode",
 	"command-code",
 	"xai",
+	"ollama-cloud",
 ] as const;
 
 export type ProviderName = (typeof PROVIDERS)[number];
@@ -267,6 +268,12 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 		// display another account's quota. Grok models routed through other
 		// providers (e.g. OpenRouter) keep resolving to that provider.
 		detection: { providerTokens: [], modelTokens: [] },
+	},
+	"ollama-cloud": {
+		displayName: "Ollama Cloud",
+		// Cloud model ids (`gpt-oss:120b`, `kimi-k2.6`, …) overlap with other
+		// hosts, so only the provider id identifies an Ollama account.
+		detection: { providerTokens: ["ollama-cloud"], modelTokens: [] },
 	},
 };
 
