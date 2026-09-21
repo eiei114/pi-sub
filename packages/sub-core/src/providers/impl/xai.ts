@@ -17,6 +17,7 @@ import * as path from "node:path";
 import type { Dependencies, RateWindow, UsageSnapshot } from "../../types.js";
 import { BaseProvider } from "../../provider.js";
 import { noCredentials, fetchFailed, httpError, apiError } from "../../errors.js";
+import { isRecord, normalizeCredentialString } from "../../credentials.js";
 import { formatReset, createTimeoutController } from "../../utils.js";
 import {
 	API_TIMEOUT_MS,
@@ -31,16 +32,8 @@ const INVALID_RESPONSE = "Invalid xAI usage response";
 /** pi stores the xAI subscription credential under this auth.json key. */
 const XAI_AUTH_KEY = "xai";
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function normalizeToken(value: unknown): string | undefined {
-	if (typeof value !== "string") return undefined;
-	const trimmed = value.trim();
-	return trimmed.length > 0 && !trimmed.startsWith("!") && !/[\r\n]/.test(trimmed)
-		? trimmed : undefined;
-}
+const normalizeToken = (value: unknown) =>
+	normalizeCredentialString(value, { rejectCommandPrefix: true, rejectNewlines: true });
 
 function clampPercent(value: number): number {
 	return Math.max(0, Math.min(100, value));

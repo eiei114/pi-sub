@@ -20,6 +20,7 @@ import type {
 	OpenCodeProviderSettings,
 	CommandCodeProviderSettings,
 	XaiProviderSettings,
+	DevinProviderSettings,
 	OllamaCloudProviderSettings,
 } from "../settings-types.js";
 
@@ -408,6 +409,25 @@ export function buildProviderSettingsItems(settings: Settings, provider: Provide
 		);
 	}
 
+	if (provider === "devin") {
+		const devinSettings = ps as DevinProviderSettings;
+		items.push(
+			{
+				id: "showDay",
+				label: "Show Day Window",
+				currentValue: devinSettings.windows.showDay ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the daily usage window.",
+			},
+			{
+				id: "showWeek",
+				label: "Show Week Window",
+				currentValue: devinSettings.windows.showWeek ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the weekly usage window.",
+			},
+		);
+	}
 
 	if (provider === "ollama-cloud") {
 		const ollamaCloudSettings = ps as OllamaCloudProviderSettings;
@@ -435,6 +455,8 @@ export function buildProviderSettingsItems(settings: Settings, provider: Provide
 			},
 		);
 	}
+
+
 	return items;
 }
 
@@ -658,6 +680,17 @@ export function applyProviderSettingsChange(
 		}
 	}
 
+	if (provider === "devin") {
+		const devinSettings = ps as DevinProviderSettings;
+		switch (id) {
+			case "showDay":
+				devinSettings.windows.showDay = value === "on";
+				break;
+			case "showWeek":
+				devinSettings.windows.showWeek = value === "on";
+				break;
+		}
+	}
 
 	if (provider === "ollama-cloud") {
 		const ollamaCloudSettings = ps as OllamaCloudProviderSettings;
@@ -673,5 +706,7 @@ export function applyProviderSettingsChange(
 				break;
 		}
 	}
+
+
 	return settings;
 }
