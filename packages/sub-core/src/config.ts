@@ -85,6 +85,23 @@ export const XAI_CLI_CLIENT_VERSION = "1.0.4";
 export const CLI_TIMEOUT_MS = 10000;
 
 /**
+ * Devin quota endpoints (unofficial, source-derived).
+ *
+ * Quota is scoped to a Devin organization, so the provider first lists the
+ * organizations the stored session token can see and then asks each one for its
+ * quota, stopping at the first that answers. Both endpoints are undocumented and
+ * can change without notice. The token is the same `devin-session-token$…`
+ * credential the `devin` model provider stores in `~/.pi/agent/auth.json`.
+ */
+export const DEVIN_API_BASE_URL = "https://app.devin.ai/api";
+export const DEVIN_ORGANIZATIONS_URL = `${DEVIN_API_BASE_URL}/organizations`;
+
+/** Quota endpoint for one Devin organization. */
+export function devinQuotaUrl(orgId: string): string {
+	return `${DEVIN_API_BASE_URL}/${encodeURIComponent(orgId)}/billing/quota/usage`;
+}
+
+/**
  * Interval for automatic usage refresh in milliseconds
  */
 export const REFRESH_INTERVAL_MS = 60_000;
