@@ -1,5 +1,22 @@
 # @eiei114/pi-sub-core
 
+## 2.6.0
+
+### Minor Changes
+
+- [#82](https://github.com/eiei114/pi-sub/pull/82) [`d5300bd`](https://github.com/eiei114/pi-sub/commit/d5300bd36d3bd322cbda32d8fe2f5d87526e9cb4) Thanks [@ttttmr](https://github.com/ttttmr)! - Add an Ollama Cloud usage provider.
+
+  `sub-core` reads `ollama.com/api/usage` with an API key (`OLLAMA_API_KEY` or the
+  `ollama-cloud` credential in `~/.pi/agent/auth.json`) and reports the account's
+  session, weekly, and monthly quotas as `Session` / `Week` / `Month` windows —
+  whichever the plan actually has — plus the current period cost.
+  `sub-bar` adds the matching window visibility settings.
+
+### Patch Changes
+
+- Updated dependencies [[`d5300bd`](https://github.com/eiei114/pi-sub/commit/d5300bd36d3bd322cbda32d8fe2f5d87526e9cb4)]:
+  - @eiei114/pi-sub-shared@2.6.0
+
 ## 2.5.0
 
 ### Minor Changes
