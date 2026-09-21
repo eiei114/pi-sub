@@ -1,5 +1,16 @@
 # @eiei114/pi-sub-shared
 
+## 2.5.0
+
+### Minor Changes
+
+- [#80](https://github.com/eiei114/pi-sub/pull/80) [`ff47bf5`](https://github.com/eiei114/pi-sub/commit/ff47bf59be47d1493d95093639feedf670bd625e) Thanks [@ttttmr](https://github.com/ttttmr)! - Add a Devin usage provider.
+
+  `sub-core` reads the `devin` session token from `~/.pi/agent/auth.json`, lists the
+  organizations it can see, and reports the first readable organization's daily and
+  weekly quota as `Day` / `Week` windows. `sub-bar` adds the matching window
+  visibility settings.
+
 ## 2.4.0
 
 ### Minor Changes
