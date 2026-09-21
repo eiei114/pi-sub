@@ -21,6 +21,7 @@ import type {
 	CommandCodeProviderSettings,
 	XaiProviderSettings,
 	DevinProviderSettings,
+	OllamaCloudProviderSettings,
 } from "../settings-types.js";
 
 function buildBaseProviderItems(ps: BaseProviderSettings): SettingItem[] {
@@ -428,6 +429,34 @@ export function buildProviderSettingsItems(settings: Settings, provider: Provide
 		);
 	}
 
+	if (provider === "ollama-cloud") {
+		const ollamaCloudSettings = ps as OllamaCloudProviderSettings;
+		items.push(
+			{
+				id: "show5h",
+				label: "Show Session Window",
+				currentValue: ollamaCloudSettings.windows.show5h ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the per-session usage window.",
+			},
+			{
+				id: "showWeek",
+				label: "Show Week Window",
+				currentValue: ollamaCloudSettings.windows.showWeek ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the weekly usage window.",
+			},
+			{
+				id: "showMonth",
+				label: "Show Month Window",
+				currentValue: ollamaCloudSettings.windows.showMonth ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the monthly usage window.",
+			},
+		);
+	}
+
+
 	return items;
 }
 
@@ -662,6 +691,22 @@ export function applyProviderSettingsChange(
 				break;
 		}
 	}
+
+	if (provider === "ollama-cloud") {
+		const ollamaCloudSettings = ps as OllamaCloudProviderSettings;
+		switch (id) {
+			case "show5h":
+				ollamaCloudSettings.windows.show5h = value === "on";
+				break;
+			case "showWeek":
+				ollamaCloudSettings.windows.showWeek = value === "on";
+				break;
+			case "showMonth":
+				ollamaCloudSettings.windows.showMonth = value === "on";
+				break;
+		}
+	}
+
 
 	return settings;
 }

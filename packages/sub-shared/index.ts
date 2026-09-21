@@ -17,6 +17,7 @@ export const PROVIDERS = [
 	"command-code",
 	"xai",
 	"devin",
+	"ollama-cloud",
 ] as const;
 
 export type ProviderName = (typeof PROVIDERS)[number];
@@ -275,6 +276,12 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 		// only the provider id identifies this account. There is no model-token
 		// fallback: a model id alone does not tell us the credential it used.
 		detection: { providerTokens: ["devin"], modelTokens: [] },
+	},
+	"ollama-cloud": {
+		displayName: "Ollama Cloud",
+		// Cloud model ids (`gpt-oss:120b`, `kimi-k2.6`, …) overlap with other
+		// hosts, so only the provider id identifies an Ollama account.
+		detection: { providerTokens: ["ollama-cloud"], modelTokens: [] },
 	},
 };
 

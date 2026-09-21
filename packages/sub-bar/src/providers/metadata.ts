@@ -200,6 +200,16 @@ const devinWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, window,
 	return true;
 };
 
+const ollamaCloudWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, window, settings, _model) => {
+	if (!settings) return true;
+	const ps = settings.providers["ollama-cloud"];
+	if (window.label === "Session") return ps.windows.show5h;
+	if (window.label === "Week") return ps.windows.showWeek;
+	if (window.label === "Month") return ps.windows.showMonth;
+	return true;
+};
+
+
 function formatUsd(value: number, digits: number): string {
 	const safeValue = Object.is(value, -0) ? 0 : value;
 	return `$${safeValue.toFixed(digits)}`;
@@ -364,5 +374,9 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 	devin: {
 		...BASE_METADATA.devin,
 		isWindowVisible: devinWindowVisible,
+	},
+	"ollama-cloud": {
+		...BASE_METADATA["ollama-cloud"],
+		isWindowVisible: ollamaCloudWindowVisible,
 	},
 };

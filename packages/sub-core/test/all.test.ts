@@ -4,6 +4,7 @@ import "./detection.test.js";
 import "./providers.test.js";
 import "./xai.test.js";
 import "./devin.test.js";
+import "./ollama-cloud.test.js";
 import "./openrouter.test.js";
 import "./command-code-credentials.test.js";
 import "./settings-list.test.js";

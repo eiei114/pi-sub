@@ -334,6 +334,15 @@ export interface DevinProviderSettings extends BaseProviderSettings {
 	};
 }
 
+export interface OllamaCloudProviderSettings extends BaseProviderSettings {
+	windows: {
+		show5h: boolean;
+		showWeek: boolean;
+		showMonth: boolean;
+	};
+}
+
+
 export interface ProviderSettingsMap {
 	anthropic: AnthropicProviderSettings;
 	copilot: CopilotProviderSettings;
@@ -349,6 +358,7 @@ export interface ProviderSettingsMap {
 	"command-code": CommandCodeProviderSettings;
 	xai: XaiProviderSettings;
 	devin: DevinProviderSettings;
+	"ollama-cloud": OllamaCloudProviderSettings;
 }
 
 export type { BehaviorSettings, CoreSettings } from "@eiei114/pi-sub-shared";
@@ -610,6 +620,14 @@ export function getDefaultSettings(): Settings {
 				windows: {
 					showDay: true,
 					showWeek: true,
+				},
+			},
+			"ollama-cloud": {
+				showStatus: false,
+				windows: {
+					show5h: true,
+					showWeek: true,
+					showMonth: true,
 				},
 			},
 		},

@@ -36,6 +36,12 @@ export const API_TIMEOUT_MS = 5000;
  *   https://openrouter.ai/docs/api-reference/get-credits
  */
 export const OPENROUTER_KEY_URL = "https://openrouter.ai/api/v1/key";
+
+/**
+ * Ollama cloud usage and quota windows for the authenticated account.
+ * Undocumented; observed at https://ollama.com/api/usage.
+ */
+export const OLLAMA_USAGE_URL = "https://ollama.com/api/usage";
 export const OPENROUTER_CREDITS_URL = "https://openrouter.ai/api/v1/credits";
 
 /**

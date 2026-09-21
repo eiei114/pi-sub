@@ -54,6 +54,7 @@ https://github.com/user-attachments/assets/d61d82f6-afd0-45fc-82f3-69910543aa7a
 | z.ai | Tokens, Monthly | - | - | - | API quota limits |
 | xAI (Grok) | Week, Month, Usage | - | - | - | Subscription (SuperGrok/Grok) quota only, unofficial endpoint, base `xai` OAuth account only |
 | Devin | Day, Week | - | - | - | Organization quota, unofficial endpoint, session token from the `devin` auth.json entry |
+| Ollama Cloud | Session, Week, Month | Cost | - | - | ollama.com usage quota, API key from `OLLAMA_API_KEY` or the `ollama-cloud` auth.json entry |
 
 ## Installation
 
