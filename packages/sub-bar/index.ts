@@ -672,6 +672,10 @@ export default function createExtension(pi: ExtensionAPI) {
 	function resolveDisplayedUsage(): UsageSnapshot | undefined {
 		const pinned = settings.pinnedProvider ?? null;
 		if (pinned) {
+			// A pinned Codex provider still means the active Codex subscription, not auth.json's base account.
+			if (pinned === "codex" && /^openai-codex(?:-\d+)?$/.test(lastContext?.model?.provider ?? "")) {
+				return currentUsage;
+			}
 			return usageEntries[pinned] ?? currentUsage;
 		}
 		return currentUsage;
@@ -1102,9 +1106,9 @@ export default function createExtension(pi: ExtensionAPI) {
 		if (!uiEnabled || !ctx.hasUI) {
 			return;
 		}
-		if (currentUsage) {
-			renderUsageWidget(ctx, currentUsage);
-		}
+		// Never repaint the previous account's quota while the core resolves new credentials.
+		currentUsage = undefined;
+		renderCurrent(ctx);
 	});
 
 	pi.on("session_shutdown", async () => {

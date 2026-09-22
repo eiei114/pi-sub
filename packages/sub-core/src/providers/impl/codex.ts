@@ -128,9 +128,9 @@ export class CodexProvider extends BaseProvider {
 		return Boolean(loadCodexCredentials(deps).accessToken);
 	}
 
-	async fetchUsage(deps: Dependencies): Promise<UsageSnapshot> {
-		const { accessToken, accountId } = loadCodexCredentials(deps);
-		if (!accessToken) {
+	async fetchUsage(deps: Dependencies, resolvedHeaders?: Headers): Promise<UsageSnapshot> {
+		const { accessToken, accountId } = resolvedHeaders ? {} : loadCodexCredentials(deps);
+		if (!resolvedHeaders && !accessToken) {
 			return this.emptySnapshot(noCredentials());
 		}
 
@@ -146,10 +146,9 @@ export class CodexProvider extends BaseProvider {
 			}
 
 			const res = await deps.fetch("https://chatgpt.com/backend-api/wham/usage", {
-				headers,
+				headers: resolvedHeaders ?? headers,
 				signal: controller.signal,
 			});
-			clear();
 
 			if (!res.ok) {
 				return this.emptySnapshot(httpError(res.status));
@@ -178,8 +177,9 @@ export class CodexProvider extends BaseProvider {
 
 			return this.snapshot({ windows });
 		} catch {
-			clear();
 			return this.emptySnapshot(fetchFailed());
+		} finally {
+			clear();
 		}
 	}
 
