@@ -17,13 +17,10 @@ import { prioritizeWindowsForModel } from "./src/utils.js";
 
 import { clearSettingsCache, loadSettings, saveSettings, SETTINGS_PATH } from "./src/settings.js";
 import { showSettingsUI } from "./src/settings-ui.js";
-<<<<<<< HEAD
 import { SCOPED_USAGE_EVENT, type ScopedUsageRequest } from "@eiei114/pi-sub-shared";
 import { readScopedUsage } from "./src/usage/scoped-request.js";
-=======
 import { createActiveCodexUsage, isActiveCodex } from "./src/usage/active-codex.js";
 import { refreshStatusForProvider } from "./src/usage/fetch.js";
->>>>>>> 7ac057f (fix(codex): isolate selected subscription usage and reload lifecycle)
 
 type SubCoreRequest =
 	| {
