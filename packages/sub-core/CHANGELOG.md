@@ -1,5 +1,13 @@
 # @eiei114/pi-sub-core
 
+## 2.7.1
+
+### Patch Changes
+
+- [#87](https://github.com/eiei114/pi-sub/pull/87) [`59cbb9b`](https://github.com/eiei114/pi-sub/commit/59cbb9be3068484f3e7549d15d58843c86d08057) Thanks [@eiei114](https://github.com/eiei114)! - Resolve Codex usage from the selected model's credentials, including numbered subscription aliases. Keep active-account usage isolated from the provider-only disk cache, discard stale selections and reload callbacks, and show the selected account in sub-bar instead of silently displaying the base account's quota.
+- Updated dependencies []:
+  - @eiei114/pi-sub-shared@2.7.1
+
 ## 2.7.0
 
 ### Minor Changes
