@@ -1,5 +1,14 @@
 # @eiei114/pi-sub-shared
 
+## 2.7.0
+
+### Minor Changes
+
+- [#85](https://github.com/eiei114/pi-sub/pull/85) [`b97ecdf`](https://github.com/eiei114/pi-sub/commit/b97ecdf8267a80815556f3224180cfdc3f4c7458) Thanks [@eiei114](https://github.com/eiei114)! - Minor version bump for the fixed release group (`sub-core` / `sub-bar` / `sub-shared`).
+
+  No functional changes: this changeset only rolls the fixed group forward to the next
+  minor version so the release can ship on its own.
+
 ## 2.6.0
 
 ### Minor Changes

@@ -1,5 +1,20 @@
 # @eiei114/pi-sub-status
 
+## 2.1.0
+
+### Minor Changes
+
+- [#85](https://github.com/eiei114/pi-sub/pull/85) [`b97ecdf`](https://github.com/eiei114/pi-sub/commit/b97ecdf8267a80815556f3224180cfdc3f4c7458) Thanks [@eiei114](https://github.com/eiei114)! - Minor version bump for `sub-status`.
+
+  No functional changes: this changeset only rolls the independently versioned status
+  package forward to the next minor version.
+
+### Patch Changes
+
+- Updated dependencies [[`b97ecdf`](https://github.com/eiei114/pi-sub/commit/b97ecdf8267a80815556f3224180cfdc3f4c7458)]:
+  - @eiei114/pi-sub-core@2.7.0
+  - @eiei114/pi-sub-shared@2.7.0
+
 ## 2.0.4
 
 ### Patch Changes
