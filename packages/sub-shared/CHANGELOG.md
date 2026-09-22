@@ -1,5 +1,9 @@
 # @eiei114/pi-sub-shared
 
+## 2.7.1
+
+No changes in this release.
+
 ## 2.7.0
 
 ### Minor Changes
