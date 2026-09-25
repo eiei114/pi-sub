@@ -12,6 +12,11 @@ export function normalizeTokens(value: string): string[] {
 		.filter(Boolean);
 }
 
+/** Return whether every candidate token appears in the available tokens. */
+export function containsAllTokens(candidateTokens: string[], availableTokens: string[]): boolean {
+	return candidateTokens.length > 0 && candidateTokens.every((token) => availableTokens.includes(token));
+}
+
 const MODEL_MULTIPLIER_TOKENS = Object.entries(MODEL_MULTIPLIERS).map(([label, multiplier]) => ({
 	label,
 	multiplier,
@@ -29,7 +34,7 @@ export function getModelMultiplier(modelId: string | undefined): number | undefi
 
 	let bestMatch: { multiplier: number; tokenCount: number } | undefined;
 	for (const entry of MODEL_MULTIPLIER_TOKENS) {
-		const isMatch = entry.tokens.every((token) => modelTokens.includes(token));
+		const isMatch = containsAllTokens(entry.tokens, modelTokens);
 		if (!isMatch) continue;
 		const tokenCount = entry.tokens.length;
 		if (!bestMatch || tokenCount > bestMatch.tokenCount) {

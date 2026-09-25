@@ -1,11 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { getModelMultiplier, normalizeTokens } from "../model-utils.js";
+import { containsAllTokens, getModelMultiplier, normalizeTokens } from "../model-utils.js";
 
 test("normalizeTokens lowercases and splits on non-alphanumeric boundaries", () => {
 	assert.deepEqual(normalizeTokens("GPT-5.3-Codex-Spark"), ["gpt", "5", "3", "codex", "spark"]);
 	assert.deepEqual(normalizeTokens("  Hello-World_123  "), ["hello", "world", "123"]);
 	assert.deepEqual(normalizeTokens(""), []);
+});
+
+test("containsAllTokens matches non-empty token subsets without matching empty candidates", () => {
+	assert.equal(containsAllTokens(["gpt", "5"], ["gpt", "5", "codex"]), true);
+	assert.equal(containsAllTokens(["gpt", "6"], ["gpt", "5", "codex"]), false);
+	assert.equal(containsAllTokens([], ["gpt", "5"]), false);
 });
 
 test("getModelMultiplier matches known models case-insensitively", () => {
