@@ -290,4 +290,4 @@ export const PROVIDER_DISPLAY_NAMES = Object.fromEntries(
 ) as Record<ProviderName, string>;
 
 export { MODEL_MULTIPLIERS } from "./model-multipliers.js";
-export { getModelMultiplier, normalizeTokens } from "./model-utils.js";
+export { containsAllTokens, getModelMultiplier, normalizeTokens } from "./model-utils.js";

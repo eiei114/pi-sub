@@ -3,7 +3,7 @@
  */
 
 import type { Dependencies, RateWindow } from "./types.js";
-import { normalizeTokens } from "@eiei114/pi-sub-shared";
+import { containsAllTokens, normalizeTokens } from "@eiei114/pi-sub-shared";
 
 // Only allow simple CLI names (no spaces/paths) to avoid unsafe command execution.
 const SAFE_CLI_NAME = /^[a-zA-Z0-9._-]+$/;
@@ -76,7 +76,7 @@ export function prioritizeWindowsForModel(
 
 	for (const window of windows) {
 		const labelTokens = normalizeTokens(window.label);
-		const isMatch = modelTokens.every((token) => labelTokens.includes(token))
+		const isMatch = containsAllTokens(modelTokens, labelTokens)
 			&& modelTokens.length * 2 > labelTokens.length;
 		if (isMatch) {
 			matched.push(window);

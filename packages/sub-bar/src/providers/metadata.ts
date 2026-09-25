@@ -4,7 +4,7 @@
 
 import type { RateWindow, UsageSnapshot, ProviderName, ModelInfo } from "../types.js";
 import type { Settings } from "../settings-types.js";
-import { getModelMultiplier, normalizeTokens } from "@eiei114/pi-sub-shared";
+import { containsAllTokens, getModelMultiplier, normalizeTokens } from "@eiei114/pi-sub-shared";
 import { PROVIDER_METADATA as BASE_METADATA, type ProviderMetadata as BaseProviderMetadata } from "@eiei114/pi-sub-shared";
 
 export { PROVIDERS, PROVIDER_DISPLAY_NAMES } from "@eiei114/pi-sub-shared";
@@ -59,7 +59,7 @@ const antigravityWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, w
 	const providerMatches = modelProvider.includes("antigravity");
 	if (ps.showCurrentModel && providerMatches && modelId) {
 		const modelTokens = normalizeTokens(modelId);
-		const match = modelTokens.length > 0 && modelTokens.every((token) => labelTokens.includes(token));
+		const match = containsAllTokens(modelTokens, labelTokens);
 		if (match) return true;
 	}
 
@@ -76,7 +76,7 @@ const antigravityWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, w
 			if (!providerPart.includes("antigravity")) return false;
 			const base = trimmed.slice(trimmed.lastIndexOf("/") + 1);
 			const tokens = normalizeTokens(base);
-			return tokens.length > 0 && tokens.every((token) => labelTokens.includes(token));
+			return containsAllTokens(tokens, labelTokens);
 		});
 		if (matchesScoped) return true;
 	}
