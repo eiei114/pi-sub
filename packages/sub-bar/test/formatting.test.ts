@@ -483,6 +483,17 @@ test("codex spark usage window labels hide model prefix", () => {
 	assert.equal(output?.includes("GPT-5.3-Codex-Spark"), false);
 	assert.equal(output?.includes("5h"), true);
 	assert.equal(output?.includes("Week"), true);
+
+	const nearMatch = formatUsageWindowParts(
+		theme,
+		usage.windows[0],
+		false,
+		settings,
+		usage,
+		undefined,
+		"gpt-5.3-codex-sparkish",
+	);
+	assert.equal(nearMatch.label.includes("GPT-5.3-Codex-Spark"), true);
 });
 
 test("codex spark provider label uses Codex (Spark)", () => {
