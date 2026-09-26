@@ -19,7 +19,7 @@ import { formatErrorForDisplay, isExpectedMissingData } from "./errors.js";
 import { getStatusIcon, getStatusLabel } from "./status.js";
 import { shouldShowWindow } from "./providers/windows.js";
 import { getUsageExtras } from "./providers/extras.js";
-import { normalizeTokens } from "@eiei114/pi-sub-shared";
+import { containsAllTokens, normalizeTokens } from "@eiei114/pi-sub-shared";
 
 export interface UsageWindowParts {
 	label: string;
@@ -52,12 +52,12 @@ function resolveModelInfo(model?: ModelInput): ModelInfo | undefined {
 
 function isCodexSparkModel(model?: ModelInput): boolean {
 	const tokens = normalizeTokens(typeof model === "string" ? model : model?.id ?? "");
-	return tokens.includes("codex") && tokens.includes("spark");
+	return containsAllTokens(["codex", "spark"], tokens);
 }
 
 function isCodexSparkWindow(window: RateWindow): boolean {
 	const tokens = normalizeTokens(window.label ?? "");
-	return tokens.includes("codex") && tokens.includes("spark");
+	return containsAllTokens(["codex", "spark"], tokens);
 }
 
 function getDisplayWindowLabel(window: RateWindow, model?: ModelInput, usage?: UsageSnapshot): string {
