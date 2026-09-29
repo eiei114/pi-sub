@@ -62,40 +62,45 @@ If you’d like to work on these, PRs or standalone packages are welcome.
 
 ## Pi package manager
 
-You can install the packages via `pi install`:
+Install the rich widget via the pi package manager (it bundles `sub-core`):
 
 ```bash
-pi install npm:@eiei114/pi-sub-core
 pi install npm:@eiei114/pi-sub-bar
+```
+
+For a compact status line, install the optional client too:
+
+```bash
 pi install npm:@eiei114/pi-sub-status
 ```
 
-`sub-bar` remains the default rich UI path. `sub-status` is an explicit opt-in compact client and can be installed alongside `sub-bar` when you want both the widget and a status-line summary.
+Install `@eiei114/pi-sub-core` separately only when you want the headless core without a display client. Installing `sub-core` separately alongside `sub-bar` or `sub-status` can load duplicate core instances.
 
 ## Quick Start (manual install)
 
+For local development, link the display client(s) you want; their package metadata loads `sub-core` automatically:
+
 ```bash
 git clone https://github.com/eiei114/pi-sub.git
+cd pi-sub
+npm install
 
-# Enable the shared core plus one or both display clients
-ln -s /path/to/pi-sub/packages/sub-core   ~/.pi/agent/extensions/sub-core
 ln -s /path/to/pi-sub/packages/sub-bar    ~/.pi/agent/extensions/sub-bar
 ln -s /path/to/pi-sub/packages/sub-status ~/.pi/agent/extensions/sub-status
 ```
 
-Alternative (no symlink): add the core plus whichever clients you want to `~/.pi/agent/settings.json`:
+Alternative (no symlink): add only the client extensions you want to `~/.pi/agent/settings.json`:
 
 ```json
 {
   "extensions": [
-    "/path/to/pi-sub/packages/sub-core/index.ts",
     "/path/to/pi-sub/packages/sub-bar/index.ts",
     "/path/to/pi-sub/packages/sub-status/index.ts"
   ]
 }
 ```
 
-> `sub-shared` is an npm dependency and is pulled automatically. `sub-bar` and `sub-status` are both optional clients on top of `sub-core`.
+> `sub-shared` is an npm dependency and is pulled automatically. The client package metadata includes `sub-core`; do not add a separate `sub-core` extension unless you are using the headless core by itself.
 
 ## Communication model (core ↔ clients)
 
