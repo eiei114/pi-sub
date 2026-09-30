@@ -1,5 +1,12 @@
 # @eiei114/pi-sub-shared
 
+## [2.7.2] - 2026-09-30
+
+### Changed
+
+- Update `@earendil-works/pi-*` dependencies to `0.99.1`.
+
+
 ## 2.7.1
 
 No changes in this release.

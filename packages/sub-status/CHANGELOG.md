@@ -1,5 +1,12 @@
 # @eiei114/pi-sub-status
 
+## [2.1.1] - 2026-09-30
+
+### Changed
+
+- Update `@earendil-works/pi-*` dependencies to `0.99.1`.
+
+
 ## 2.1.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@eiei114/pi-sub-status",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Compact status-line client for pi subscription usage",
   "keywords": [
     "pi-package"
@@ -39,6 +39,6 @@
     "@eiei114/pi-sub-shared": "^2.7.0"
   },
   "peerDependencies": {
-    "@earendil-works/pi-coding-agent": "^0.80.0"
+    "@earendil-works/pi-coding-agent": "*"
   }
 }
