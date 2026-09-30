@@ -1,11 +1,18 @@
 # @eiei114/pi-sub-core
 
+## 2.7.3
+
+### Patch Changes
+
+- Require compatible shared dependencies in the core and usage widget, excluding releases without the `containsAllTokens` API. This fixes `TypeError: containsAllTokens is not a function` when an existing installation retains an older shared package.
+- Updated dependencies []:
+  - @eiei114/pi-sub-shared@2.7.3
+
 ## [2.7.2] - 2026-09-30
 
 ### Changed
 
 - Update `@earendil-works/pi-*` dependencies to `0.99.1`.
-
 
 ## 2.7.1
 

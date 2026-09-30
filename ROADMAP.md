@@ -18,9 +18,9 @@ up, so the planner always has an accurate picture of "what's next".
 
 | Package | Latest | Published | Release group |
 | --- | --- | --- | --- |
-| [`@eiei114/pi-sub-core`](https://www.npmjs.com/package/@eiei114/pi-sub-core) | `2.7.2` | 2026-09-30 | **fixed** |
-| [`@eiei114/pi-sub-bar`](https://www.npmjs.com/package/@eiei114/pi-sub-bar) | `2.7.2` | 2026-09-30 | **fixed** |
-| [`@eiei114/pi-sub-shared`](https://www.npmjs.com/package/@eiei114/pi-sub-shared) | `2.7.2` | 2026-09-30 | **fixed** |
+| [`@eiei114/pi-sub-core`](https://www.npmjs.com/package/@eiei114/pi-sub-core) | `2.7.3` | 2026-09-30 | **fixed** |
+| [`@eiei114/pi-sub-bar`](https://www.npmjs.com/package/@eiei114/pi-sub-bar) | `2.7.3` | 2026-09-30 | **fixed** |
+| [`@eiei114/pi-sub-shared`](https://www.npmjs.com/package/@eiei114/pi-sub-shared) | `2.7.3` | 2026-09-30 | **fixed** |
 | [`@eiei114/pi-sub-status`](https://www.npmjs.com/package/@eiei114/pi-sub-status) | `2.1.1` | 2026-09-30 | independent |
 
 - `2.0.0` was a **major** bump ([PR #13](https://github.com/eiei114/pi-sub/pull/13),
