@@ -7,7 +7,9 @@
     "type": "git",
     "url": "git+https://github.com/eiei114/pi-sub.git"
   },
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "clean": "npm run clean --workspaces --if-present",
     "check": "npm run check --workspaces --if-present",
@@ -25,8 +27,8 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^3.0.2",
-    "@earendil-works/pi-coding-agent": "^0.80.5",
-    "@earendil-works/pi-tui": "^0.80.5",
+    "@earendil-works/pi-coding-agent": "^0.99.1",
+    "@earendil-works/pi-tui": "^0.99.1",
     "@types/node": "^26.1.0",
     "typescript": "^6.0.3",
     "eslint": "^9.24.0",
