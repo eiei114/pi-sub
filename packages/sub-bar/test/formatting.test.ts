@@ -46,6 +46,13 @@ function buildUsageWithStatus(
 	};
 }
 
+test("ordinary usage windows render for gpt-5.6-luna without a token-matching crash", () => {
+	const output = formatUsageStatusWithWidth(theme, buildUsage(), 80, "gpt-5.6-luna", getDefaultSettings());
+	assert.ok(output);
+	assert.match(output, /5h/);
+	assert.match(output, /Week/);
+});
+
 test("fill width with contained vertical bars does not overflow", () => {
 	const settings = getDefaultSettings();
 	settings.display.barType = "vertical";
