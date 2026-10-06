@@ -213,35 +213,31 @@ all packages including `sub-status`.
 
 ---
 
-### S-5 — Document the Windows reliability contract
+### S-5 — Document the Windows reliability contract ✅
 
-**Size:** ~60 min · **Type:** docs · **Changeset:** no
+**Size:** ~60 min · **Type:** docs · **Changeset:** no · **Status:** done
+(DOT-1698, [PR #54](https://github.com/eiei114/pi-sub/pull/54))
 
-The Windows cache-rename retry, lock-ownership, and TTL-respecting refresh
-behavior are the fork's main differentiators, but they are only described
-loosely in the README. Capture the exact contract so future changes don't
-silently regress it.
-
-**Why needed:** without a written contract, well-intentioned refactors can
-reintroduce the Windows cache races this fork was created to fix.
+`docs/WINDOWS_CACHE_CONTRACT.md` records the cache/lock locations, Windows
+rename retries, lock ownership, and TTL-respecting lifecycle refresh behavior.
+The README links to it from the "About this fork" section, and the document
+names the implementation and regression-test surfaces.
 
 **Acceptance criteria**
 
-- [ ] New `docs/WINDOWS_CACHE_CONTRACT.md` documents: cache/lock file locations,
-      the rename-retry behavior, that a process only releases its own lock, and
-      that `turn_end`/`tool_result` refreshes respect the cache TTL.
-- [ ] Lists the source files that implement each behavior
-      (`src/cache.ts`, `src/storage/lock.ts`, usage controller) as the "do not
+- [x] New `docs/WINDOWS_CACHE_CONTRACT.md` documents cache/lock file locations,
+      rename-retry behavior, lock ownership, and TTL-respecting refreshes.
+- [x] The source files implementing each behavior are listed as the "do not
       regress" surface.
-- [ ] README links to the new doc from the "About this fork" section.
-- [ ] No source changes; no changeset.
+- [x] README links to the new doc from the "About this fork" section.
+- [x] No source changes; no changeset.
 
-**Verification:** all four implementation files are named in the doc; README link
-resolves.
+**Verification:** `docs/WINDOWS_CACHE_CONTRACT.md` and its README link are present;
+contract regression tests are listed in the document.
 
 ---
 
-### S-6 — Triage upstream `marckrenn/pi-sub` for portable fixes
+### S-6 — Triage upstream `marckrenn/pi-sub` for portable fixes (next candidate)
 
 **Size:** ~45 min · **Type:** triage · **Changeset:** no
 
@@ -282,6 +278,11 @@ seed. Revisit only if a contributor volunteers to own one.
 
 ## 6. Changelog
 
+- **2026-10-01** — Roadmap refresh (DOT-2158). Confirmed the fixed release group at
+  `2.7.3` and `sub-status` at `2.1.1`; marked the already-landed Windows
+  reliability contract (DOT-1698 / PR #54) done. The next bounded candidate is
+  S-6: triage up to three provider-only upstream items, excluding cache/lock and
+  SDK-scope changes, and open a follow-up issue for any safe port.
 - **2026-08-25** — Roadmap refresh (DOT-1575). Marked seed S-4 done; CONTRIBUTING now
   lists workspace commands for all packages including `sub-status`, guarded by
   `packages/sub-core/test/contributing-accuracy.test.ts`.
