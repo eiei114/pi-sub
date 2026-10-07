@@ -184,12 +184,18 @@ export async function getCachedUsageEntries(
 	settings: Settings
 ): Promise<ProviderUsageEntry[]> {
 	const cache = readCache();
+	const ttlMs = getCacheTtlMs(settings);
+	const now = Date.now();
 	const entries: ProviderUsageEntry[] = [];
 	for (const provider of providers) {
-		const entry = await getCachedUsageEntry(provider, settings, cache);
-		if (entry) {
-			entries.push(entry);
-		}
+		const cachedEntry = cache[provider];
+		if (!cachedEntry || now - cachedEntry.fetchedAt >= ttlMs) continue;
+		if (cachedEntry.usage?.error && !isExpectedMissingData(cachedEntry.usage.error)) continue;
+		const usage = cachedEntry.usage
+			? { ...cachedEntry.usage, status: cachedEntry.status }
+			: undefined;
+		if (!usage || (usage.error && isExpectedMissingData(usage.error))) continue;
+		entries.push({ provider, usage });
 	}
 	return entries;
 }
