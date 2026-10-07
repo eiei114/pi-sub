@@ -62,6 +62,18 @@ up, so the planner always has an accurate picture of "what's next".
 
 ---
 
+## Roadmap review — 2026-W41
+
+The roadmap source is present and has been refreshed against the current `main` branch
+(release `2.7.3`). The next bounded maintenance candidates are:
+
+1. **S-5** — Document the Windows reliability contract.
+2. **S-6** — Triage upstream `marckrenn/pi-sub` for portable fixes.
+3. **Dependency hygiene** — review the Dependabot npm-dev-minor-patch batch when safe.
+
+These candidates are already recorded in the maintenance backlog below; no
+implementation or release action is part of this roadmap refresh.
+
 ## 2. Maintenance priorities (next 2–3 releases)
 
 These are the themes the fork should hold steady on. They are deliberately
