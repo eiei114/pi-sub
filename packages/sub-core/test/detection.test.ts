@@ -43,6 +43,26 @@ test("detectProviderFromModel detects opencode by provider", () => {
 	assert.equal(provider, "opencode");
 });
 
+test("base and non-numbered OpenCode provider ids show the OpenCode Go usage", () => {
+	assert.equal(detectProviderFromModel({ provider: "opencode", id: "glm-5.3" }), "opencode");
+	assert.equal(detectProviderFromModel({ provider: "opencode-go", id: "glm-5.3" }), "opencode");
+	assert.equal(detectProviderFromModel({ provider: "OpenCode-Go", id: "kimi-k3" }), "opencode");
+	// Only numbered ids are aliases: a custom id may reuse the base key.
+	assert.equal(detectProviderFromModel({ provider: "opencode-go-work", id: "gpt-6-luna" }), "opencode");
+});
+
+test("numbered OpenCode aliases resolve to no provider instead of the base account", () => {
+	// The usage is read with the base credential only; a numbered alias such as
+	// `opencode-go-2` holds another account's key and must not borrow the base
+	// account's quota, nor fall through to model tokens (`gpt-6-luna` would read
+	// as Codex).
+	for (const provider of ["opencode-go-2", "opencode-go2", "opencode-2", "opencode3"]) {
+		for (const id of ["glm-5.3", "gpt-6-luna"]) {
+			assert.equal(detectProviderFromModel({ provider, id }), undefined, `${provider}/${id}`);
+		}
+	}
+});
+
 test("detectProviderFromModel detects command-code by provider", () => {
 	const provider = detectProviderFromModel({ provider: "command-code", id: "auto" });
 	assert.equal(provider, "command-code");
