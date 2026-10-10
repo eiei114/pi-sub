@@ -63,6 +63,13 @@ test("numbered OpenCode aliases resolve to no provider instead of the base accou
 	}
 });
 
+test("numbered OpenCode aliases stay unknown when model id hints at antigravity", () => {
+	assert.equal(
+		detectProviderFromModel({ provider: "opencode-go-2", id: "antigravity-gemini" }),
+		undefined,
+	);
+});
+
 test("detectProviderFromModel detects command-code by provider", () => {
 	const provider = detectProviderFromModel({ provider: "command-code", id: "auto" });
 	assert.equal(provider, "command-code");

@@ -53,16 +53,16 @@ export function detectProviderFromModel(
 	const providerValue = model.provider?.toLowerCase() || "";
 	const idValue = model.id?.toLowerCase() || "";
 
+	if (OPENCODE_NUMBERED_ALIAS.test(providerValue)) {
+		return undefined;
+	}
+
 	if (providerValue.includes("antigravity") || idValue.includes("antigravity")) {
 		return "antigravity";
 	}
 
 	if (XAI_PROVIDER_PREFIXES.some((prefix) => providerValue.startsWith(prefix))) {
 		return XAI_BASE_PROVIDER_IDS.has(providerValue) ? "xai" : undefined;
-	}
-
-	if (OPENCODE_NUMBERED_ALIAS.test(providerValue)) {
-		return undefined;
 	}
 
 	for (const hint of PROVIDER_DETECTION_HINTS) {
