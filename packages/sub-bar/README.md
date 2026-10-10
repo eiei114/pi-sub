@@ -165,6 +165,8 @@ Credentials are loaded by sub-core from:
 
 xAI (Grok) shows the **subscription** quota of the base `xai` OAuth entry only. `XAI_API_KEY` is not used: it is a valid developer-API credential, but that API cannot report subscription quota. Numbered accounts (`xai-2`, …) show no usage rather than the base account's numbers, and the endpoint is unofficial, so it can break without notice.
 
+OpenCode Go likewise shows the usage of the base credential only: numbered accounts (`opencode-go-2`, …) show no usage rather than the base account's numbers.
+
 ## Development
 
 ### Packaging notes (pi install compatibility)

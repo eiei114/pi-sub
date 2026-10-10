@@ -32,6 +32,18 @@ const XAI_PROVIDER_PREFIXES = ["xai", "x-ai", "x.ai"];
 const XAI_BASE_PROVIDER_IDS = new Set(["xai"]);
 
 /**
+ * OpenCode Go usage is read with the base credential only
+ * (OPENCODE_API_KEY/OPENCODE_GO_API_KEY, OPENCODE_AUTH_CONTENT, or the
+ * `opencode-go` entry of OpenCode's or pi's auth.json). A numbered provider id
+ * such as `opencode-go-2` (the `<provider>-<n>` naming of extra accounts) holds
+ * another key whose quota this extension does not read; it resolves to no
+ * provider instead of the base account's usage, and never falls through to
+ * model tokens. Unlike the xAI rule this matches numbered ids only, so custom
+ * ids that may reuse the base key (`opencode-go-work`) keep their usage.
+ */
+const OPENCODE_NUMBERED_ALIAS = /^opencode(?:-go)?-?\d+$/;
+
+/**
  * Detect the provider from model metadata.
  */
 export function detectProviderFromModel(
@@ -40,6 +52,10 @@ export function detectProviderFromModel(
 	if (!model) return undefined;
 	const providerValue = model.provider?.toLowerCase() || "";
 	const idValue = model.id?.toLowerCase() || "";
+
+	if (OPENCODE_NUMBERED_ALIAS.test(providerValue)) {
+		return undefined;
+	}
 
 	if (providerValue.includes("antigravity") || idValue.includes("antigravity")) {
 		return "antigravity";
