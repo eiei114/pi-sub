@@ -8,10 +8,9 @@
  */
 
 import * as path from "node:path";
-import type { Dependencies, UsageSnapshot } from "../../types.js";
+import type { Dependencies, UsageError, UsageSnapshot } from "../../types.js";
 import { BaseProvider } from "../../provider.js";
-import { noCredentials, fetchFailed, httpError, apiError, noCli, notLoggedIn } from "../../errors.js";
-import { isRecord, normalizeCredentialString } from "../../credentials.js";
+import { noCredentials, fetchFailed, httpError, apiError, noCli, notLoggedIn } from "../../errors.js";import { isRecord, normalizeCredentialString } from "../../credentials.js";
 import { createTimeoutController } from "../../utils.js";
 import {
 	API_TIMEOUT_MS,
@@ -102,6 +101,13 @@ async function resolveWorkspaceId(deps: Dependencies): Promise<string | undefine
 	const sync = loadWorkspaceIdSync(deps);
 	if (sync) return sync;
 	return loadWorkspaceIdFromAmrWorkspaces(deps);
+}
+
+/** An auth failure on the Link key says nothing about quota; it is never the real cause. */
+function isAuthError(error: UsageError | undefined): boolean {
+	return (
+		error?.code === "HTTP_ERROR" && (error.httpStatus === 401 || error.httpStatus === 403)
+	);
 }
 
 export class OpenDesignProvider extends BaseProvider {
@@ -204,6 +210,10 @@ export class OpenDesignProvider extends BaseProvider {
 				if (candidates.length === 0) {
 					return velaResult;
 				}
+				// The Link key cannot read billing routes, so an auth error from it
+				// would hide the Vela failure that names the real action to take.
+				const keyResult = await this.fetchUsageWithKey(deps, candidates[0]);
+				return isAuthError(keyResult.error) ? velaResult : keyResult;
 			}
 		}
 
@@ -218,11 +228,7 @@ export class OpenDesignProvider extends BaseProvider {
 		for (let i = 0; i < candidates.length; i += 1) {
 			const result = await this.fetchUsageWithKey(deps, candidates[i]);
 			lastResult = result;
-			const error = result.error;
-			const isAuthError =
-				error?.code === "HTTP_ERROR" &&
-				(error.httpStatus === 401 || error.httpStatus === 403);
-			if (!isAuthError || i === candidates.length - 1) {
+			if (!isAuthError(result.error) || i === candidates.length - 1) {
 				return result;
 			}
 		}

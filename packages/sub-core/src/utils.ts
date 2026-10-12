@@ -112,6 +112,26 @@ function needsWindowsShell(deps: Dependencies, binary: string): boolean {
 	return base.endsWith(".cmd") || base.endsWith(".bat") || !path.extname(base);
 }
 
+/**
+ * Arguments that are safe to place on a `cmd.exe` command line.
+ *
+ * `quoteWindowsArg` follows CommandLineToArgvW rules, but `cmd.exe` parses the
+ * line first: `&`, `|`, `<` and `>` are operators, `%VAR%` is expanded even
+ * inside quotes, and `"` is not an escape. A workspace id or model id can come
+ * from a config file or an HTTP response body, so arguments are allowlisted
+ * rather than escaped.
+ */
+const SAFE_SHELL_ARG = /^[A-Za-z0-9._:/\\ -]+$/;
+
+/**
+ * Characters that change meaning when `cmd.exe` parses the line.
+ *
+ * An executable path is not attacker-controlled the way an argument is, so the
+ * path is only denied these characters; that keeps ordinary install locations
+ * such as `C:\Program Files (x86)\nodejs` working.
+ */
+const UNSAFE_SHELL_PATH = /[&|<>^%!"\r\n]/;
+
 /** Quote one argument for a Windows command line (CommandLineToArgvW rules). */
 export function quoteWindowsArg(value: string): string {
 	const escaped = value.replace(/(\\*)"/g, '$1$1\\"').replace(/(\\+)$/, "$1$1");
@@ -131,11 +151,29 @@ export function buildShellCommandLine(file: string, args: string[]): string {
  * unescaped concatenated args. Passing a single pre-quoted command line to
  * `shell: true` runs the shim without that warning.
  */
+/** True when an argument can be placed on a `cmd.exe` line without interpretation. */
+export function isSafeShellArg(value: string): boolean {
+	return SAFE_SHELL_ARG.test(value);
+}
+
+/** True when an executable path contains no `cmd.exe` control characters. */
+export function isSafeShellCommandPath(value: string): boolean {
+	return !UNSAFE_SHELL_PATH.test(value);
+}
+
 function spawnShellCommand(
 	file: string,
 	args: string[],
 	options?: ExecFileSyncOptionsWithStringEncoding
 ) {
+	if (!isSafeShellCommandPath(file)) {
+		throw new Error(`Refusing unsafe executable path for shell execution: ${file}`);
+	}
+	for (const value of args) {
+		if (!isSafeShellArg(value)) {
+			throw new Error(`Refusing unsafe argument for shell execution: ${value}`);
+		}
+	}
 	const commandLine = buildShellCommandLine(file, args);
 	return spawnSync(commandLine, {
 		...options,

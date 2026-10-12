@@ -198,6 +198,36 @@ test("opendesign reports not logged in when vela has no session", async () => {
 	assert.equal(usage.error?.code, "NOT_LOGGED_IN");
 });
 
+test("opendesign keeps the Vela failure when the Link key only gets a 401", async () => {
+	const provider = new OpenDesignProvider();
+	const home = "/home/test";
+	const workspaceFile = path.join(home, ".pi", "agent", "opendesign-workspace.json");
+
+	const { deps, files } = createDeps({
+		homedir: home,
+		fetch: async () => createJsonResponse({ error: "unauthenticated" }, { ok: false, status: 401 }),
+		execFileSync: (file, args) => {
+			if (file === "which" && args[0] === "vela") {
+				return "/usr/bin/vela\n";
+			}
+			if (file === "/usr/bin/vela" && args[0] === "whoami") {
+				throw new Error('profile "prod" is not logged in; run `vela login`');
+			}
+			throw new Error(`unexpected execFileSync ${file} ${args.join(" ")}`);
+		},
+	});
+	files.set(workspaceFile, JSON.stringify({ workspaceId: "ws-test" }));
+	files.set(
+		getAuthPath(home),
+		JSON.stringify({ opendesign: { type: "api_key", key: "sk-amr-test" } })
+	);
+
+	const usage = await provider.fetchUsage(deps);
+	// The Link key can never read billing routes, so its 401 must not replace the
+	// Vela error that tells the user to run `vela login`.
+	assert.equal(usage.error?.code, "NOT_LOGGED_IN");
+});
+
 test("opendesign reports missing credentials", async () => {
 	const provider = new OpenDesignProvider();
 	const { deps } = createDeps({
