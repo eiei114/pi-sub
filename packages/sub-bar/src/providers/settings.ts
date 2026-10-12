@@ -18,6 +18,7 @@ import type {
 	OpenRouterProviderSettings,
 	CursorProviderSettings,
 	OpenCodeProviderSettings,
+	OpenDesignProviderSettings,
 	CommandCodeProviderSettings,
 	XaiProviderSettings,
 	DevinProviderSettings,
@@ -355,6 +356,33 @@ export function buildProviderSettingsItems(settings: Settings, provider: Provide
 		);
 	}
 
+	if (provider === "opendesign") {
+		const openDesignSettings = ps as OpenDesignProviderSettings;
+		items.push(
+			{
+				id: "show5h",
+				label: "Show 5h Window",
+				currentValue: openDesignSettings.windows.show5h ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the 5-hour Coding Plan window.",
+			},
+			{
+				id: "showWeek",
+				label: "Show Week Window",
+				currentValue: openDesignSettings.windows.showWeek ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show the weekly Coding Plan window.",
+			},
+			{
+				id: "showMonth",
+				label: "Show Month Window",
+				currentValue: openDesignSettings.windows.showMonth ? "on" : "off",
+				values: ["on", "off"],
+				description: "Show monthly or longer Coding Plan windows.",
+			},
+		);
+	}
+
 	if (provider === "command-code") {
 		const commandCodeSettings = ps as CommandCodeProviderSettings;
 		items.push(
@@ -646,6 +674,24 @@ export function applyProviderSettingsChange(
 				break;
 			case "showWeek":
 				openCodeSettings.windows.showWeek = value === "on";
+				break;
+			case "showMonth":
+				openCodeSettings.windows.showMonth = value === "on";
+				break;
+		}
+	}
+
+	if (provider === "opendesign") {
+		const openDesignSettings = ps as OpenDesignProviderSettings;
+		switch (id) {
+			case "show5h":
+				openDesignSettings.windows.show5h = value === "on";
+				break;
+			case "showWeek":
+				openDesignSettings.windows.showWeek = value === "on";
+				break;
+			case "showMonth":
+				openDesignSettings.windows.showMonth = value === "on";
 				break;
 		}
 	}

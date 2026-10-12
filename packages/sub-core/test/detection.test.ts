@@ -43,6 +43,14 @@ test("detectProviderFromModel detects opencode by provider", () => {
 	assert.equal(provider, "opencode");
 });
 
+test("detectProviderFromModel detects opendesign by provider", () => {
+	const provider = detectProviderFromModel({
+		provider: "opendesign",
+		id: "deepseek-v4.1-flash",
+	});
+	assert.equal(provider, "opendesign");
+});
+
 test("base and non-numbered OpenCode provider ids show the OpenCode Go usage", () => {
 	assert.equal(detectProviderFromModel({ provider: "opencode", id: "glm-5.3" }), "opencode");
 	assert.equal(detectProviderFromModel({ provider: "opencode-go", id: "glm-5.3" }), "opencode");

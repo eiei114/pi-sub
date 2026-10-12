@@ -35,6 +35,7 @@ https://github.com/user-attachments/assets/d61d82f6-afd0-45fc-82f3-69910543aa7a
 | Antigravity | Model quotas | ✅ |
 | OpenAI Codex | Primary/secondary windows | ✅ |
 | OpenCode | 5h/Week/Month windows | - |
+| OpenDesign | 5h/Week windows | - |
 | AWS Kiro | Credits | - |
 | z.ai | Tokens/monthly limits | - |
 | xAI (Grok) | Subscription quota window | - |
@@ -50,6 +51,7 @@ https://github.com/user-attachments/assets/d61d82f6-afd0-45fc-82f3-69910543aa7a
 | Antigravity | Models | - | ✅ | ✅ | Sandbox Cloud Code Assist quotas |
 | OpenAI Codex | Primary, Secondary | - | ✅ | ✅ | Credits not yet supported (PRs welcome!) |
 | OpenCode | 5h, Week, Month | - | - | ✅ | Go subscription quotas, unofficial API |
+| OpenDesign | 5h, Week | - | - | ✅ | Design Plan Coding Plan windows from the Vela CLI (`vela login`), unofficial; workspace id required |
 | AWS Kiro | Credits | - | - | - | - |
 | z.ai | Tokens, Monthly | - | - | - | API quota limits |
 | xAI (Grok) | Week, Month, Usage | - | - | - | Subscription (SuperGrok/Grok) quota only, unofficial endpoint, base `xai` OAuth account only |

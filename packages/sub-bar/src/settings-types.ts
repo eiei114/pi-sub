@@ -310,6 +310,14 @@ export interface OpenCodeProviderSettings extends BaseProviderSettings {
 	};
 }
 
+export interface OpenDesignProviderSettings extends BaseProviderSettings {
+	windows: {
+		show5h: boolean;
+		showWeek: boolean;
+		showMonth: boolean;
+	};
+}
+
 export interface CommandCodeProviderSettings extends BaseProviderSettings {
 	showCredits: boolean;
 	windows: {
@@ -355,6 +363,7 @@ export interface ProviderSettingsMap {
 	openrouter: OpenRouterProviderSettings;
 	cursor: CursorProviderSettings;
 	opencode: OpenCodeProviderSettings;
+	opendesign: OpenDesignProviderSettings;
 	"command-code": CommandCodeProviderSettings;
 	xai: XaiProviderSettings;
 	devin: DevinProviderSettings;
@@ -592,6 +601,14 @@ export function getDefaultSettings(): Settings {
 				},
 			},
 			opencode: {
+				showStatus: false,
+				windows: {
+					show5h: true,
+					showWeek: true,
+					showMonth: true,
+				},
+			},
+			opendesign: {
 				showStatus: false,
 				windows: {
 					show5h: true,

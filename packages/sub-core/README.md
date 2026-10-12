@@ -136,6 +136,7 @@ Current-session Codex usage is an exception: it resolves credentials from the se
 | Antigravity | Model quotas | ✅ | Sandbox Cloud Code Assist quotas (tested) |
 | OpenAI Codex | Primary/secondary windows | ✅ | Credits not yet supported (PRs welcome!) |
 | OpenCode | 5h/Week/Month windows | - | Go subscription quotas from opencode.ai usage API; unofficial; base account only, numbered ids (`opencode-go-2`, …) show no usage |
+| OpenDesign | 5h/Week windows | - | Design Plan Coding Plan windows from `vela billing preflight --format json` after `vela login`; unofficial; requires the Vela CLI (`@powerformer/vela-cli` 0.1.4-test.0+) and a workspace id |
 | AWS Kiro | Credits | - | `kiro-cli /usage` (stdout+stderr); tested on Windows |
 | z.ai | Tokens/monthly limits | - | API quota limits |
 | Kimi for Coding | Week + 5h rolling windows | - | OAuth; tested with `pi-provider-kimi-code` |
@@ -149,6 +150,15 @@ Current-session Codex usage is an exception: it resolves credentials from the se
 - **API keys are not a substitute:** `XAI_API_KEY` and `api_key` auth entries are never used here. They are valid credentials for the xAI developer API, but that is a different billing bucket and cannot report subscription quota.
 - **Single account:** usage is read for the base `xai` credential only. Numbered aliases (`xai-2`, …) resolve to no provider rather than displaying the base account's quota.
 - **Unofficial endpoint:** the endpoint and its client headers are derived from client behavior, not from public docs, and can break at any time. HTTP 426 means the pinned client version is no longer accepted; it is reported as a plain error and never retried with a spoofed version. All failures soft-error with a static message plus HTTP status — response bodies are never surfaced or logged.
+
+### OpenDesign Design Plan usage
+
+- **What it shows:** the Coding Plan windows the Coding Plan preflight reports, read as `usedCredits / limitCredits`. A Go plan returns two windows — `5h` (18000s) and `Week` (604800s) — sorted shortest first; both are shown with their reset time when the payload carries one.
+- **Credentials:** the Vela CLI session (`vela login`), not pi's AMR Link key. `OPENDESIGN_VELA_BIN` or `VELA_BIN` selects the binary when `vela` is not on `PATH`.
+- **Workspace id:** resolved from `OPENDESIGN_WORKSPACE_ID`, `~/.pi/agent/opendesign-workspace.json` (`{"workspaceId":"…"}`), the OpenDesign desktop app-config `workspaceScope`, or (after `vela login`) `GET /api/v1/workspaces` with the control key in `~/.amr/config.json`, preferring the personal workspace.
+- **API keys are not a substitute:** the `opendesign` auth.json entry (an `sk-amr-…` AMR Link key) authenticates chat only; amr-api billing routes reject it, so a key-only setup reports an HTTP error instead of numbers. `vela` is therefore required for quota reads.
+- **Windows shell:** npm installs Vela as `vela.cmd`, which `execFileSync` cannot start directly; `sub-core` resolves it with `where.exe` and runs it through a quoted command line so the same code path works on Windows.
+- **Unofficial endpoint:** the CLI output shape is not a public contract and can change with a Vela release. `OPENDESIGN_PREFLIGHT_MODEL` scopes the preflight to one model when needed.
 
 ## Development
 

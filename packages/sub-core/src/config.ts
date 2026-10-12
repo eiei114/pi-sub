@@ -61,6 +61,20 @@ export const CURSOR_CURRENT_PERIOD_USAGE_URL =
 export const OPENCODE_USAGE_URL = "https://opencode.ai/zen/go/v1/usage";
 
 /**
+ * OpenDesign / AMR Link usage endpoints (unofficial, source-derived).
+ *
+ * Link API keys (`sk-amr-…`) authenticate chat at amr-link; quota reads may
+ * eventually appear on the link usage route or on amr-api billing routes with
+ * the same key. Today those billing routes typically require a Vela control
+ * session instead.
+ */
+export const OPENDESIGN_LINK_USAGE_URL = "https://amr-link.open-design.ai/v1/usage";
+export const OPENDESIGN_BILLING_SUMMARY_URL =
+	"https://amr-api.open-design.ai/api/v1/billing/summary";
+export const OPENDESIGN_WORKSPACES_URL =
+	"https://amr-api.open-design.ai/api/v1/workspaces";
+
+/**
  * Command Code billing endpoints (unofficial)
  */
 export const COMMAND_CODE_WHOAMI_URL = "https://api.commandcode.ai/alpha/whoami";

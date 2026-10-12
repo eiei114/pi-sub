@@ -42,9 +42,10 @@ up, so the planner always has an accurate picture of "what's next".
 - `sub-core`, `sub-bar`, and `sub-shared` form a **fixed release group** (one
   changeset bumps all three together — see `.changeset/config.json`).
   `sub-status` is versioned independently but currently tracks the same number.
-- 15 usage providers are supported: `anthropic`, `copilot`, `gemini`,
+- 16 usage providers are supported: `anthropic`, `copilot`, `gemini`,
   `antigravity`, `codex`, `kiro`, `zai`, `kimi-coding`, `openrouter`,
-  `cursor`, `opencode`, `command-code`, `xai`, `devin`, `ollama-cloud`.
+  `cursor`, `opencode`, `opendesign`, `command-code`, `xai`, `devin`,
+  `ollama-cloud`.
 
 ### Release pipeline
 

@@ -145,11 +145,13 @@ Settings live in the agent directory to survive updates (legacy extension `setti
 
 You must update **sub-shared** (provider id + metadata), **sub-core** (fetch layer), and **sub-bar** (display/UI).
 
-> **Unofficial provider APIs:** Cursor, OpenCode, Command Code, xAI (Grok), Devin, and Ollama Cloud usage endpoints are unofficial and may change without notice. Failures soft-error in the UI; disable the provider in settings if an API shape breaks.
+> **Unofficial provider APIs:** Cursor, OpenCode, OpenDesign, Command Code, xAI (Grok), Devin, and Ollama Cloud usage endpoints are unofficial and may change without notice. Failures soft-error in the UI; disable the provider in settings if an API shape breaks.
 
 > **xAI (Grok) limitations:** the xAI provider reports the **subscription** quota (SuperGrok/Grok plan) of the single base `xai` OAuth credential in `~/.pi/agent/auth.json`. xAI API keys (`XAI_API_KEY`) are not accepted for this endpoint — they are valid credentials for the developer API, just not for subscription quota. Additional numbered accounts (`xai-2`, …) are not supported and intentionally show no usage instead of the base account's numbers.
 
 > **OpenCode Go accounts:** usage is read with the base OpenCode credential only. Numbered accounts (`opencode-go-2`, …) show no usage instead of the base account's numbers.
+
+> **OpenDesign limitations:** the OpenDesign provider reads Design Plan Coding Plan windows (5h / Week) from `vela billing preflight --format json` after `vela login`, using `@powerformer/vela-cli` **0.1.4-test.0 or newer** (that build exposes `billing preflight`). Workspace id comes from `OPENDESIGN_WORKSPACE_ID`, `~/.pi/agent/opendesign-workspace.json`, OpenDesign desktop `app-config.json`, or (after `vela login`) `GET /api/v1/workspaces` using the control key in `~/.amr/config.json`. Set `OPENDESIGN_VELA_BIN` when `vela` is not on `PATH`. Pi's AMR Link key (`opendesign` / `sk-amr-…`) is for chat only; amr-api billing routes reject it with HTTP 401 until link-key quota reads exist.
 
 > **Devin limitations:** the Devin provider reports the **organization** quota behind the `devin` credential in `~/.pi/agent/auth.json`, which is the same `devin-session-token$…` the `devin` model provider stores. Quota is scoped to an organization, so a token that belongs to several of them is tried primary-first and the first readable organization wins. The endpoint returns bare percentages with no documented direction; they are read as the **used** share, which is what a freshly allocated plan reporting `0` means.
 
