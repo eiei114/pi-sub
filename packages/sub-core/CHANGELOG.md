@@ -1,5 +1,13 @@
 # @eiei114/pi-sub-core
 
+## 2.7.5
+
+### Patch Changes
+
+- Verify the existing extension lifecycle, command, and tool integration against Pi SDK 1.1.0 while preserving wildcard peer ranges.
+- Updated dependencies:
+  - @eiei114/pi-sub-shared@2.7.5
+
 ## 2.7.4
 
 ### Patch Changes
