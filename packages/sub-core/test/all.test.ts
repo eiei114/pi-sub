@@ -1,4 +1,5 @@
 import "./credentials.test.js";
+import "./utils.test.js";
 import "./dependencies.test.js";
 import "./cache.test.js";
 import "./detection.test.js";
@@ -6,6 +7,7 @@ import "./providers.test.js";
 import "./xai.test.js";
 import "./devin.test.js";
 import "./ollama-cloud.test.js";
+import "./opendesign.test.js";
 import "./openrouter.test.js";
 import "./command-code-credentials.test.js";
 import "./active-codex.test.js";

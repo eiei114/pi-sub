@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { behaviorAssertions, EXPECTED_STATUS } from "./pi-sdk-smoke-contract.mjs";
+import { behaviorAssertions, EXPECTED_STATUS, sanitizeEvidence } from "./pi-sdk-smoke-contract.mjs";
 
 const commands = ["sub-core:settings", "sub-bar:settings", "sub-bar:import"];
 const commandResponse = {
@@ -103,4 +103,11 @@ test("reload assertions require second-process registration, feature output, cle
 test("host shell boundary checks the exact pinned runtime version", () => {
 	assert.equal(assertions("host_shell", [], { fullOutput: "1.1.0\n" })[0].passed, true);
 	assert.equal(assertions("host_shell", [], { fullOutput: "1.0.0\n" })[0].passed, false);
+});
+
+test("evidence sanitization removes literal and JSON-escaped Windows checkout paths", () => {
+	const repoRoot = "C:\\Users\\Keisu\\pi-sub";
+	const escapedRoot = JSON.stringify(repoRoot).slice(1, -1);
+	const evidence = `json=${escapedRoot}\\source.ts; literal=${repoRoot}\\source.ts`;
+	assert.equal(sanitizeEvidence(evidence, repoRoot), "json=<repo>\\source.ts; literal=<repo>\\source.ts");
 });

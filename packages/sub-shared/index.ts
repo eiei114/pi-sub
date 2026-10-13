@@ -14,6 +14,7 @@ export const PROVIDERS = [
 	"openrouter",
 	"cursor",
 	"opencode",
+	"opendesign",
 	"command-code",
 	"xai",
 	"devin",
@@ -255,6 +256,10 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 	opencode: {
 		displayName: "OpenCode",
 		detection: { providerTokens: ["opencode"], modelTokens: [] },
+	},
+	opendesign: {
+		displayName: "OpenDesign",
+		detection: { providerTokens: ["opendesign"], modelTokens: [] },
 	},
 	"command-code": {
 		displayName: "Command Code",

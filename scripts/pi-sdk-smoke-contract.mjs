@@ -9,6 +9,11 @@ export const UNHANDLED_ERROR_PATTERN = /UnhandledPromiseRejection|uncaught excep
 export const EXTENSION_LOAD_ERROR_PATTERN = /Failed to load extension|Error loading extension/i;
 export const EXPECTED_STATUS = "3h 17% · 4d 29%";
 
+export function sanitizeEvidence(value, repoRoot) {
+	const escapedRoot = JSON.stringify(repoRoot).slice(1, -1);
+	return value.replaceAll(escapedRoot, "<repo>").replaceAll(repoRoot, "<repo>");
+}
+
 function assertion(id, expected, observed, passed) {
 	return { id, expected, observed: JSON.stringify(observed), passed: passed === true };
 }

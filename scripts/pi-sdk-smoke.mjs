@@ -6,6 +6,7 @@ import { dirname, resolve, join } from "node:path";
 import {
 	behaviorAssertions,
 	EXTENSION_LOAD_ERROR_PATTERN,
+	sanitizeEvidence,
 	SDK_NAMES,
 	UNHANDLED_ERROR_PATTERN,
 	VERIFICATION_CONTRACT,
@@ -92,7 +93,7 @@ function parseJsonLines(output) {
 }
 
 function sanitize(value) {
-	return value.replaceAll(root, "<repo>");
+	return sanitizeEvidence(value, root);
 }
 
 function runProcess(executable, args, input) {

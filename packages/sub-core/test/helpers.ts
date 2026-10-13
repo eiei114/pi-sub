@@ -5,13 +5,16 @@ export type FetchResponse<T> = {
 	ok: boolean;
 	status: number;
 	json: () => Promise<T>;
+	text: () => Promise<string>;
 };
 
 export function createJsonResponse<T>(data: T, init?: { ok?: boolean; status?: number }): FetchResponse<T> {
+	const body = JSON.stringify(data);
 	return {
 		ok: init?.ok ?? true,
 		status: init?.status ?? 200,
 		json: async () => data,
+		text: async () => body,
 	};
 }
 

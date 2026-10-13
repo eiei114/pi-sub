@@ -175,6 +175,15 @@ const opencodeWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, wind
 	return true;
 };
 
+const opendesignWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, window, settings, _model) => {
+	if (!settings) return true;
+	const ps = settings.providers.opendesign;
+	if (window.label === "5h") return ps.windows.show5h;
+	if (window.label === "Week") return ps.windows.showWeek;
+	if (window.label === "Month") return ps.windows.showMonth;
+	return true;
+};
+
 const commandCodeWindowVisible: ProviderMetadata["isWindowVisible"] = (_usage, window, settings, _model) => {
 	if (!settings) return true;
 	const ps = settings.providers["command-code"];
@@ -361,6 +370,10 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 	opencode: {
 		...BASE_METADATA.opencode,
 		isWindowVisible: opencodeWindowVisible,
+	},
+	opendesign: {
+		...BASE_METADATA.opendesign,
+		isWindowVisible: opendesignWindowVisible,
 	},
 	"command-code": {
 		...BASE_METADATA["command-code"],
