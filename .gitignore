@@ -13,3 +13,4 @@ packages/sub-bar/settings.json
 packages/sub-core/settings.json
 
 release-notes-*.md
+.tmp/
