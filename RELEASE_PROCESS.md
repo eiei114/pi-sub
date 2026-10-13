@@ -1,13 +1,15 @@
 # Release Process
 
-This repo uses Changesets + GitHub Actions to ship npm releases automatically after merges to `main`.
+This repo uses Changesets + GitHub Actions for manually approved npm releases.
 
 ## One-time setup
 
-1. **npm Trusted Publishing**
+1. **GitHub release environment**
+   - Create the `release` environment and require approval from the release owners before deployments can proceed. Configure the protection rules in repository settings; the workflow references the environment but cannot configure its reviewers.
+2. **npm Trusted Publishing**
    - In npm, grant this repo permission to publish each `@eiei114/pi-sub-*` package from `.github/workflows/release.yml`.
    - This workflow already requests `id-token: write`, so no `NPM_TOKEN` secret is required when Trusted Publishing is configured.
-2. **Enable GitHub auto-merge**
+3. **Enable GitHub auto-merge**
    - Repo Settings → Pull Requests → enable **Allow auto-merge**.
    - The release workflow turns on auto-merge for the bot-created `Version Packages` PR after Changesets opens it.
 
@@ -29,21 +31,22 @@ Commit the generated `.changeset/*.md` file in the same PR.
 
 ### 2) Merge the feature PR to `main`
 
-On every push to `main`, `.github/workflows/release.yml` runs automatically.
+Merging to `main` does not run the release workflow and cannot publish packages.
 
-- If unreleased changesets exist, Changesets creates or updates a **Version Packages** PR.
-- The same workflow immediately enables auto-merge for that PR with `gh pr merge --auto --squash`.
+### 3) Release owner dispatches the workflow
 
-### 3) Let the Version Packages PR merge itself
+From **Actions → Release**, dispatch the workflow on `main`. The `release` environment pauses the release job until a configured release owner approves it.
 
-When checks pass, GitHub auto-merges the `Version Packages` PR.
+If unreleased changesets exist, Changesets creates or updates a **Version Packages** PR and the workflow enables auto-merge after the owner-approved job starts.
 
-### 4) Publish happens automatically
+### 4) Publish after the Version Packages PR merges
 
-The merge of the `Version Packages` PR pushes to `main` again, so `release.yml` runs a second time.
+The Version Packages PR merge does not run the release workflow. After it merges, the release owner dispatches the workflow again on `main`; the environment again requires approval before publishing.
 
-- This time there are no pending changesets, so Changesets publishes the changed packages to npm.
+- With no pending changesets, Changesets publishes eligible packages to npm.
 - Changesets also creates package tags / GitHub releases for the published packages.
+
+Pushes, pull-request events, and scheduled runs never invoke the release workflow. Do not dispatch it until the `release` environment has required release-owner reviewers configured.
 
 ## Local verification before merge
 

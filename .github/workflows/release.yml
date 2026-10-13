@@ -1,30 +1,17 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types:
-      - closed
-  schedule:
-    - cron: "30 * * * *"
   workflow_dispatch:
 
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
 
-env:
-  CHECKOUT_REF: ${{ github.event_name == 'pull_request' && 'refs/heads/main' || '' }}
-
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-        with:
-          ref: ${{ env.CHECKOUT_REF }}
       - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
@@ -34,27 +21,16 @@ jobs:
 
   release:
     needs: test
-    # Publish on: push to main, manual dispatch, scheduled fallback, or the
-    # Version Packages PR being merged (auto-merge does not fire a push event,
-    # but the pull_request closed event does).
     if: >-
-      needs.test.result == 'success' &&
-      (
-        github.event_name != 'pull_request' ||
-        (
-          github.event.pull_request.merged == true &&
-          github.event.pull_request.head.ref == 'changeset-release/main'
-        )
-      )
+      needs.test.result == 'success' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment: release
     permissions:
       contents: write
       pull-requests: write
       id-token: write
     steps:
       - uses: actions/checkout@v5
-        with:
-          ref: ${{ env.CHECKOUT_REF }}
       - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
