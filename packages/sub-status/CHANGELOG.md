@@ -1,5 +1,14 @@
 # @eiei114/pi-sub-status
 
+## 2.1.3
+
+### Patch Changes
+
+- Verify the existing status-line extension integration against Pi SDK 1.2.0 while preserving its wildcard peer range.
+- Updated dependencies:
+  - @eiei114/pi-sub-core@2.8.2
+  - @eiei114/pi-sub-shared@2.8.2
+
 ## 2.1.2
 
 ### Patch Changes

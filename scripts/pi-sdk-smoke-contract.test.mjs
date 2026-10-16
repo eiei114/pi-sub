@@ -45,7 +45,7 @@ function assertions(name, responses, extras = {}) {
 		responses,
 		exit_code: 0,
 		fullOutput: "",
-		expectedVersion: "1.1.0",
+		expectedVersion: "1.2.0",
 		processExitObserved: true,
 		timedOut: false,
 		...extras,
@@ -101,8 +101,8 @@ test("reload assertions require second-process registration, feature output, cle
 });
 
 test("host shell boundary checks the exact pinned runtime version", () => {
-	assert.equal(assertions("host_shell", [], { fullOutput: "1.1.0\n" })[0].passed, true);
-	assert.equal(assertions("host_shell", [], { fullOutput: "1.0.0\n" })[0].passed, false);
+	assert.equal(assertions("host_shell", [], { fullOutput: "1.2.0\n" })[0].passed, true);
+	assert.equal(assertions("host_shell", [], { fullOutput: "1.1.0\n" })[0].passed, false);
 });
 
 test("evidence sanitization removes literal and JSON-escaped Windows checkout paths", () => {

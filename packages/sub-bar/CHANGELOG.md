@@ -1,5 +1,14 @@
 # @eiei114/pi-sub-bar
 
+## 2.8.2
+
+### Patch Changes
+
+- Verify the existing widget, settings, and command integration against Pi SDK 1.2.0 while preserving wildcard peer ranges.
+- Updated dependencies:
+  - @eiei114/pi-sub-core@2.8.2
+  - @eiei114/pi-sub-shared@2.8.2
+
 ## 2.8.1
 
 ### Patch Changes
