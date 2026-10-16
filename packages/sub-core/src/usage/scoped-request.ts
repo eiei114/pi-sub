@@ -13,6 +13,7 @@ const IDENTITIES: Readonly<Record<string, string>> = Object.freeze({
 	openrouter: 'openrouter',
 	'opencode-go': 'opencode',
 	xai: 'xai',
+	meta: 'meta',
 });
 
 function withAbort<T>(operation: Promise<T>, signal: AbortSignal): Promise<T> {

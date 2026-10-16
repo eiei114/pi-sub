@@ -392,4 +392,7 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 		...BASE_METADATA["ollama-cloud"],
 		isWindowVisible: ollamaCloudWindowVisible,
 	},
+	meta: {
+		...BASE_METADATA.meta,
+	},
 };

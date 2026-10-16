@@ -110,3 +110,30 @@ test("grok models routed through other providers are not detected as xAI", () =>
 	// detected from the provider id, never from the model id.
 	assert.equal(detectProviderFromModel({ provider: "someproxy", id: "grok-4" }), undefined);
 });
+
+test("base meta provider id resolves to the Meta subscription", () => {
+	assert.equal(detectProviderFromModel({ provider: "meta", id: "muse-spark-1.3" }), "meta");
+	assert.equal(detectProviderFromModel({ provider: "Meta", id: "muse-spark-1.3" }), "meta");
+});
+
+test("numbered Meta aliases resolve to no provider instead of the base account", () => {
+	// Only the base `meta` OAuth entry can be read, so an alias account must
+	// not borrow the base account's subscription state.
+	for (const provider of ["meta-2", "meta-13"]) {
+		assert.equal(detectProviderFromModel({ provider, id: "muse-spark-1.3" }), undefined);
+	}
+});
+
+test("Muse models routed through other providers are not detected as Meta", () => {
+	assert.equal(
+		detectProviderFromModel({ provider: "opencode-go", id: "muse-spark-1.3-contributor" }),
+		"opencode",
+	);
+	assert.equal(
+		detectProviderFromModel({ provider: "openrouter", id: "meta/muse-spark-1.3" }),
+		"openrouter",
+	);
+	// An unknown provider serving a Muse model stays unknown: Meta is only
+	// detected from the exact provider id, never from the model id.
+	assert.equal(detectProviderFromModel({ provider: "someproxy", id: "muse-spark-1.3" }), undefined);
+});

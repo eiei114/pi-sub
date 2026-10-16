@@ -351,6 +351,9 @@ export interface OllamaCloudProviderSettings extends BaseProviderSettings {
 }
 
 
+/** Meta publishes no usage windows, so there is nothing beyond the base toggles to configure. */
+export type MetaProviderSettings = BaseProviderSettings;
+
 export interface ProviderSettingsMap {
 	anthropic: AnthropicProviderSettings;
 	copilot: CopilotProviderSettings;
@@ -368,6 +371,7 @@ export interface ProviderSettingsMap {
 	xai: XaiProviderSettings;
 	devin: DevinProviderSettings;
 	"ollama-cloud": OllamaCloudProviderSettings;
+	meta: MetaProviderSettings;
 }
 
 export type { BehaviorSettings, CoreSettings } from "@eiei114/pi-sub-shared";
@@ -646,6 +650,9 @@ export function getDefaultSettings(): Settings {
 					showWeek: true,
 					showMonth: true,
 				},
+			},
+			meta: {
+				showStatus: false,
 			},
 		},
 		display: {

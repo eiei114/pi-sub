@@ -19,6 +19,7 @@ export const PROVIDERS = [
 	"xai",
 	"devin",
 	"ollama-cloud",
+	"meta",
 ] as const;
 
 export type ProviderName = (typeof PROVIDERS)[number];
@@ -287,6 +288,15 @@ export const PROVIDER_METADATA: Record<ProviderName, ProviderMetadata> = {
 		// Cloud model ids (`gpt-oss:120b`, `kimi-k2.6`, …) overlap with other
 		// hosts, so only the provider id identifies an Ollama account.
 		detection: { providerTokens: ["ollama-cloud"], modelTokens: [] },
+	},
+	meta: {
+		displayName: "Meta (Muse)",
+		// Detection is a dedicated exact rule in sub-core, like xAI: the Muse
+		// subscription credential is the single base `meta` OAuth entry in pi's
+		// auth.json, so numbered aliases (`meta-2`, …) must not resolve here,
+		// and Muse models routed through other providers (e.g. OpenCode Go)
+		// keep resolving to that provider.
+		detection: { providerTokens: [], modelTokens: [] },
 	},
 };
 

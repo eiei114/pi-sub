@@ -65,6 +65,19 @@ export function detectProviderFromModel(
 		return XAI_BASE_PROVIDER_IDS.has(providerValue) ? "xai" : undefined;
 	}
 
+	// Meta Muse subscription state belongs to the single base `meta` OAuth
+	// credential in pi's auth.json, mirroring the xAI rule: only the exact
+	// base provider id resolves. Numbered aliases (`meta-2`, …) are separate
+	// accounts and resolve to no provider instead of borrowing the base
+	// account, and Muse models routed through other providers keep that
+	// provider's resolution (this rule inspects the provider id only).
+	if (providerValue === "meta") {
+		return "meta";
+	}
+	if (/^meta-\d+$/.test(providerValue)) {
+		return undefined;
+	}
+
 	for (const hint of PROVIDER_DETECTION_HINTS) {
 		if (hint.providerTokens.some((token) => providerValue.includes(token))) {
 			return hint.provider;

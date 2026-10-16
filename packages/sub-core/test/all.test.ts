@@ -5,6 +5,7 @@ import "./cache.test.js";
 import "./detection.test.js";
 import "./providers.test.js";
 import "./xai.test.js";
+import "./meta.test.js";
 import "./devin.test.js";
 import "./ollama-cloud.test.js";
 import "./opendesign.test.js";

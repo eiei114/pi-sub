@@ -40,6 +40,7 @@ https://github.com/user-attachments/assets/d61d82f6-afd0-45fc-82f3-69910543aa7a
 | z.ai | Tokens/monthly limits | - |
 | xAI (Grok) | Subscription quota window | - |
 | Devin | Daily/Weekly organization quota | - |
+| Meta (Muse) | Signed-in state only (no quota data) | - |
 
 ### Provider Feature Matrix
 
@@ -57,6 +58,7 @@ https://github.com/user-attachments/assets/d61d82f6-afd0-45fc-82f3-69910543aa7a
 | xAI (Grok) | Week, Month, Usage | - | - | - | Subscription (SuperGrok/Grok) quota only, unofficial endpoint, base `xai` OAuth account only |
 | Devin | Day, Week | - | - | - | Organization quota, unofficial endpoint, session token from the `devin` auth.json entry |
 | Ollama Cloud | Session, Week, Month | Cost | - | - | ollama.com usage quota, API key from `OLLAMA_API_KEY` or the `ollama-cloud` auth.json entry |
+| Meta (Muse) | - | - | - | - | Subscription sign-in state only: Meta publishes no usage endpoint, base `meta` OAuth account only |
 
 ## Installation
 
@@ -168,6 +170,8 @@ Credentials are loaded by sub-core from:
 xAI (Grok) shows the **subscription** quota of the base `xai` OAuth entry only. `XAI_API_KEY` is not used: it is a valid developer-API credential, but that API cannot report subscription quota. Numbered accounts (`xai-2`, …) show no usage rather than the base account's numbers, and the endpoint is unofficial, so it can break without notice.
 
 OpenCode Go likewise shows the usage of the base credential only: numbered accounts (`opencode-go-2`, …) show no usage rather than the base account's numbers.
+
+Meta (Muse) shows only the **subscription** sign-in state of the base `meta` OAuth entry: Meta publishes no usage endpoint, so no quota is displayed (unknown, not unlimited). `META_API_KEY` is not used, and numbered accounts (`meta-2`, …) show no state rather than the base account's.
 
 ## Development
 

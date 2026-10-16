@@ -142,6 +142,7 @@ Current-session Codex usage is an exception: it resolves credentials from the se
 | Kimi for Coding | Week + 5h rolling windows | - | OAuth; tested with `pi-provider-kimi-code` |
 | OpenRouter | Key spending cap + account credit | - | `/api/v1/key` (authoritative) plus best-effort `/api/v1/credits` |
 | xAI (Grok) | Subscription quota window (Week/Month) | - | SuperGrok/Grok plan quota via an undocumented CLI billing endpoint; OAuth only; base `xai` account only |
+| Meta (Muse) | Signed-in state only (no quota data) | - | Meta publishes no Muse subscription usage endpoint; OAuth presence only; base `meta` account only |
 
 ### xAI (Grok) subscription usage
 
@@ -150,6 +151,13 @@ Current-session Codex usage is an exception: it resolves credentials from the se
 - **API keys are not a substitute:** `XAI_API_KEY` and `api_key` auth entries are never used here. They are valid credentials for the xAI developer API, but that is a different billing bucket and cannot report subscription quota.
 - **Single account:** usage is read for the base `xai` credential only. Numbered aliases (`xai-2`, …) resolve to no provider rather than displaying the base account's quota.
 - **Unofficial endpoint:** the endpoint and its client headers are derived from client behavior, not from public docs, and can break at any time. HTTP 426 means the pinned client version is no longer accepted; it is reported as a plain error and never retried with a spoofed version. All failures soft-error with a static message plus HTTP status — response bodies are never surfaced or logged.
+
+### Meta (Muse) subscription
+
+- **What it shows:** only that a Muse subscription sign-in exists. Meta publishes no subscription usage endpoint — there is no quota, window, or balance read for the subscription — so the provider performs no network request and reports an empty window list. Consumers render that as quota **unknown**, never as unlimited or zero used.
+- **Credentials:** presence of the OAuth entry from `~/.pi/agent/auth.json` under `meta` (only when the entry has `"type": "oauth"` and a non-blank identity token or minted Model API key). Only presence is read: tokens are never refreshed, minted, logged, or returned; pi owns the OAuth lifecycle when a model is used.
+- **API keys are not a substitute:** `META_API_KEY` and `api_key` auth entries are never used here. They are valid credentials for the pay-as-you-go Model API, but that is a different billing bucket, not the Muse subscription.
+- **Single account:** state is read for the base `meta` credential only. Numbered aliases (`meta-2`, …) resolve to no provider rather than borrowing the base account's state, and Muse models routed through other providers (e.g. OpenCode Go) keep that provider's usage.
 
 ### OpenDesign Design Plan usage
 

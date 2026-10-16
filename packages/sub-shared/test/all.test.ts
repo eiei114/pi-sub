@@ -34,6 +34,16 @@ test("xAI and z.ai are separate providers with separate labels", () => {
 	assert.equal(getDefaultCoreProviderSettings().xai.fetchStatus, false);
 });
 
+test("Meta (Muse) is a provider with no status page wired up", () => {
+	assert.ok(PROVIDERS.includes("meta"));
+	assert.equal(PROVIDER_DISPLAY_NAMES.meta, "Meta (Muse)");
+	// Meta has no status page wired up, so status fetching stays off by default.
+	assert.equal(PROVIDER_METADATA.meta.status, undefined);
+	assert.equal(getDefaultCoreProviderSettings().meta.fetchStatus, false);
+	// Detection is an exact sub-core rule, never substring tokens.
+	assert.deepEqual(PROVIDER_METADATA.meta.detection, { providerTokens: [], modelTokens: [] });
+});
+
 test("default provider settings include every provider as auto", () => {
 	const settings = getDefaultCoreProviderSettings();
 

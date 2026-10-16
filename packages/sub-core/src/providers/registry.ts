@@ -18,6 +18,7 @@ export { CommandCodeProvider } from "./impl/command-code.js";
 export { XaiProvider } from "./impl/xai.js";
 export { DevinProvider } from "./impl/devin.js";
 export { OllamaCloudProvider } from "./impl/ollama-cloud.js";
+export { MetaProvider } from "./impl/meta.js";
 
 import type { Dependencies, ProviderName } from "../types.js";
 import type { UsageProvider } from "../provider.js";
@@ -38,6 +39,7 @@ import { CommandCodeProvider } from "./impl/command-code.js";
 import { XaiProvider } from "./impl/xai.js";
 import { DevinProvider } from "./impl/devin.js";
 import { OllamaCloudProvider } from "./impl/ollama-cloud.js";
+import { MetaProvider } from "./impl/meta.js";
 
 const PROVIDER_FACTORIES: Record<ProviderName, () => UsageProvider> = {
 	anthropic: () => new AnthropicProvider(),
@@ -56,6 +58,7 @@ const PROVIDER_FACTORIES: Record<ProviderName, () => UsageProvider> = {
 	xai: () => new XaiProvider(),
 	devin: () => new DevinProvider(),
 	"ollama-cloud": () => new OllamaCloudProvider(),
+	meta: () => new MetaProvider(),
 };
 
 /**

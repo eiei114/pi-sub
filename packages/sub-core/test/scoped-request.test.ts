@@ -47,6 +47,7 @@ test('scoped reads route exactly one base provider, preserve identity, and never
 		zai: 'zai',
 		openrouter: 'openrouter',
 		'opencode-go': 'opencode',
+		meta: 'meta',
 	})) {
 		const seen: string[] = [];
 		const result = await readScopedUsage(
@@ -77,6 +78,7 @@ test('scoped reads route exactly one base provider, preserve identity, and never
 		'cursor',
 		'command-code',
 		'google',
+		'meta-2',
 	]) {
 		const result = await readScopedUsage({ provider }, deps, settings, lifecycle().signal, () => {
 			throw new Error('must not inspect credentials');
