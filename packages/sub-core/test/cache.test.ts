@@ -87,6 +87,9 @@ test("readCache recovers from truncated JSON", async () => {
 		};
 		const corrupted = `${JSON.stringify(cacheValue)}garbage`;
 		fs.writeFileSync(CACHE_PATH, corrupted, "utf-8");
+		// Fast writes may share an mtime on Windows; ensure readCache sees this file update.
+		const changedAt = new Date(Date.now() + 60_000);
+		fs.utimesSync(CACHE_PATH, changedAt, changedAt);
 
 		const cache = readCache();
 		assert.equal(cache.copilot?.fetchedAt, 123);
