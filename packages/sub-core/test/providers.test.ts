@@ -878,6 +878,33 @@ test("opencode falls back to pi agent auth.json", async () => {
 	assert.equal(usage.windows.find((w) => w.label === "5h")?.usedPercent, 6);
 });
 
+test("opencode accepts a bare string entry in pi agent auth.json", async () => {
+	const provider = new OpenCodeProvider();
+	let authorization: string | undefined;
+	const home = "/home/test";
+	const { deps, files } = createDeps({
+		homedir: home,
+		fetch: async (_url, init) => {
+			authorization = (init as { headers?: { Authorization?: string } })?.headers?.Authorization;
+			return createJsonResponse({
+				usage: {
+					rolling: { percent: 6, status: "ok", resetsAt: "2099-01-01T00:00:00.000Z" },
+					weekly: { percent: 4, status: "ok", resetsAt: "2099-01-08T00:00:00.000Z" },
+					monthly: { percent: 8, status: "ok", resetsAt: "2099-02-01T00:00:00.000Z" },
+				},
+			});
+		},
+	});
+	files.set(
+		path.join(home, ".pi", "agent", "auth.json"),
+		JSON.stringify({ "opencode-go": "pi-string-key" })
+	);
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(authorization, "Bearer pi-string-key");
+	assert.equal(usage.error, undefined);
+});
+
 test("opencode prefers opencode auth.json over pi agent auth.json", async () => {
 	const provider = new OpenCodeProvider();
 	let authorization: string | undefined;

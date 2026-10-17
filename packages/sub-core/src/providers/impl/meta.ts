@@ -16,8 +16,7 @@
  *   short-lived Model API key) when a model is actually used.
  */
 
-import * as path from 'node:path';
-import { isRecord, normalizeCredentialString } from '../../credentials.js';
+import { normalizeCredentialString, readPiAuthEntry } from '../../credentials.js';
 import type { Dependencies, UsageSnapshot } from '../../types.js';
 import { BaseProvider } from '../../provider.js';
 import { noCredentials } from '../../errors.js';
@@ -36,19 +35,9 @@ const normalizeToken = (value: unknown) =>
  * Reading is presence-only: no token value leaves this function.
  */
 export function hasMetaSubscriptionCredential(deps: Dependencies): boolean {
-	const authPath = path.join(deps.homedir(), '.pi', 'agent', 'auth.json');
-	try {
-		if (!deps.fileExists(authPath)) return false;
-		const auth = JSON.parse(deps.readFile(authPath) ?? '{}') as unknown;
-		if (!isRecord(auth)) return false;
-		const entry = auth[META_AUTH_KEY];
-		if (!isRecord(entry) || entry.type !== 'oauth') return false;
-		return Boolean(normalizeToken(entry.access) ?? normalizeToken(entry.refresh));
-	} catch {
-		// Ignore parse errors
-	}
-
-	return false;
+	const entry = readPiAuthEntry(deps, META_AUTH_KEY);
+	if (!entry || entry.type !== 'oauth') return false;
+	return Boolean(normalizeToken(entry.access) ?? normalizeToken(entry.refresh));
 }
 
 export class MetaProvider extends BaseProvider {

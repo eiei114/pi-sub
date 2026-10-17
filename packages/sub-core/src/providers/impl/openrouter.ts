@@ -7,11 +7,10 @@
  * wallet failure must never discard valid key data.
  */
 
-import * as path from "node:path";
 import type { Dependencies, RateWindow, UsageError, UsageSnapshot } from "../../types.js";
 import { BaseProvider } from "../../provider.js";
 import { noCredentials, fetchFailed, httpError, apiError } from "../../errors.js";
-import { normalizeCredentialString } from "../../credentials.js";
+import { normalizeCredentialString, readPiAuthEntry } from "../../credentials.js";
 import { createTimeoutController } from "../../utils.js";
 import { API_TIMEOUT_MS, OPENROUTER_CREDITS_URL, OPENROUTER_KEY_URL } from "../../config.js";
 import {
@@ -49,22 +48,12 @@ function loadOpenRouterApiKey(deps: Dependencies): string | undefined {
 	const envApiKey = normalizeApiKey(deps.env.OPENROUTER_API_KEY) ?? normalizeApiKey(deps.env.OPENROUTER_KEY);
 	if (envApiKey) return envApiKey;
 
-	const authPath = path.join(deps.homedir(), ".pi", "agent", "auth.json");
-	try {
-		if (deps.fileExists(authPath)) {
-			const auth = JSON.parse(deps.readFile(authPath) ?? "{}") as Record<string, unknown>;
-			const openrouterAuth = auth.openrouter as Record<string, unknown> | undefined;
-			return (
-				normalizeApiKey(openrouterAuth?.access)
-				?? normalizeApiKey(openrouterAuth?.key)
-				?? normalizeApiKey(openrouterAuth?.apiKey)
-			);
-		}
-	} catch {
-		// Ignore parse errors
-	}
-
-	return undefined;
+	const openrouterAuth = readPiAuthEntry(deps, "openrouter");
+	return (
+		normalizeApiKey(openrouterAuth?.access)
+		?? normalizeApiKey(openrouterAuth?.key)
+		?? normalizeApiKey(openrouterAuth?.apiKey)
+	);
 }
 
 type JsonResult =

@@ -10,7 +10,7 @@
 import * as path from "node:path";
 import type { Dependencies, UsageError, UsageSnapshot } from "../../types.js";
 import { BaseProvider } from "../../provider.js";
-import { noCredentials, fetchFailed, httpError, apiError, noCli, notLoggedIn } from "../../errors.js";import { isRecord, normalizeCredentialString } from "../../credentials.js";
+import { noCredentials, fetchFailed, httpError, apiError, noCli, notLoggedIn } from "../../errors.js";import { isRecord, normalizeCredentialString, readPiAuthEntryValue } from "../../credentials.js";
 import { createTimeoutController } from "../../utils.js";
 import {
 	API_TIMEOUT_MS,
@@ -32,10 +32,6 @@ import {
 
 const normalizeApiKey = normalizeCredentialString;
 
-function piAuthFilePath(deps: Dependencies): string {
-	return path.join(deps.homedir(), ".pi", "agent", "auth.json");
-}
-
 function workspaceConfigPath(deps: Dependencies): string {
 	return path.join(deps.homedir(), ".pi", "agent", "opendesign-workspace.json");
 }
@@ -54,16 +50,6 @@ function credentialKey(credential: unknown): string | undefined {
 	);
 }
 
-function keyFromAuthContent(contents: string | undefined): string | undefined {
-	try {
-		if (!contents) return undefined;
-		const auth = JSON.parse(contents) as Record<string, unknown>;
-		return credentialKey(auth.opendesign);
-	} catch {
-		return undefined;
-	}
-}
-
 function loadOpenDesignApiKeys(deps: Dependencies): string[] {
 	const candidates: string[] = [];
 	const push = (key: string | undefined) => {
@@ -74,7 +60,7 @@ function loadOpenDesignApiKeys(deps: Dependencies): string[] {
 	};
 
 	push(normalizeApiKey(deps.env.OPENDESIGN_API_KEY));
-	push(keyFromAuthContent(deps.fileExists(piAuthFilePath(deps)) ? deps.readFile(piAuthFilePath(deps)) : undefined));
+	push(credentialKey(readPiAuthEntryValue(deps, "opendesign")));
 	return candidates;
 }
 

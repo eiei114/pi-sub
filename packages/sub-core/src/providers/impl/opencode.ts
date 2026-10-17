@@ -6,7 +6,7 @@ import * as path from "node:path";
 import type { Dependencies, RateWindow, UsageSnapshot } from "../../types.js";
 import { BaseProvider } from "../../provider.js";
 import { noCredentials, fetchFailed, httpError, apiError } from "../../errors.js";
-import { isRecord, normalizeCredentialString } from "../../credentials.js";
+import { isRecord, normalizeCredentialString, readPiAuthEntryValue } from "../../credentials.js";
 import { formatReset, createTimeoutController } from "../../utils.js";
 import { API_TIMEOUT_MS, OPENCODE_USAGE_URL } from "../../config.js";
 
@@ -33,10 +33,6 @@ function clampPercent(value: number): number {
 function authFilePath(deps: Dependencies): string {
 	const dataHome = deps.env.XDG_DATA_HOME || path.join(deps.homedir(), ".local", "share");
 	return path.join(dataHome, "opencode", "auth.json");
-}
-
-function piAuthFilePath(deps: Dependencies): string {
-	return path.join(deps.homedir(), ".pi", "agent", "auth.json");
 }
 
 function credentialKey(credential: unknown): string | undefined {
@@ -84,7 +80,7 @@ function loadOpenCodeApiKeys(deps: Dependencies): string[] {
 	push(normalizeApiKey(deps.env.OPENCODE_API_KEY ?? deps.env.OPENCODE_GO_API_KEY));
 	push(keyFromAuthContent(deps.env.OPENCODE_AUTH_CONTENT));
 	push(keyFromAuthFile(deps, authFilePath(deps)));
-	push(keyFromAuthFile(deps, piAuthFilePath(deps)));
+	push(credentialKey(readPiAuthEntryValue(deps, "opencode-go")));
 	return candidates;
 }
 

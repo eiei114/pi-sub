@@ -10,11 +10,10 @@
  *   usually fails for API-key logins — treat it as optional.
  */
 
-import * as path from "node:path";
 import type { Dependencies, RateWindow, UsageSnapshot } from "../../types.js";
 import { BaseProvider } from "../../provider.js";
 import { noCredentials, fetchFailed, httpError, apiError } from "../../errors.js";
-import { isRecord, normalizeCredentialString } from "../../credentials.js";
+import { isRecord, normalizeCredentialString, readPiAuthEntryValue } from "../../credentials.js";
 import { formatReset, createTimeoutController } from "../../utils.js";
 import {
 	API_TIMEOUT_MS,
@@ -60,24 +59,17 @@ function loadCursorToken(deps: Dependencies): string | undefined {
 	);
 	if (envToken) return envToken;
 
-	const authPath = path.join(deps.homedir(), ".pi", "agent", "auth.json");
-	try {
-		if (!deps.fileExists(authPath)) return undefined;
-		const auth = JSON.parse(deps.readFile(authPath) ?? "{}") as Record<string, unknown>;
-		const entry = auth.cursor;
-		if (typeof entry === "string") return normalizeToken(entry);
-		if (!isRecord(entry)) return undefined;
+	const entry = readPiAuthEntryValue(deps, "cursor");
+	if (typeof entry === "string") return normalizeToken(entry);
+	if (!isRecord(entry)) return undefined;
 
-		// Prefer explicit access JWT when present; otherwise API key / aliases.
-		return (
-			normalizeToken(entry.access)
-			?? normalizeToken(entry.key)
-			?? normalizeToken(entry.apiKey)
-			?? normalizeToken(entry.token)
-		);
-	} catch {
-		return undefined;
-	}
+	// Prefer explicit access JWT when present; otherwise API key / aliases.
+	return (
+		normalizeToken(entry.access)
+		?? normalizeToken(entry.key)
+		?? normalizeToken(entry.apiKey)
+		?? normalizeToken(entry.token)
+	);
 }
 
 function extractCursorUserId(accessToken: string): string | undefined {

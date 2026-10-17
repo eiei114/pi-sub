@@ -13,11 +13,10 @@
  *   message plus the HTTP status; response bodies are never surfaced.
  */
 
-import * as path from "node:path";
 import type { Dependencies, RateWindow, UsageSnapshot } from "../../types.js";
 import { BaseProvider } from "../../provider.js";
 import { noCredentials, fetchFailed, httpError, apiError } from "../../errors.js";
-import { isRecord, normalizeCredentialString } from "../../credentials.js";
+import { isRecord, normalizeCredentialString, readPiAuthEntry } from "../../credentials.js";
 import { formatReset, createTimeoutController } from "../../utils.js";
 import {
 	API_TIMEOUT_MS,
@@ -56,19 +55,9 @@ function loadXaiOAuthToken(deps: Dependencies): string | undefined {
 	const envToken = normalizeToken(deps.env.XAI_OAUTH_TOKEN);
 	if (envToken) return envToken;
 
-	const authPath = path.join(deps.homedir(), ".pi", "agent", "auth.json");
-	try {
-		if (!deps.fileExists(authPath)) return undefined;
-		const auth = JSON.parse(deps.readFile(authPath) ?? "{}") as unknown;
-		if (!isRecord(auth)) return undefined;
-		const entry = auth[XAI_AUTH_KEY];
-		if (!isRecord(entry) || entry.type !== "oauth") return undefined;
-		return normalizeToken(entry.access);
-	} catch {
-		// Ignore parse errors
-	}
-
-	return undefined;
+	const entry = readPiAuthEntry(deps, XAI_AUTH_KEY);
+	if (!entry || entry.type !== "oauth") return undefined;
+	return normalizeToken(entry.access);
 }
 
 /**
