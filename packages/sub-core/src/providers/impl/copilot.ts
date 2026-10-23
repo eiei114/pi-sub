@@ -8,6 +8,7 @@ import { BaseProvider } from "../../provider.js";
 import { noCredentials, fetchFailed, httpError } from "../../errors.js";
 import { formatReset, createTimeoutController } from "../../utils.js";
 import { API_TIMEOUT_MS } from "../../config.js";
+import { normalizeCredentialString } from "../../credentials.js";
 
 /**
  * Copilot token entries stored by legacy GitHub Copilot CLI
@@ -85,8 +86,10 @@ function loadCopilotToken(deps: Dependencies): string | undefined {
 		if (deps.fileExists(authPath)) {
 			const data = JSON.parse(deps.readFile(authPath) ?? "{}");
 			// Prefer refresh token (GitHub access token) for GitHub API endpoints.
-			const piToken = data["github-copilot"]?.refresh || data["github-copilot"]?.access;
-			if (typeof piToken === "string" && piToken.length > 0) return piToken;
+			const options = { rejectCommandPrefix: true, rejectNewlines: true };
+			const piToken = normalizeCredentialString(data["github-copilot"]?.refresh, options)
+				?? normalizeCredentialString(data["github-copilot"]?.access, options);
+			if (piToken) return piToken;
 		}
 	} catch {
 		// Ignore parse errors

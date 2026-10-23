@@ -4,6 +4,7 @@ import "./dependencies.test.js";
 import "./cache.test.js";
 import "./detection.test.js";
 import "./providers.test.js";
+import "./pi-entry-acceptance.test.js";
 import "./xai.test.js";
 import "./meta.test.js";
 import "./devin.test.js";
