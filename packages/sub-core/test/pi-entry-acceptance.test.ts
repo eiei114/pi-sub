@@ -64,6 +64,36 @@ const rejectedValues: Array<[string, unknown]> = [
 ];
 
 for (const target of targets) {
+	for (const [label, contents] of [
+		["absent file", undefined],
+		["malformed JSON", "{"],
+		["null document", "null"],
+		["absent entry", "{}"],
+		["null entry", JSON.stringify({ [target.key]: null })],
+		["bare-string entry", JSON.stringify({ [target.key]: "not-a-token-entry" })],
+	]) {
+		test(`${target.name}: ${label} reports NO_CREDENTIALS or uses legacy fallback`, async () => {
+			const provider = target.provider();
+			const requests: Headers[] = [];
+			const { deps, files } = createDeps({
+				fetch: async (_url, init) => {
+					requests.push(new Headers(init?.headers));
+					return createJsonResponse({});
+				},
+			});
+			if (contents !== undefined) files.set(getAuthPath(deps.homedir()), contents);
+			assert.equal(provider.hasCredentials(deps), false);
+			assert.equal((await provider.fetchUsage(deps)).error?.code, "NO_CREDENTIALS");
+			assert.equal(requests.length, 0);
+
+			files.set(path.join(deps.homedir(), ...target.legacyPath), JSON.stringify(target.legacy));
+			assert.equal(provider.hasCredentials(deps), true);
+			assert.equal((await provider.fetchUsage(deps)).error, undefined);
+			assert.equal(requests.length, 1);
+			assert.equal(requests[0].get("authorization"), `${target.scheme} legacy-token`);
+		});
+	}
+
 	for (const [label, value] of rejectedValues) {
 		test(`${target.name}: rejects ${label} pi token and continues to legacy credentials`, async () => {
 			const provider = target.provider();
@@ -80,7 +110,7 @@ for (const target of targets) {
 
 			assert.equal(provider.hasCredentials(deps), false);
 			const missing = await provider.fetchUsage(deps);
-			assert.ok(missing.error);
+			assert.equal(missing.error?.code, "NO_CREDENTIALS");
 			assert.equal(requests.length, 0, "invalid pi tokens must not reach fetch");
 
 			files.set(path.join(deps.homedir(), ...target.legacyPath), JSON.stringify(target.legacy));
@@ -95,11 +125,11 @@ for (const target of targets) {
 		});
 	}
 
-	for (const [label, value] of [
-		["plain", "valid-token"],
-		["padded", " \tvalid-token "],
+	for (const [label, value, type] of [
+		["plain", "valid-token", undefined],
+		["padded", " \tvalid-token ", "oauth"],
 		// normalizeCredentialString trims before rejecting remaining CR/LF.
-		["surrounding CRLF", "\r\nvalid-token\r\n"],
+		["surrounding CRLF", "\r\nvalid-token\r\n", "api_key"],
 	]) {
 		test(`${target.name}: accepts ${label} pi token ahead of legacy, behind env`, async () => {
 			const provider = target.provider();
@@ -107,11 +137,12 @@ for (const target of targets) {
 			const { deps, files } = createDeps({
 				fetch: async (_url, init) => {
 					requests.push(init?.headers as Record<string, string>);
+					assert.equal(new Headers(init?.headers).get("authorization"), requests.at(-1)?.Authorization);
 					return createJsonResponse({});
 				},
 			});
 			files.set(getAuthPath(deps.homedir()), JSON.stringify({
-				[target.key]: { [target.field]: value, accountId: "pi-account" },
+				[target.key]: { type, [target.field]: value, accountId: " pi-account " },
 			}));
 			files.set(path.join(deps.homedir(), ...target.legacyPath), JSON.stringify(target.legacy));
 
@@ -121,7 +152,7 @@ for (const target of targets) {
 			assert.equal(requests.length, 1);
 			assert.equal(requests[0].Authorization, `${target.scheme} valid-token`);
 			if (target.key === "openai-codex") {
-				assert.equal(requests[0]["ChatGPT-Account-Id"], "pi-account");
+				assert.equal(requests[0]["ChatGPT-Account-Id"], " pi-account ");
 			}
 
 			deps.env[target.env] = "env-token";
