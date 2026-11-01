@@ -11,6 +11,11 @@ import { containsAllTokens, normalizeTokens } from "@eiei114/pi-sub-shared";
 // Only allow simple CLI names (no spaces/paths) to avoid unsafe command execution.
 const SAFE_CLI_NAME = /^[a-zA-Z0-9._-]+$/;
 
+/** Clamp a usage percentage to the inclusive 0–100 range. */
+export function clampPercent(value: number): number {
+	return Math.max(0, Math.min(100, value));
+}
+
 /**
  * Format a reset date as a relative time string
  */

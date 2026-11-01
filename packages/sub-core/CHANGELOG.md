@@ -1,5 +1,11 @@
 # @eiei114/pi-sub-core
 
+## 2.9.1
+
+### Patch Changes
+
+- Reuse a shared percentage clamp across usage providers without changing quota output.
+
 ## 2.9.0
 
 ### Minor Changes

@@ -3,7 +3,7 @@
  */
 
 import type { RateWindow } from "../../types.js";
-import { formatReset } from "../../utils.js";
+import { clampPercent, formatReset } from "../../utils.js";
 
 const FIVE_HOURS_SECONDS = 18_000;
 const WEEK_SECONDS = 604_800;
@@ -32,10 +32,6 @@ export interface BillingPreflightPayload {
 
 function creditCount(raw: unknown): bigint | null {
 	return typeof raw === "string" && /^\d+$/.test(raw) ? BigInt(raw) : null;
-}
-
-function clampPercent(value: number): number {
-	return Math.max(0, Math.min(100, value));
 }
 
 export function labelForCodingPlanDuration(durationSeconds: number): string {

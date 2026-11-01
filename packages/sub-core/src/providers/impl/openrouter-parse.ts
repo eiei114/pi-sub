@@ -7,6 +7,7 @@
  */
 
 import { isRecord } from "../../credentials.js";
+import { clampPercent } from "../../utils.js";
 
 /** Per-credential cap and spend, from `GET /api/v1/key`. */
 export interface OpenRouterKeyInfo {
@@ -41,10 +42,6 @@ function toAmount(value: unknown): number | undefined {
 		return undefined;
 	}
 	return value;
-}
-
-function clampPercent(value: number): number {
-	return Math.max(0, Math.min(100, value));
 }
 
 /**

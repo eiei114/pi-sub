@@ -2,12 +2,27 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
 	buildShellCommandLine,
+	clampPercent,
 	execCliSync,
 	isSafeShellArg,
 	isSafeShellCommandPath,
 	quoteWindowsArg,
 } from "../src/utils.js";
 import { createDeps } from "./helpers.js";
+
+test("clampPercent keeps values in the inclusive 0–100 range", () => {
+	assert.equal(clampPercent(-1), 0);
+	assert.equal(clampPercent(0), 0);
+	assert.equal(clampPercent(42.5), 42.5);
+	assert.equal(clampPercent(100), 100);
+	assert.equal(clampPercent(101), 100);
+});
+
+test("clampPercent preserves the existing non-finite arithmetic behavior", () => {
+	assert.equal(clampPercent(Number.POSITIVE_INFINITY), 100);
+	assert.equal(clampPercent(Number.NEGATIVE_INFINITY), 0);
+	assert.ok(Number.isNaN(clampPercent(Number.NaN)));
+});
 
 test("quoteWindowsArg wraps a plain argument", () => {
 	assert.equal(quoteWindowsArg("vela"), '"vela"');

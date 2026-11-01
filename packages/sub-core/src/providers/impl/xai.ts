@@ -17,7 +17,7 @@ import type { Dependencies, RateWindow, UsageSnapshot } from "../../types.js";
 import { BaseProvider } from "../../provider.js";
 import { noCredentials, fetchFailed, httpError, apiError } from "../../errors.js";
 import { isRecord, normalizeCredentialString, readPiAuthEntry } from "../../credentials.js";
-import { formatReset, createTimeoutController } from "../../utils.js";
+import { clampPercent, formatReset, createTimeoutController } from "../../utils.js";
 import {
 	API_TIMEOUT_MS,
 	XAI_BILLING_URL,
@@ -33,10 +33,6 @@ const XAI_AUTH_KEY = "xai";
 
 const normalizeToken = (value: unknown) =>
 	normalizeCredentialString(value, { rejectCommandPrefix: true, rejectNewlines: true });
-
-function clampPercent(value: number): number {
-	return Math.max(0, Math.min(100, value));
-}
 
 /**
  * Load the xAI subscription OAuth access token.

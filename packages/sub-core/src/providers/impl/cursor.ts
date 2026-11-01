@@ -14,7 +14,7 @@ import type { Dependencies, RateWindow, UsageSnapshot } from "../../types.js";
 import { BaseProvider } from "../../provider.js";
 import { noCredentials, fetchFailed, httpError, apiError } from "../../errors.js";
 import { isRecord, normalizeCredentialString, readPiAuthEntryValue } from "../../credentials.js";
-import { formatReset, createTimeoutController } from "../../utils.js";
+import { clampPercent, formatReset, createTimeoutController } from "../../utils.js";
 import {
 	API_TIMEOUT_MS,
 	CURSOR_AUTH_USAGE_URL,
@@ -38,10 +38,6 @@ function toFiniteNumber(value: unknown): number | undefined {
 		if (Number.isFinite(parsed)) return parsed;
 	}
 	return undefined;
-}
-
-function clampPercent(value: number): number {
-	return Math.max(0, Math.min(100, value));
 }
 
 function looksLikeCursorApiKey(token: string): boolean {
