@@ -1,5 +1,15 @@
 # @eiei114/pi-sub-bar
 
+## 2.9.1
+
+### Patch Changes
+
+- [#112](https://github.com/eiei114/pi-sub/pull/112) [`6e01e3c`](https://github.com/eiei114/pi-sub/commit/6e01e3c8e838f8b0239b865f166eb96a3f379742) Thanks [@eiei114](https://github.com/eiei114)! - Reuse one shared `clampPercent` helper across usage providers (Antigravity, Command Code, Cursor, OpenCode, OpenDesign, OpenRouter, xAI) instead of per-provider copies. The inclusive 0–100 boundary behavior and quota output are unchanged.
+
+- Updated dependencies [[`6e01e3c`](https://github.com/eiei114/pi-sub/commit/6e01e3c8e838f8b0239b865f166eb96a3f379742), [`cc86adc`](https://github.com/eiei114/pi-sub/commit/cc86adcfbe6b54c58ef2c5a8f7d3fe3d94c246c0)]:
+  - @eiei114/pi-sub-core@2.9.1
+  - @eiei114/pi-sub-shared@2.9.1
+
 ## 2.9.0
 
 ### Minor Changes
