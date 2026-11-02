@@ -8,6 +8,7 @@ import { BaseProvider } from "../../provider.js";
 import { noCredentials, fetchFailed, httpError } from "../../errors.js";
 import { formatReset, createTimeoutController } from "../../utils.js";
 import { API_TIMEOUT_MS } from "../../config.js";
+import { normalizeCredentialString } from "../../credentials.js";
 
 interface CodexRateWindow {
 	reset_at?: number;
@@ -48,9 +49,13 @@ function loadCodexCredentials(deps: Dependencies): { accessToken?: string; accou
 	try {
 		if (deps.fileExists(piAuthPath)) {
 			const data = JSON.parse(deps.readFile(piAuthPath) ?? "{}");
-			if (data["openai-codex"]?.access) {
+			const accessToken = normalizeCredentialString(data["openai-codex"]?.access, {
+				rejectCommandPrefix: true,
+				rejectNewlines: true,
+			});
+			if (accessToken) {
 				return {
-					accessToken: data["openai-codex"].access,
+					accessToken,
 					accountId: data["openai-codex"].accountId,
 				};
 			}

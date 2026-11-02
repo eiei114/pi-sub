@@ -9,6 +9,7 @@ import { noCredentials, fetchFailed, httpError } from "../../errors.js";
 import { formatReset, createTimeoutController } from "../../utils.js";
 import { API_TIMEOUT_MS } from "../../config.js";
 import { getSettings } from "../../settings.js";
+import { normalizeCredentialString } from "../../credentials.js";
 
 /**
  * Load Claude API token from various sources
@@ -23,7 +24,11 @@ function loadClaudeToken(deps: Dependencies): string | undefined {
 	try {
 		if (deps.fileExists(piAuthPath)) {
 			const data = JSON.parse(deps.readFile(piAuthPath) ?? "{}");
-			if (data.anthropic?.access) return data.anthropic.access;
+			const token = normalizeCredentialString(data.anthropic?.access, {
+				rejectCommandPrefix: true,
+				rejectNewlines: true,
+			});
+			if (token) return token;
 		}
 	} catch {
 		// Ignore parse errors
