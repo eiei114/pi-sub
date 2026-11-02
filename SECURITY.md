@@ -7,8 +7,15 @@ security fixes.
 
 ## Reporting a vulnerability
 
-Open a private security advisory on GitHub, or contact the maintainer by the
-preferred channel listed in the repository profile.
+Please report vulnerabilities privately through GitHub's private vulnerability
+reporting:
+
+1. Open the [Security tab](https://github.com/eiei114/pi-sub/security) of this repository.
+2. Select **Report a vulnerability**
+   ([direct link](https://github.com/eiei114/pi-sub/security/advisories/new)).
+
+This is the only official private reporting channel. Please do not open a public
+issue, pull request or discussion for a suspected vulnerability.
 
 Please include:
 
