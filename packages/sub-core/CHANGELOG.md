@@ -1,5 +1,18 @@
 # @eiei114/pi-sub-core
 
+## 2.9.1
+
+### Patch Changes
+
+- [#112](https://github.com/eiei114/pi-sub/pull/112) [`6e01e3c`](https://github.com/eiei114/pi-sub/commit/6e01e3c8e838f8b0239b865f166eb96a3f379742) Thanks [@eiei114](https://github.com/eiei114)! - Reuse one shared `clampPercent` helper across usage providers (Antigravity, Command Code, Cursor, OpenCode, OpenDesign, OpenRouter, xAI) instead of per-provider copies. The inclusive 0–100 boundary behavior and quota output are unchanged.
+
+- [#110](https://github.com/eiei114/pi-sub/pull/110) [`cc86adc`](https://github.com/eiei114/pi-sub/commit/cc86adcfbe6b54c58ef2c5a8f7d3fe3d94c246c0) Thanks [@tryingET](https://github.com/tryingET)! - Normalize Anthropic, GitHub Copilot, and Codex tokens read from pi's `auth.json` before using them. Token fields now accept only non-empty strings, trim surrounding whitespace, and reject command-prefixed (`!`) values and CR/LF remaining after trimming. Command values were previously sent literally, not executed; use a resolved static token instead.
+
+  Rejected pi tokens now allow legacy credential fallback. Copilot prefers an accepted refresh token, then an accepted access token, so an invalid refresh value no longer masks a valid access token. Valid tokens and environment override precedence remain supported; environment/legacy credential acceptance and Codex account IDs are unchanged.
+
+- Updated dependencies [[`6e01e3c`](https://github.com/eiei114/pi-sub/commit/6e01e3c8e838f8b0239b865f166eb96a3f379742)]:
+  - @eiei114/pi-sub-shared@2.9.1
+
 ## 2.9.0
 
 ### Minor Changes
