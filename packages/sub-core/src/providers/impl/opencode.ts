@@ -7,7 +7,7 @@ import type { Dependencies, RateWindow, UsageSnapshot } from "../../types.js";
 import { BaseProvider } from "../../provider.js";
 import { noCredentials, fetchFailed, httpError, apiError } from "../../errors.js";
 import { isRecord, normalizeCredentialString, readPiAuthEntryValue } from "../../credentials.js";
-import { formatReset, createTimeoutController } from "../../utils.js";
+import { clampPercent, formatReset, createTimeoutController } from "../../utils.js";
 import { API_TIMEOUT_MS, OPENCODE_USAGE_URL } from "../../config.js";
 
 interface OpenCodeUsageWindow {
@@ -25,10 +25,6 @@ interface OpenCodeUsageResponse {
 }
 
 const normalizeApiKey = normalizeCredentialString;
-
-function clampPercent(value: number): number {
-	return Math.max(0, Math.min(100, value));
-}
 
 function authFilePath(deps: Dependencies): string {
 	const dataHome = deps.env.XDG_DATA_HOME || path.join(deps.homedir(), ".local", "share");

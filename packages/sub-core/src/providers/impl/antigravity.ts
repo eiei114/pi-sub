@@ -6,7 +6,7 @@ import * as path from "node:path";
 import type { Dependencies, RateWindow, UsageSnapshot } from "../../types.js";
 import { BaseProvider } from "../../provider.js";
 import { noCredentials, fetchFailed, httpError } from "../../errors.js";
-import { createTimeoutController, formatReset } from "../../utils.js";
+import { clampPercent, createTimeoutController, formatReset } from "../../utils.js";
 import { API_TIMEOUT_MS } from "../../config.js";
 
 const ANTIGRAVITY_ENDPOINTS = [
@@ -117,7 +117,7 @@ function parseResetTime(value?: string): Date | undefined {
 function toUsedPercent(remainingFraction: number): number {
 	const fraction = Number.isFinite(remainingFraction) ? remainingFraction : 1;
 	const used = (1 - fraction) * 100;
-	return Math.max(0, Math.min(100, used));
+	return clampPercent(used);
 }
 
 async function fetchAntigravityQuota(

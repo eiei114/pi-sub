@@ -7,7 +7,7 @@ import type { Dependencies, RateWindow, UsageSnapshot } from "../../types.js";
 import { BaseProvider } from "../../provider.js";
 import { noCredentials, fetchFailed, httpError, apiError } from "../../errors.js";
 import { isRecord, normalizeCredentialString } from "../../credentials.js";
-import { formatReset, createTimeoutController } from "../../utils.js";
+import { clampPercent, formatReset, createTimeoutController } from "../../utils.js";
 import { API_TIMEOUT_MS, COMMAND_CODE_CREDITS_URL, COMMAND_CODE_WHOAMI_URL } from "../../config.js";
 
 interface CommandCodeWindowLimit {
@@ -32,10 +32,6 @@ const normalizeApiKey = normalizeCredentialString;
 
 function toFiniteNumber(value: unknown): number | undefined {
 	return typeof value === "number" && Number.isFinite(value) ? value : undefined;
-}
-
-function clampPercent(value: number): number {
-	return Math.max(0, Math.min(100, value));
 }
 
 function extractKeyFromAuthObject(entry: unknown): string | undefined {
