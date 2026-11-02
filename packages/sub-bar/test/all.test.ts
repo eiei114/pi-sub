@@ -1,4 +1,5 @@
 import "./formatting.test.js";
+import "./errors.test.js";
 import "./package-compatibility.test.js";
 import "./settings.test.js";
 import "./dividers.test.js";

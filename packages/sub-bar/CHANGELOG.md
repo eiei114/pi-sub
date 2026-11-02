@@ -1,5 +1,14 @@
 # @eiei114/pi-sub-bar
 
+## 2.10.0
+
+### Patch Changes
+
+- Export shared usage-error helpers and have core and bar re-export them locally, preserving existing caller imports and error text.
+- Updated dependencies []:
+  - @eiei114/pi-sub-shared@2.10.0
+  - @eiei114/pi-sub-core@2.10.0
+
 ## 2.9.1
 
 ### Patch Changes
