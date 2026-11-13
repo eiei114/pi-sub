@@ -38,11 +38,20 @@ validation (numeric strings, `"true"`, single value to one-item array), and
 validation errors use pi-schema messages.
 
 The published `@earendil-works/pi-ai` no longer re-exports TypeBox, and its
-`StringEnum` is typed as a pi-schema `Schema<T>`. A `StringEnum` property inside
-`Type.Object` therefore infers as `unknown` when type-checked against the npm
-package; wrap it as `Type.Unsafe<T>(StringEnum(...))` or import `Type` from
-`typebox`. pi-sub is unaffected because it imports `Type` from `typebox` and
-uses no `StringEnum`.
+`StringEnum` is declared to return a pi-schema `Schema<string>`, not a TypeBox
+enum. A `StringEnum` property inside `Type.Object` keeps that declared type, so
+`Static<typeof schema>` resolves the property to `string` and the literal union
+is lost. Importing `Type` from `typebox` does not change this: `StringEnum`'s
+return type decides it, not which `Type` builder wraps it. Wrap the value as
+`Type.Unsafe<T>(StringEnum(...))` to get the literal union back; pi-sub needs
+neither workaround because it imports `Type` from `typebox` and uses no
+`StringEnum`.
+
+Checked against the installed `typebox@1.3.27` and
+`@earendil-works/pi-ai@1.5.0` types: `Type.Object({ op: StringEnum(["add",
+"subtract"]) })` type-checks `op` as `string`, while
+`Type.Object({ op: Type.Unsafe<"add" | "subtract">(StringEnum([...])) })`
+type-checks it as the literal union and rejects other strings.
 
 ### 1.2.0 notes (still applicable)
 
