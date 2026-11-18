@@ -18,10 +18,29 @@ version.
 `Type.Boolean` tool parameter schemas, which stay inside JSON Schema. `sub-status`
 uses no TypeBox schemas at all.
 
-All three extensions use `ctx.hasUI`, `registerCommand`, `registerTool`,
-`session_start`, `model_select`, the shared sub-* event bus, and `pi-tui`
-components (`Container`, `Input`, `SelectList`, `Text`, `DynamicBorder`,
-`getSettingsListTheme`, width helpers). Those APIs behave the same on 1.5.0.
+Package API inventory on Pi 1.5.0:
+
+- **sub-core** (`packages/sub-core/index.ts`): registers `sub-core:settings`,
+  conditionally registers tools (`sub_get_usage`/`get_current_usage`,
+  `sub_get_all_usage`/`get_all_usage`) from settings, listens to
+  `session_start`, `turn_start`, `tool_result`, `turn_end`,
+  `session_before_switch`, `session_before_fork`, `model_select`, and
+  `session_shutdown`, and uses the shared `sub-core:*` / scoped-usage event bus.
+  Its extension entry does not use `ctx.hasUI` or `pi-tui` UI components.
+- **sub-bar** (`packages/sub-bar/index.ts`): uses `ctx.hasUI`, registers commands
+  `sub-bar:settings` and `sub-bar:import`, registers shortcuts, listens to
+  `session_start`, `model_select`, and `session_shutdown`, uses the shared
+  `sub-core:*` event bus, and uses `pi-tui` components/helpers in its settings
+  and theme-import UI flows (for example `Container`, `Input`, `SelectList`,
+  `Spacer`, `Text`, `truncateToWidth`, `wrapTextWithAnsi`, `visibleWidth`, and
+  `ctx.ui.custom` dialogs).
+- **sub-status** (`packages/sub-status/index.ts`, `src/runtime.ts`): listens to
+  `session_start` and `session_shutdown`, reacts to `sub-core:ready` /
+  `sub-core:update-current`, and renders compact status via `ctx.ui.setStatus`.
+  It does not register commands or tools, does not handle `model_select`, does
+  not use `ctx.hasUI`, and does not use `pi-tui` components.
+
+These package-specific APIs behave the same on 1.5.0.
 
 `pi-coding-agent` 1.5.0 pins `typebox` to exactly `1.3.27`; this workspace keeps
 that version at the root, so only one copy is installed.
@@ -63,15 +82,20 @@ pi-sub only registers startup work through `session_start`, which is unaffected.
 
 ## Runtime verification
 
-`npm run smoke:pi` loads all three extensions in the actual locally pinned Pi
-host through RPC. `npm run verify` runs `check`, `test`, `lint`, and that smoke
-harness, and CI runs it on Ubuntu and Windows.
+`npm run smoke:pi` runs two actual Pi 1.5.0 host checks:
 
-The committed result is `docs/verification/pi-sdk-smoke.json` with
-`verification_contract=pi-sdk-behavior-v2` and all four SDK versions set to
-`1.5.0`.
+- `scripts/pi-sdk-smoke.mjs` loads all three extensions through RPC and records
+  `docs/verification/pi-sdk-smoke.json`
+  (`verification_contract=pi-sdk-behavior-v2`, all four SDK versions `1.5.0`).
+- `scripts/pi-sdk-tui-smoke.mjs` executes automated interactive UI operations in
+  the real Pi 1.5.0 / `pi-tui` environment against `sub-bar`'s
+  `ctx.ui.custom`/`SelectList` settings and theme-import flows and records
+  `docs/verification/pi-sdk-tui-smoke.json`.
 
-The harness asserts actual extension registration (`sub-core:settings`,
+`npm run verify` runs `check`, `test`, `lint`, and `smoke:pi`, and CI runs it on
+Ubuntu and Windows.
+
+The RPC harness asserts actual extension registration (`sub-core:settings`,
 `sub-bar:settings`, `sub-bar:import`), the seeded usage rendered through
 `sub-status`, a handled malformed-input error followed by a successful response,
 a second actual Pi process's registration and feature response plus clean
@@ -80,9 +104,16 @@ on POSIX). It resolves the CLI from the installed SDK manifest, checks all four
 installed versions against the exact pins, and uses an isolated temporary agent
 directory without touching global Pi settings.
 
-The feature path is deterministic and offline, so verification makes no paid
-model requests. Pi's extension loader, host process, RPC handling, lifecycle, and
-feature response are real rather than mocked; provider inference is outside this
-compatibility contract. `scripts/pi-sdk-smoke-contract.test.mjs` keeps the
-assertions honest by requiring the second-process reload fields and by
-rejecting deliberately missing or malformed responses.
+The TUI harness drives real `sub-bar` custom UI components in the actual Pi 1.5.0
+environment: theme import opens a `ctx.ui.custom` `SelectList` action prompt,
+accepts pasted share input through a `ctx.ui.custom` input prompt, applies a
+selected action with observed feedback, and navigates the settings UI custom menu
+to theme/import-related options. Rendered UI output and interaction results are
+captured as assertions in the committed TUI evidence.
+
+The feature paths are deterministic and offline, so verification makes no paid
+model requests. Pi's extension loader, host process, RPC/TUI component handling,
+lifecycle, and feature responses are real rather than mocked; provider inference
+is outside this compatibility contract. `scripts/pi-sdk-smoke-contract.test.mjs`
+keeps the RPC assertions honest by requiring the second-process reload fields and
+by rejecting deliberately missing or malformed responses.
