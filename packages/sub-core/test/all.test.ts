@@ -1,3 +1,4 @@
+import "./test-agent-dir.js";
 import "./credentials.test.js";
 import "./errors.test.js";
 import "./utils.test.js";
