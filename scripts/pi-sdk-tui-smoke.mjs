@@ -1,4 +1,4 @@
-/* global process, console, setTimeout */
+/* global process, console, setTimeout, clearTimeout */
 import fs, { mkdtempSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -253,6 +253,26 @@ async function tick(ms = 0) {
 	await new Promise((r) => setTimeout(r, ms));
 }
 
+// Await a promise but reject if it has not settled before the deadline, so an
+// unfinished command reaches the failure path instead of silently passing.
+async function withDeadline(promise, ms, label) {
+	let timer;
+	const deadline = new Promise((_, reject) => {
+		timer = setTimeout(() => reject(new Error(`${label} did not settle within ${ms}ms`)), ms);
+	});
+	try {
+		return await Promise.race([promise, deadline]);
+	} finally {
+		clearTimeout(timer);
+	}
+}
+
+// Label of the currently highlighted SelectList row ("→ Label   description").
+function selectedLabel(text) {
+	const match = text.match(/^→\s+(.+?)(?:\s{2,}|$)/m);
+	return match ? match[1].trim() : null;
+}
+
 async function testThemeImportUiFlows(subBarModule, harness) {
 	const { pi, commands, createContext, emitSessionEvent, messages, notifications } = harness;
 	const extension = subBarModule.default;
@@ -339,57 +359,63 @@ async function testSettingsUiFlow(subBarModule, harness) {
 	const enter = () => custom.component.handleInput("\r");
 	const down = () => custom.component.handleInput("\x1b[B");
 	const esc = () => custom.component.handleInput("\x1b");
+	const current = () => renderedText(custom.component, 120);
 
-	let current = () => renderedText(custom.component, 120);
-	let last = mainText;
+	// Labels that only exist on destination screens. Main-menu labels such as
+	// "Themes" must not count as navigation evidence.
+	const themesSubmenuLabels = ["Load & Manage themes", "Import theme"];
+	const importScreenLabel = "Paste Theme Share string";
+	const mainHasDestinationLabels = [...themesSubmenuLabels, importScreenLabel].some((label) => mainText.includes(label));
+	const mainSelected = selectedLabel(mainText);
 
-	// From main menu: "Themes" is typically the first item. Enter to open Themes submenu.
-	enter();
-	await tick(30);
-	last = current();
+	// 1) Main menu: confirm the highlighted "Themes" item via handleInput.
+	let themesText = "";
+	if (mainSelected === "Themes") {
+		enter();
+		await tick(30);
+		themesText = current();
+	}
+	const reachedThemesSubmenu = themesText !== ""
+		&& !themesText.includes("sub-bar Settings")
+		&& themesSubmenuLabels.every((label) => themesText.includes(label));
 
-	// If we landed somewhere else, try to navigate back up to Themes by escaping and selecting.
-	if (!/Import theme|Load & Manage themes|Share theme|Save current as theme|Themes|Manage themes/i.test(last)) {
-		esc();
-		await tick(20);
-		for (let i = 0; i < 15; i++) {
-			const t = current();
-			if (/ↁE\s*Themes|\bThemes\b/.test(t) && /save, manage, share|Themes/i.test(t)) break;
+	// 2) Themes submenu: move the selection (not just visibility) to "Import theme".
+	let selected = selectedLabel(themesText);
+	if (reachedThemesSubmenu) {
+		for (let i = 0; i < 10 && selected !== "Import theme"; i++) {
 			down();
-			await tick(5);
+			await tick(10);
+			selected = selectedLabel(current());
 		}
+	}
+	const selectedImportTheme = reachedThemesSubmenu && selected === "Import theme";
+
+	// 3) Confirm "Import theme" and require the distinct import input screen.
+	let importText = "";
+	if (selectedImportTheme) {
 		enter();
 		await tick(30);
-		last = current();
+		importText = current();
 	}
+	const reachedImportScreen = importText.includes(importScreenLabel)
+		&& !themesSubmenuLabels.some((label) => importText.includes(label));
 
-	// In Themes submenu, find "Import theme".
-	for (let i = 0; i < 20 && !/Import theme/i.test(last); i++) {
-		down();
-		await tick(10);
-		last = current();
-	}
-	const sawImportTheme = /Import theme/i.test(last);
-
-	// Select Import theme if visible to exercise deeper custom UI path, then cancel out.
-	if (sawImportTheme) {
-		enter();
-		await tick(30);
-		last = current(); // may show import input/custom prompt
-		esc();
-		await tick(20);
-	}
-
-	// Exit settings UI completely (best effort).
+	// Exit settings UI completely; the command must settle before the deadline.
 	for (let i = 0; i < 8; i++) { esc(); await tick(10); }
-	await Promise.race([run, tick(300)]);
+	await withDeadline(run, 1000, "sub-bar:settings command");
 
+	const reachable = !mainHasDestinationLabels && reachedThemesSubmenu && selectedImportTheme && reachedImportScreen;
 	return {
 		name: "settings_tui",
 		assertions: [
 			{ id: "settings_custom_opened", expected: "Settings command opens custom UI component", observed: mainText.slice(0, 400), passed: !!custom?.component },
 			{ id: "settings_menu_rendered", expected: "Settings menu renders interactive items", observed: mainText.slice(0, 400), passed: mainText.includes("Display") || mainText.includes("Providers") || mainText.includes("Settings") || mainText.includes("Themes") },
-			{ id: "settings_theme_import_reachable", expected: "Settings UI can navigate to theme/import-related options using SelectList interactions", observed: last.slice(0, 600), passed: sawImportTheme || /Load & Manage themes|Share theme|Save current as theme|Themes/i.test(last) },
+			{
+				id: "settings_theme_import_reachable",
+				expected: "handleInput navigation Main -> Themes -> Import theme reaches the distinct import input screen",
+				observed: { mainSelected, themesSubmenu: themesText.slice(0, 600), selected, importScreen: importText.slice(0, 600) },
+				passed: reachable,
+			},
 		],
 	};
 }

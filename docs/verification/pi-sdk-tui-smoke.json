@@ -57,8 +57,13 @@
         },
         {
           "id": "settings_theme_import_reachable",
-          "expected": "Settings UI can navigate to theme/import-related options using SelectList interactions",
-          "observed": "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n Save Theme                                                                                                             \n\n Theme name                                                                                                             \n\n> \u001b_pi:c\u0007\u001b_pi:fc\u0007 \u001b_pi:/fc\u0007                                                                                                                     \n\n Type name • Enter to save • Esc back                                                    ",
+          "expected": "handleInput navigation Main -> Themes -> Import theme reaches the distinct import input screen",
+          "observed": {
+            "mainSelected": "Themes",
+            "themesSubmenu": "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n Themes                                                                                                                 \n\n→ Save Theme                      store current theme\n  Load & Manage themes            load, share, rename and delete themes\n  Share Theme                     share current theme\n  Import theme                    from share string\n  Random theme                    generate a new theme\n  Restore previous state          restore your last theme\n\n Save the c",
+            "selected": "Import theme",
+            "importScreen": "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n Import Theme                                                                                                           \n\n Paste Theme Share string                                                                                               \n\n> \u001b_pi:c\u0007\u001b_pi:fc\u0007 \u001b_pi:/fc\u0007                                                                                                                     \n\n Paste theme share string • Enter to import • Esc back                                   "
+          },
           "passed": true
         }
       ]
