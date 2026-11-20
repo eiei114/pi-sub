@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "verification_contract": "pi-sdk-tui-behavior-v1",
+  "sdk_versions": {
+    "@earendil-works/pi-coding-agent": "1.5.0",
+    "@earendil-works/pi-tui": "1.5.0"
+  },
+  "platform": "win32",
+  "model_inference": "none; actual Pi 1.5.0 extension and pi-tui component execution driven by automated UI interactions",
+  "passed": true,
+  "cases": [
+    {
+      "name": "theme_import_tui",
+      "assertions": [
+        {
+          "id": "import_action_selectlist",
+          "expected": "Custom SelectList action prompt renders Save & apply/Save/Cancel",
+          "observed": "→ Save & apply                    save and use this theme\n  Save                            save without applying\n  Cancel                          discard import",
+          "passed": true
+        },
+        {
+          "id": "import_string_prompt",
+          "expected": "Custom input prompt renders Paste Theme Share string and accepts input",
+          "observed": " Paste Theme Share string                                                                           \n\n> \u001b_pi:c\u0007\u001b_pi:fc\u0007 \u001b_pi:/fc\u0007                                                                                                 ",
+          "passed": true
+        },
+        {
+          "id": "import_save_feedback",
+          "expected": "Saving imported theme via UI selection emits feedback",
+          "observed": {
+            "notifications": [
+              {
+                "message": "Imported TuiSmoke2",
+                "type": "info"
+              }
+            ],
+            "messageCount": 0
+          },
+          "passed": true
+        }
+      ]
+    },
+    {
+      "name": "settings_tui",
+      "assertions": [
+        {
+          "id": "settings_custom_opened",
+          "expected": "Settings command opens custom UI component",
+          "observed": "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n sub-bar Settings                                                                                                       \n\n→ Themes                          save, manage, share\n  Adv. Display Settings           layout, bars, colors\n  Provider Settings               provider speci",
+          "passed": true
+        },
+        {
+          "id": "settings_menu_rendered",
+          "expected": "Settings menu renders interactive items",
+          "observed": "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n sub-bar Settings                                                                                                       \n\n→ Themes                          save, manage, share\n  Adv. Display Settings           layout, bars, colors\n  Provider Settings               provider speci",
+          "passed": true
+        },
+        {
+          "id": "settings_theme_import_reachable",
+          "expected": "handleInput navigation Main -> Themes -> Import theme reaches the distinct import input screen",
+          "observed": {
+            "mainSelected": "Themes",
+            "themesSubmenu": "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n Themes                                                                                                                 \n\n→ Save Theme                      store current theme\n  Load & Manage themes            load, share, rename and delete themes\n  Share Theme                     share current theme\n  Import theme                    from share string\n  Random theme                    generate a new theme\n  Restore previous state          restore your last theme\n\n Save the c",
+            "selected": "Import theme",
+            "importScreen": "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────\n Import Theme                                                                                                           \n\n Paste Theme Share string                                                                                               \n\n> \u001b_pi:c\u0007\u001b_pi:fc\u0007 \u001b_pi:/fc\u0007                                                                                                                     \n\n Paste theme share string • Enter to import • Esc back                                   "
+          },
+          "passed": true
+        }
+      ]
+    }
+  ]
+}
