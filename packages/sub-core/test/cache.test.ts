@@ -1,3 +1,4 @@
+import { TEST_AGENT_DIR } from "./test-agent-dir.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -11,43 +12,58 @@ import {
 	updateCacheStatus,
 	watchCacheUpdates,
 } from "../src/cache.js";
-import { getCacheLockPath, getLegacyAgentCachePath } from "../src/paths.js";
+import {
+	getCacheLockPath,
+	getLegacyAgentCacheLockPath,
+	getLegacyAgentCachePath,
+} from "../src/paths.js";
 
 const LOCK_PATH = getCacheLockPath();
 const LEGACY_AGENT_CACHE_PATH = getLegacyAgentCachePath();
+const LEGACY_AGENT_LOCK_PATH = getLegacyAgentCacheLockPath();
+
+function assertCachePathsUseTestAgentDir(): void {
+	const expectedPaths = [
+		[path.resolve(CACHE_PATH), path.resolve(TEST_AGENT_DIR, "cache", "sub-core", "cache.json")],
+		[path.resolve(LOCK_PATH), path.resolve(TEST_AGENT_DIR, "cache", "sub-core", "cache.lock")],
+		[path.resolve(LEGACY_AGENT_CACHE_PATH), path.resolve(TEST_AGENT_DIR, "pi-sub-core-cache.json")],
+		[path.resolve(LEGACY_AGENT_LOCK_PATH), path.resolve(TEST_AGENT_DIR, "pi-sub-core-cache.lock")],
+	];
+
+	for (const [actualPath, expectedPath] of expectedPaths) {
+		assert.equal(actualPath, expectedPath);
+		const relativePath = path.relative(TEST_AGENT_DIR, actualPath);
+		assert.notEqual(relativePath, "");
+		assert.notEqual(relativePath, "..");
+		assert.ok(!relativePath.startsWith(`..${path.sep}`));
+		assert.ok(!path.isAbsolute(relativePath));
+	}
+}
 
 function wait(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function withCacheFiles(fn: () => Promise<void> | void): Promise<void> {
+	assertCachePathsUseTestAgentDir();
 	const cacheDir = path.dirname(CACHE_PATH);
-	const lockDir = path.dirname(LOCK_PATH);
 	fs.mkdirSync(cacheDir, { recursive: true });
-	fs.mkdirSync(lockDir, { recursive: true });
-
-	const cacheExists = fs.existsSync(CACHE_PATH);
-	const lockExists = fs.existsSync(LOCK_PATH);
-	const cacheBackup = cacheExists ? fs.readFileSync(CACHE_PATH, "utf-8") : null;
-	const lockBackup = lockExists ? fs.readFileSync(LOCK_PATH, "utf-8") : null;
 
 	try {
 		await fn();
 	} finally {
-		if (lockBackup !== null) {
-			fs.writeFileSync(LOCK_PATH, lockBackup, "utf-8");
-		} else if (fs.existsSync(LOCK_PATH)) {
-			fs.unlinkSync(LOCK_PATH);
-		}
-		if (cacheBackup !== null) {
-			fs.writeFileSync(CACHE_PATH, cacheBackup, "utf-8");
-		} else if (fs.existsSync(CACHE_PATH)) {
-			fs.unlinkSync(CACHE_PATH);
+		for (const filePath of [CACHE_PATH, LOCK_PATH, LEGACY_AGENT_CACHE_PATH, LEGACY_AGENT_LOCK_PATH]) {
+			fs.rmSync(filePath, { force: true });
 		}
 	}
 }
 
+test("cache and migration paths use the temporary Pi agent directory", () => {
+	assertCachePathsUseTestAgentDir();
+});
+
 test("readCache migrates legacy agent cache file", async () => {
+	assertCachePathsUseTestAgentDir();
 	await withCacheFiles(() => {
 		const legacyValue = {
 			anthropic: {
@@ -60,15 +76,14 @@ test("readCache migrates legacy agent cache file", async () => {
 			},
 		};
 
-		if (fs.existsSync(CACHE_PATH)) {
-			fs.unlinkSync(CACHE_PATH);
-		}
 		fs.mkdirSync(path.dirname(LEGACY_AGENT_CACHE_PATH), { recursive: true });
 		fs.writeFileSync(LEGACY_AGENT_CACHE_PATH, JSON.stringify(legacyValue), "utf-8");
 
 		const cache = readCache();
+		assert.deepEqual(cache, legacyValue);
 		assert.equal(cache.anthropic?.fetchedAt, 456);
 		assert.ok(fs.existsSync(CACHE_PATH));
+		assert.deepEqual(JSON.parse(fs.readFileSync(CACHE_PATH, "utf-8")), legacyValue);
 		assert.equal(fs.existsSync(LEGACY_AGENT_CACHE_PATH), false);
 	});
 });
