@@ -208,6 +208,7 @@ function resolveUsageColorTargets(settings?: Settings): {
 
 function formatElapsedSince(timestamp: number): string {
 	const diffMs = Date.now() - timestamp;
+	if (diffMs >= 0 && diffMs < 1000) return "just now";
 	if (diffMs < 60000) {
 		const seconds = Math.max(1, Math.floor(diffMs / 1000));
 		return `${seconds}s`;
