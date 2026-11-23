@@ -169,21 +169,31 @@ test("unknown status shows label in text mode", () => {
 	assert.ok(output.includes("Status Unknown"));
 });
 
-test("fetch errors rely on status text instead of appended warning", () => {
-	const settings = getDefaultSettings();
-	settings.display.statusIndicatorMode = "text";
+for (const [ageMs, expected] of [
+	[0, "Last upd.: just now"],
+	[999, "Last upd.: just now"],
+	[1000, "Last upd.: 1s ago"],
+	[5 * 60 * 1000, "Last upd.: 5m ago"],
+	[undefined, "Fetch failed"],
+] as const) {
+	test(`fetch error shows ${expected} in status text (age: ${ageMs ?? "missing"})`, ({ mock }) => {
+		mock.timers.enable({ apis: ["Date"], now: Date.UTC(2026, 0, 1) });
+		const settings = getDefaultSettings();
+		settings.display.statusIndicatorMode = "text";
 
-	const usage = buildUsage();
-	usage.error = { code: "FETCH_FAILED", message: "Fetch failed" };
-	usage.lastSuccessAt = Date.now() - 5 * 60 * 1000;
-	usage.status = { indicator: "minor", description: "Fetch failed" };
+		const usage = buildUsage();
+		usage.error = { code: "FETCH_FAILED", message: "Fetch failed" };
+		if (ageMs !== undefined) usage.lastSuccessAt = Date.now() - ageMs;
+		usage.status = { indicator: "minor", description: "Provider incident" };
 
-	const output = formatUsageStatus(theme, usage, undefined, settings);
-	assert.ok(output);
-	assert.ok(output.includes("Last upd.: 5m ago"));
-	assert.ok(!output.includes("(Fetch failed)"));
-	assert.ok(output.includes("5h"));
-});
+		const output = formatUsageStatus(theme, usage, undefined, settings);
+		assert.ok(output);
+		assert.ok(output.includes(expected), output);
+		assert.ok(!output.includes("(Fetch failed)"));
+		assert.ok(!output.includes("Provider incident"));
+		assert.ok(output.includes("5h"));
+	});
+}
 
 test("background base text color uses theme background ansi", () => {
 	const settings = getDefaultSettings();
