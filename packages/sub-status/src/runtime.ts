@@ -99,6 +99,7 @@ async function loadSubCoreFactory(
  */
 export function createStatusRuntime(pi: ExtensionAPI, dependencies: RuntimeDependencies = {}): void {
 	let lastContext: ExtensionContext | undefined;
+	let activeSession: symbol | undefined;
 	let lastRenderedStatus: string | undefined;
 	let subCoreBootstrapAttempted = false;
 	let currentStateVersion = 0;
@@ -155,16 +156,18 @@ export function createStatusRuntime(pi: ExtensionAPI, dependencies: RuntimeDepen
 	});
 
 	pi.on("session_start", (_event, ctx) => {
+		const session = Symbol();
+		activeSession = session;
 		lastContext = ctx;
 		const requestStateVersion = currentStateVersion;
 
 		void (async () => {
 			await ensureSubCoreLoaded();
-			if (lastContext !== ctx) {
+			if (activeSession !== session) {
 				return;
 			}
 			const state = await requestCoreState(pi, requestTimeoutMs);
-			if (lastContext !== ctx || currentStateVersion !== requestStateVersion) {
+			if (activeSession !== session || currentStateVersion !== requestStateVersion) {
 				return;
 			}
 			renderStatus(ctx, state);
@@ -172,6 +175,7 @@ export function createStatusRuntime(pi: ExtensionAPI, dependencies: RuntimeDepen
 	});
 
 	pi.on("session_shutdown", () => {
+		activeSession = undefined;
 		if (lastContext) {
 			renderStatus(lastContext, undefined);
 		}

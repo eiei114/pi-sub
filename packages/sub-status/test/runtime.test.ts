@@ -258,6 +258,37 @@ test("keeps a newer sub-core ready update when the startup request replies later
 	assert.deepEqual(statusCalls, [{ key: "sub-status:usage", text: "3h4m 3% · 6d11h 7%" }]);
 });
 
+test("ignores a previous session's delayed reply when the same context is reused", async () => {
+	const pi = createFakePi();
+	const { ctx, statusCalls, waitForStatusCalls } = createContext();
+	const firstRequest = createDeferred<{ reply: (payload: { state: SubCoreState }) => void }>();
+	let requestCount = 0;
+
+	pi.events.on("sub-core:request", (payload) => {
+		const request = payload as { reply: (payload: { state: SubCoreState }) => void };
+		requestCount += 1;
+		if (requestCount === 2) {
+			firstRequest.resolve(request);
+		} else {
+			// Both probes reply immediately, as does the second session's state request.
+			request.reply({ state: { usage: buildUsage() } });
+		}
+	});
+
+	createStatusRuntime(pi);
+	await pi.emitEvent("session_start", ctx);
+	const delayedRequest = await firstRequest.promise;
+	await pi.emitEvent("session_shutdown", ctx);
+	await pi.emitEvent("session_start", ctx);
+	await waitForStatusCalls(1);
+	assert.deepEqual(statusCalls, [{ key: "sub-status:usage", text: "3h4m 3% · 6d11h 7%" }]);
+
+	delayedRequest.reply({ state: { usage: buildUsage({ windows: [{ label: "Month", usedPercent: 42 }] }) } });
+	await new Promise((resolve) => setImmediate(resolve));
+
+	assert.deepEqual(statusCalls, [{ key: "sub-status:usage", text: "3h4m 3% · 6d11h 7%" }]);
+});
+
 test("tries bundled sub-core first and falls back to package resolution when probing fails", async () => {
 	const pi = createFakePi();
 	const { ctx, statusCalls, waitForStatusCalls } = createContext();
