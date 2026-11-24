@@ -193,6 +193,30 @@ test("openrouter window toggles separate the key cap from the wallet", () => {
 	assert.equal(shouldShowWindow(usage, usage.windows[1], settings), false);
 });
 
+test("opencode Month toggle hides and restores only the Month window", () => {
+	const settings = getDefaultSettings();
+	const usage: UsageSnapshot = {
+		provider: "opencode",
+		displayName: "OpenCode",
+		windows: [
+			{ label: "5h", usedPercent: 10 },
+			{ label: "Week", usedPercent: 20 },
+			{ label: "Month", usedPercent: 30 },
+		],
+	};
+	const visibleLabels = () => usage.windows
+		.filter((window) => shouldShowWindow(usage, window, settings))
+		.map((window) => window.label);
+
+	assert.deepEqual(visibleLabels(), ["5h", "Week", "Month"]);
+
+	applyProviderSettingsChange(settings, "opencode", "showMonth", "off");
+	assert.deepEqual(visibleLabels(), ["5h", "Week"]);
+
+	applyProviderSettingsChange(settings, "opencode", "showMonth", "on");
+	assert.deepEqual(visibleLabels(), ["5h", "Week", "Month"]);
+});
+
 test("openrouter provider settings expose key and account toggles", () => {
 	const items = buildProviderSettingsItems(getDefaultSettings(), "openrouter");
 	const byId = new Map(items.map((item) => [item.id, item]));
