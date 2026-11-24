@@ -822,6 +822,32 @@ test("opencode reads key from local auth.json", async () => {
 	);
 });
 
+test("opencode retains usable quota windows in order when quota data is malformed", async () => {
+	const provider = new OpenCodeProvider();
+	const monthlyReset = "2099-02-01T00:00:00.000Z";
+	const { deps } = createDeps({
+		env: { OPENCODE_API_KEY: "oc-key" },
+		fetch: async () => createJsonResponse({
+			usage: {
+				rolling: { percent: 10, resetsAt: "not-a-date" },
+				weekly: { percent: "unknown", resetsAt: "2099-01-08T00:00:00.000Z" },
+				monthly: { percent: 30, resetsAt: monthlyReset },
+			},
+		}),
+	});
+
+	const usage = await provider.fetchUsage(deps);
+	assert.equal(usage.error, undefined);
+	assert.deepEqual(
+		usage.windows.map(({ label, usedPercent, resetAt }) => ({ label, usedPercent, resetAt })),
+		[
+			{ label: "5h", usedPercent: 10, resetAt: undefined },
+			{ label: "Month", usedPercent: 30, resetAt: monthlyReset },
+		]
+	);
+	assert.equal(usage.windows[0]?.resetDescription, undefined);
+});
+
 test("opencode reports http errors", async () => {
 	const provider = new OpenCodeProvider();
 	const home = "/home/test";
