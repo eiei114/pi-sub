@@ -112,6 +112,26 @@ test("width-aware compact status keeps full text when it fits", () => {
 	assert.equal(formatCompactStatusWithWidth(buildUsage(), 80), "3h4m 3% · 6d11h 7%");
 });
 
+for (const { name, values, full, both, first } of [
+	{ name: "negative first", values: [-12.4, 127.6], full: "Short 0% · Long 100%", both: "0% 100%", first: "0%" },
+	{ name: "over 100 first", values: [127.6, -12.4], full: "Short 100% · Long 0%", both: "100% 0%", first: "100%" },
+	{ name: "in-range rounding", values: [42.6, 42.4], full: "Short 43% · Long 42%", both: "43% 42%", first: "43%" },
+]) {
+	test(`width-aware compact status formats percentages in each layout: ${name}`, () => {
+		const usage = buildUsage({
+			windows: [
+				{ label: "Short", usedPercent: values[0] },
+				{ label: "Long", usedPercent: values[1] },
+			],
+		});
+
+		assert.equal(formatCompactStatusWithWidth(usage, 20), full);
+		// Exact ASCII outputs also enforce the width budget and rule out partial percentages.
+		assert.equal(formatCompactStatusWithWidth(usage, 7), both);
+		assert.equal(formatCompactStatusWithWidth(usage, 4), first);
+	});
+}
+
 test("width-aware compact status keeps percent with top priority on narrow widths", () => {
 	const usage = buildUsage();
 	for (const width of [20, 15, 10, 8, 6, 5, 4, 2]) {
