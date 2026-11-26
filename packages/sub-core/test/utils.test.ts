@@ -4,11 +4,39 @@ import {
 	buildShellCommandLine,
 	clampPercent,
 	execCliSync,
+	formatReset,
 	isSafeShellArg,
 	isSafeShellCommandPath,
 	quoteWindowsArg,
 } from "../src/utils.js";
 import { createDeps } from "./helpers.js";
+
+const minute = 60_000;
+const hour = 60 * minute;
+const day = 24 * hour;
+
+for (const [offsetMs, expected] of [
+	[-1, "now"],
+	[0, "0m"],
+	[minute - 1, "0m"],
+	[minute, "1m"],
+	[hour - 1, "59m"],
+	[hour, "1h"],
+	[hour + minute, "1h1m"],
+	[day - 1, "23h59m"],
+	[day, "1d"],
+	[day + 2 * hour + 30 * minute, "1d2h"],
+] as const) {
+	test(`formatReset returns ${expected} for a reset ${offsetMs}ms from now`, ({ mock }) => {
+		const now = Date.UTC(2026, 0, 1);
+		mock.timers.enable({ apis: ["Date"], now });
+		try {
+			assert.equal(formatReset(new Date(now + offsetMs)), expected);
+		} finally {
+			mock.timers.reset();
+		}
+	});
+}
 
 test("clampPercent keeps values in the inclusive 0–100 range", () => {
 	assert.equal(clampPercent(-1), 0);
